@@ -42,44 +42,54 @@ There's an external project [docker-lobsters](https://github.com/jamesbrink/dock
 * Run Bundler to install/bundle gems needed by the project:
 
     ```sh
-    lobsters$ bundle
+    blockchainers$ bundle install --path vendor/bundle
     ```
 
-* Create a MySQL (other DBs supported by ActiveRecord may work, only MySQL and
-MariaDB have been tested) database, username, and password and put them in a
-`config/database.yml` file.  You will also want a separate database for
-running tests:
+* Install postgresql locally using the following command:
 
-    ```yaml
-    development:
-      adapter: mysql2
-      encoding: utf8mb4
-      reconnect: false
-      database: lobsters_dev
-      socket: /tmp/mysql.sock
-      username: *dev_username*
-      password: *dev_password*
-      
-    test:
-      adapter: mysql2
-      encoding: utf8mb4
-      reconnect: false
-      database: lobsters_test
-      socket: /tmp/mysql.sock
-      username: *test_username*
-      password: *test_password*
+    ```sh
+    blockchainers$ sudo apt install postgresql
+    ```
+* Create role for your current user:
+
+    ```sh
+    blockchainers$ sudo -u postgres createuser $(whoami) -s -P
+    ```
+
+
+* Create `development.env` inside root directory with the
+following content:
+
+    ```sh
+    POSTGRES_USER=$(whoami)
+    POSTGRES_PASSWORD='YOUR_PASS'
+    POSTGRES_HOST='localhost'
+    POSTGRES_DB='blockchainers_dev'
+    POSTGRES_TEST_DB='blockchainers_test'
     ```
 
 * Load the schema into the new database:
 
     ```sh
-    lobsters$ rake db:schema:load
+    bundle exec rake db:schema:load
     ```
 
-* Create a `config/initializers/secret_token.rb` file, using a randomly
-generated key from the output of `rake secret`:
+* If you have found a problem, run the following commands
+to debug the migrations:
 
     ```sh
+    bin/rails db:environment:set RAILS_ENV=development
+    bundle exec rake db:drop
+    bundle exec rake db:create
+    bundle exec rake db:migrate
+    ```
+
+then load again.
+
+* Create a `config/initializers/secret_token.rb` file, using a randomly
+generated key from the output of `bundle exec rake secret`:
+
+    ```ruby
     Lobsters::Application.config.secret_key_base = 'your random secret here'
     ```
 
@@ -105,7 +115,7 @@ in a `config/initializers/production.rb` or similar file:
 * Seed the database to create an initial administrator user, the `inactive-user`, and at least one tag:
 
     ```sh
-    lobsters$ rake db:seed
+    bundle exec rake db:seed
     ```
 
 * Run the Rails server in development mode.  You should be able to login to
