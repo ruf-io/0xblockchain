@@ -21,7 +21,7 @@ end
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Lobsters
+module Blockchain
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
@@ -85,11 +85,11 @@ class << Rails.application
   end
 
   def domain
-    "example.com"
+    "0xblockchain.network"
   end
 
   def name
-    "Lobsters"
+    "0xblockchain"
   end
 
   # to force everyone to be considered logged-out (without destroying
