@@ -1,16 +1,16 @@
 ### 0xblockchain Rails Project [![Build Status](https://travis-ci.org/pyk/0xblockchain.svg?branch=master)](https://travis-ci.org/pyk/0xblockchain)
 
 This is the source code of the site operating at
-[https://0xblockchain.network](https://0xblochain.network).
+[https://0xblockchain.network](https://0xblockchain.network).
 It is a Rails 5 codebase and uses a SQL (PostgreSQL in production) backend for the database.
 
 While you are free to fork this code and modify it (according to the [license](https://github.com/pyk/0xblockchain/blob/master/LICENSE))
 to run your own link aggregation website, this source code repository and bug
-tracker are only for the site operating at [0xblockchain.network](https://0xblochain.network/).
+tracker are only for the site operating at [0xblockchain.network](https://0xblockchain.network/).
 Please do not use the bug tracker for support related to operating your own
-site unless you are contributing code that will also benefit [0xblockchain.network](https://0xblochain.network/).
+site unless you are contributing code that will also benefit [0xblockchain.network](https://0xblockchain.network/).
 
-The [0xblockchain](https://0xblochain.network) site is based on awesome [lobster](https://github.com/lobster/lobster) site.
+The [0xblockchain](https://0xblockchain.network) site is based on awesome [lobster](https://github.com/lobster/lobster) site.
 
 
 #### Contributing bugfixes and new features
