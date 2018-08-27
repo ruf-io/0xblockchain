@@ -38,7 +38,7 @@ module ApplicationHelper
     return @header_links if @header_links
 
     @header_links = {
-      root_path => { :title => @cur_url == "/" ? Rails.application.name : "Home" },
+      # root_path => { :title => @cur_url == "/" ? Rails.application.name : "Home" },
       recent_path => { :title => "Recent" },
       comments_path => { :title => "Comments" },
     }
@@ -94,7 +94,7 @@ module ApplicationHelper
 
       @right_header_links[settings_path] = { :title => "#{@user.username} (#{@user.karma})" }
     else
-      @right_header_links[login_path] = { :title => "Login" }
+      @right_header_links["/auth/github"] = { :title => "Login via Github" }
     end
 
     @right_header_links.each do |k, v|

@@ -53,3 +53,6 @@ end
 
 # Configuration
 gem 'dotenv-rails'
+
+# Github login
+gem 'omniauth-github'

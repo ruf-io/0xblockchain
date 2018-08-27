@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'sessions/new'
+  get 'sessions/create'
+  get 'sessions/destroy'
   root :to => "home#index",
     :protocol => (Rails.application.config.force_ssl ? "https://" : "http://"),
     :as => "root"
@@ -41,15 +44,21 @@ Rails.application.routes.draw do
   get "/replies/unread" => "replies#unread"
   get "/replies/unread/page/:page" => "replies#unread"
 
-  get "/login" => "login#index"
-  post "/login" => "login#login"
-  post "/logout" => "login#logout"
-  get "/login/2fa" => "login#twofa"
-  post "/login/2fa_verify" => "login#twofa_verify", :as => "twofa_login"
+  # get "/login" => "login#index"
+  # post "/login" => "login#login"
+  # post "/logout" => "login#logout"
+  # get "/login/2fa" => "login#twofa"
+  # post "/login/2fa_verify" => "login#twofa_verify", :as => "twofa_login"
 
-  get "/signup" => "signup#index"
-  post "/signup" => "signup#signup"
-  get "/signup/invite" => "signup#invite"
+  # get "/signup" => "signup#index"
+  # post "/signup" => "signup#signup"
+  # get "/signup/invite" => "signup#invite"
+
+  # Login via github
+  get "/auth/:provider/callback", to: "sessions#create"
+  get 'auth/failure', to: redirect('/')
+  post "/logout" => "sessions#logout"
+  delete 'signout', to: 'sessions#destroy', as: 'signout'
 
   get "/login/forgot_password" => "login#forgot_password",
     :as => "forgot_password"

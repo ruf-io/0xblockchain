@@ -48,8 +48,6 @@ class User < ApplicationRecord
            :class_name => "Hat",
            :inverse_of => :user
 
-  has_secure_password
-
   typed_store :settings do |s|
     s.boolean :email_notifications, :default => false
     s.boolean :email_replies, :default => false
@@ -73,7 +71,9 @@ class User < ApplicationRecord
             :format => { :with => /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/ },
             :uniqueness => { :case_sensitive => false }
 
-  validates :password, :presence => true, :on => :create
+  # Disable password validation, we use oauth token
+  # validates :password, :presence => true, :on => :create
+  # has_secure_password
 
   VALID_USERNAME = /[A-Za-z0-9][A-Za-z0-9_-]{0,24}/
   validates :username,
@@ -533,5 +533,16 @@ class User < ApplicationRecord
       .where("(votes.comment_id is not null and comments.user_id <> votes.user_id) OR " <<
              "(votes.comment_id is null and stories.user_id <> votes.user_id)")
       .order("id DESC")
+  end
+
+  # Omniauth, login via github
+  def self.from_omniauth(auth)
+    User.where(username: auth.info.name, github_uid: auth.uid).first_or_initialize.tap do |user|
+      user.username = auth.extra.raw_info.login
+      user.email = auth.info.email
+      user.github_uid = auth.uid
+      user.github_oauth_token = auth.credentials.token
+      user.save!
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_11_123440) do
+ActiveRecord::Schema.define(version: 2018_08_27_160712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gin"
@@ -253,6 +253,9 @@ ActiveRecord::Schema.define(version: 2018_07_11_123440) do
     t.integer "disabled_invite_by_user_id"
     t.string "disabled_invite_reason", limit: 200
     t.text "settings"
+    t.string "github_uid"
+    t.string "github_oauth_token"
+    t.index ["github_uid"], name: "index_users_on_github_uid", unique: true
     t.index ["mailing_list_mode"], name: "index_users_on_mailing_list_mode"
     t.index ["password_reset_token"], name: "password_reset_token", unique: true
     t.index ["session_token"], name: "session_hash", unique: true
