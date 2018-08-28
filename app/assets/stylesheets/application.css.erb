@@ -1411,3 +1411,52 @@ div.fieldWithErrors {
 .fs-10pt {
   font-size: 10pt;
 }
+
+/* Buttons */
+.button.button-primary,
+.button.button-primary:visited {
+  background-image: none;
+  background-color: #000;
+  border-color: transparent;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.button,
+.button:visited,
+a.button {
+  box-sizing: border-box;
+  transition: background-color 0.1s ease-out;
+  border-radius: 3.01px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-family: inherit;
+  font-variant: normal;
+  font-weight: 400;
+  background-image: none;
+  background-color: rgba(9, 30, 66, 0.08);
+  border-color: transparent;
+  color: #344563;
+  text-decoration: none;
+  display: inline-block;
+  height: 2.14285714em;
+  line-height: 1.42857143em;
+  margin: 0;
+  padding: 4px 10px;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+/* .button.button-primary:focus,
+.button.button-primary:hover {
+  background-color: #0065ff;
+  border-color: transparent;
+  color: #fff;
+  text-decoration: none;
+} */
+
+.icon-github {
+  background-image: url(<%=asset_path"GitHub-Mark-32px.png"%>);
+}

@@ -41,42 +41,58 @@
   <% end %>
 
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/brands.css" integrity="sha384-nT8r1Kzllf71iZl81CdFzObMsaLOhqBU1JD2+XoAALbdtWaXDOlWOZTR4v1ktjPE" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
 </head>
+
 <body class="sans-serif fs-10pt black-80">
-  <div class="mw8 center ph3 pt3">
-    <div class="cf">
-      <div class="fl mw-50">
-        <a class="link black b code"
-          href="/" title="<%= Rails.application.name %> (Current traffic: <%=
-          @traffic.to_i %>)">0xbn</a>
-
-        <% if @cur_url.present? && !header_links.keys.include?(@cur_url) &&
-        @heading.present? %>
-          <!-- <span id="headertitle">
-            <a href="<%= @cur_url %>"><%= @heading %></a>
-          </span> -->
-        <% end %>
-
-        <span class="">
-          <% header_links.each do |u,v| %>
+  <div class="mw8 center">
+    <%# Logo and login button %>
+    <div class="cf pv3">
+      <div class="fl w-20 ph3">
+        <a
+          class="link black b code"
+          href="/"
+          title="<%= Rails.application.name %> (Current traffic: <%= @traffic.to_i %>)">
+          0xbn
+        </a>
+      </div>
+      <div class="fl w-80 ph3 tr">
+        <% if !@user %>
+          <a href="/auth/github" class="link black-80 dim"><i class="fab fa-github-alt"></i>  <span class="b">Login</span></a>
+        <% else %>
+          <% right_header_links.each do |u,v| %>
             <a href="<%= u %>" class="ml3 link gray <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
-          <% if !@user && Rails.application.open_signups? %>
-            <strong><a href="/invitations/open" class="link gray">Sign Up Now</a></strong>
-          <% end %>
-        </span>
-      </div>
-
-      <div class="fl mw-50">
-        <span class="pl3 headerlinks">
-          <% right_header_links.each do |u,v| %>
-            <a href="<%= u %>" class="link gray <%= v[:class].join(" ") %>"><%=
-              v[:title] %></a>
-          <% end %>
-        </span>
+        <% end %>
       </div>
     </div>
+
+    <%# Join banner %>
+    <% if !@user %>
+      <div class="cf ba-ns bt bb b--light-gray mb3">
+        <div class="fl w-100 ph3">
+          <p><span class="code b">0xblockhain</span> is a Blockhain technology-focused community centered around link aggregation and discussion.</p>
+          <p><a href="/auth/github" class="link black-80 dim"><i class="fab fa-github-alt"></i>  <span class="b">Join via GitHub</span></a></p>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Navigation %>
+    <div class="cf pb3">
+      <div class="fl w-100 ph3 nowrap overflow-x-auto">
+        <% header_links.each do |u,v| %>
+          <a
+            href="<%= u %>"
+            class="mr3 link gray dim <%= v[:class].join(" ") %>">
+            <%= v[:title] %>
+          </a>
+        <% end %>
+      </div>
+    </div>
+
+
 
     <div id="inside">
       <% [ :error, :success, :notice ].each do |f| %>
