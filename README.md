@@ -12,7 +12,6 @@ site unless you are contributing code that will also benefit [0xblockchain.netwo
 
 The [0xblockchain](https://0xblockchain.network) site is based on awesome [lobster](https://github.com/lobster/lobster) site.
 
-
 #### Contributing bugfixes and new features
 
 Please see the [CONTRIBUTING](https://github.com/pyk/0xblockchain/blob/master/CONTRIBUTING.md) file.
@@ -21,108 +20,113 @@ Please see the [CONTRIBUTING](https://github.com/pyk/0xblockchain/blob/master/CO
 
 Use the steps below for a local install.
 
-* Install Ruby 2.5.
+- Install Ruby 2.5.
 
-* Checkout the 0xblockhain git tree from Github
-    ```sh
-    $ git clone git://github.com/pyk/0xblockchain.git
-    $ cd 0xblockhain
-    0xblockhain$
-    ```
+- Checkout the 0xblockhain git tree from Github
 
-* Install Nodejs, needed (or other execjs) for uglifier
-    ```sh
-    Fedora: sudo yum install nodejs
-    Ubuntu: sudo apt-get install nodejs
-    OSX: brew install nodejs
-    ```
+  ```sh
+  $ git clone git://github.com/pyk/0xblockchain.git
+  $ cd 0xblockhain
+  0xblockhain$
+  ```
 
-* Run Bundler to install/bundle gems needed by the project:
-    ```sh
-    0xblockchain$ bundle install --path vendor/bundle
-    ```
+- Install Nodejs, needed (or other execjs) for uglifier
 
-* Install postgresql locally using the following command:
-    ```sh
-    0xblockchain$ sudo apt install postgresql
-    ```
+  ```sh
+  Fedora: sudo yum install nodejs
+  Ubuntu: sudo apt-get install nodejs
+  OSX: brew install nodejs
+  ```
 
-* Create role for your current user:
-    ```sh
-    0xblockchain$ sudo -u postgres createuser $(whoami) -s -P
-    ```
+- Run Bundler to install/bundle gems needed by the project:
 
-* Create `.env.development` inside root directory with the
-following content:
-    ```sh
-    POSTGRES_USER=$(whoami)
-    POSTGRES_PASSWORD='YOUR_PASS'
-    POSTGRES_HOST='localhost'
-    POSTGRES_DB='0xblockchain_dev'
-    POSTGRES_TEST_DB='0xblockchain_test'
-    ```
+  ```sh
+  0xblockchain$ bundle install --path vendor/bundle
+  ```
 
-* Load the schema into the new database:
-    ```sh
-    bundle exec rake db:schema:load
-    ```
+- Install postgresql locally using the following command:
 
-* If you have found a problem, run the following commands
-to debug the migrations:
-    ```sh
-    bin/rails db:environment:set RAILS_ENV=development
-    bundle exec rake db:drop
-    bundle exec rake db:create
-    bundle exec rake db:migrate
-    ```
+  ```sh
+  0xblockchain$ sudo apt install postgresql
+  ```
+
+- Create role for your current user:
+
+  ```sh
+  0xblockchain$ sudo -u postgres createuser $(whoami) -s -P
+  ```
+
+- Create `.env.development` inside root directory with the
+  following content:
+
+      ```sh
+      POSTGRES_USER=$(whoami)
+      POSTGRES_PASSWORD='YOUR_PASS'
+      POSTGRES_HOST='localhost'
+      POSTGRES_DB='0xblockchain_dev'
+      POSTGRES_TEST_DB='0xblockchain_test'
+      GITHUB_CLIENT_ID='UPDATE_HERE'
+      GITHUB_CLIENT_SECRET='UPDATE_HERE'
+      ```
+
+- Load the schema into the new database:
+
+  ```sh
+  bundle exec rake db:schema:load
+  ```
+
+- If you have found a problem, run the following commands
+  to debug the migrations:
+  `sh bin/rails db:environment:set RAILS_ENV=development bundle exec rake db:drop bundle exec rake db:create bundle exec rake db:migrate`
 
 then load the schema again.
 
-* Create a `config/initializers/secret_token.rb` file, using a randomly
-generated key from the output of `bundle exec rake secret`:
+- Create a `config/initializers/secret_token.rb` file, using a randomly
+  generated key from the output of `bundle exec rake secret`:
 
-    ```ruby
-    0xblockhain::Application.config.secret_key_base = 'your random secret here'
-    ```
+      ```ruby
+      0xblockhain::Application.config.secret_key_base = 'your random secret here'
+      ```
 
-* Define your site's name and default domain, which are used in various places,
-in a `config/initializers/production.rb` or similar file:
+- Define your site's name and default domain, which are used in various places,
+  in a `config/initializers/production.rb` or similar file:
 
-    ```ruby
-    class << Rails.application
-      def domain
-        "example.com"
+      ```ruby
+      class << Rails.application
+        def domain
+          "example.com"
+        end
+
+        def name
+          "Example News"
+        end
       end
 
-      def name
-        "Example News"
-      end
-    end
+      Rails.application.routes.default_url_options[:host] = Rails.application.domain
+      ```
 
-    Rails.application.routes.default_url_options[:host] = Rails.application.domain
-    ```
+- Put your site's custom CSS in `app/assets/stylesheets/local`.
 
-* Put your site's custom CSS in `app/assets/stylesheets/local`.
+- Seed the database to create an initial administrator user, the `inactive-user`, and at least one tag:
 
-* Seed the database to create an initial administrator user, the `inactive-user`, and at least one tag:
+  ```sh
+  bundle exec rake db:seed
+  ```
 
-    ```sh
-    bundle exec rake db:seed
-    ```
+- Run the Rails server in development mode. You should be able to login to
+  `http://localhost:3000` with your new `test` user:
 
-* Run the Rails server in development mode.  You should be able to login to
-`http://localhost:3000` with your new `test` user:
+      ```sh
+      0xblockhain$ rails server
+      ```
 
-    ```sh
-    0xblockhain$ rails server
-    ```
+- In production, set up crontab or another scheduler to run regular jobs:
 
-* In production, set up crontab or another scheduler to run regular jobs:
+  ```
+  */5 * * * *  cd /path/to/0xblockhain && env RAILS_ENV=production sh -c 'bundle exec ruby script/mail_new_activity; bundle exec ruby script/post_to_twitter'
+  ```
 
-    ```
-    */5 * * * *  cd /path/to/0xblockhain && env RAILS_ENV=production sh -c 'bundle exec ruby script/mail_new_activity; bundle exec ruby script/post_to_twitter'
-    ```
-* In production, see `config/initializers/production.rb.sample` for GitHub/Twitter integration help.
+- In production, see `config/initializers/production.rb.sample` for GitHub/Twitter integration help.
 
 #### Administration
 
