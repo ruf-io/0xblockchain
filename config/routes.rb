@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  get 'sessions/new'
-  get 'sessions/create'
-  get 'sessions/destroy'
   root :to => "home#index",
     :protocol => (Rails.application.config.force_ssl ? "https://" : "http://"),
     :as => "root"

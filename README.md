@@ -60,10 +60,7 @@ Use the steps below for a local install.
   following content:
 
   ```sh
-    POSTGRES_USER=$(whoami)
-    POSTGRES_PASSWORD='YOUR_PASS'
-    POSTGRES_HOST='localhost'
-    POSTGRES_DB='0xblockchain_dev'
+    DATABASER_URL="postgres://$(whoami):1234@localhost/0xblockchain_dev"
     GITHUB_CLIENT_ID='UPDATE_HERE'
     GITHUB_CLIENT_SECRET='UPDATE_HERE'
   ```
@@ -137,10 +134,7 @@ then load the schema again.
   following content:
 
   ```sh
-  POSTGRES_USER=$(whoami)
-  POSTGRES_PASSWORD='YOUR_PASS'
-  POSTGRES_HOST='localhost'
-  POSTGRES_DB='0xblockchain_test'
+  DATABASER_URL="postgres://$(whoami):1234@localhost/0xblockchain_test"
   GITHUB_CLIENT_ID='UPDATE_HERE'
   GITHUB_CLIENT_SECRET='UPDATE_HERE'
   ```
@@ -167,7 +161,7 @@ bundle exec rails console
 Then find the user and grant the admin access:
 
 ```ruby
-user = User.find_by(email: "admin@mail.com")
-user.is_admin = True
+user = User.find_by(username: "username")
+user.is_admin = true
 user.save!
 ```

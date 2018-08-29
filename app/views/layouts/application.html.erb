@@ -62,7 +62,7 @@
           <a href="/auth/github" class="link black-80 dim"><i class="fab fa-github-alt"></i>  <span class="b">Login</span></a>
         <% else %>
           <% right_header_links.each do |u,v| %>
-            <a href="<%= u %>" class="ml3 link gray <%= v[:class].join(" ") %>"><%=
+            <a href="<%= u %>" class="ml3 link gray underline-hover <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
         <% end %>
@@ -85,25 +85,26 @@
         <% header_links.each do |u,v| %>
           <a
             href="<%= u %>"
-            class="mr3 link gray dim <%= v[:class].join(" ") %>">
+            class="mr3 link gray underline-hover <%= v[:class].join(" ") %>">
             <%= v[:title] %>
           </a>
         <% end %>
       </div>
     </div>
 
-
-
-    <div id="inside">
-      <% [ :error, :success, :notice ].each do |f| %>
-        <% if flash[f].present? %>
-          <div class="flash-<%= f %>"><%= flash[f] %></div>
-        <% end %>
+    <%# Flash messages %>
+    <% [ :error, :success, :notice ].each do |f| %>
+      <% if flash[f].present? %>
+        <div class="cf pb3">
+        <div class="w-100 flash-<%= f %>"><%= flash[f] %></div>
+        </div>
       <% end %>
+    <% end %>
 
-      <%= yield %>
+    <%# Content %>
+    <%= yield %>
 
-      <div id="footer">
+    <div id="footer">
         <% if lookup_context.template_exists?("footer", "layouts", true) %>
           <%= render :partial => "layouts/footer" %>
         <% else %>
@@ -126,8 +127,6 @@
           <a href="/about">About</a>
         <% end %>
       </div>
-      <div class="clear"></div>
-    </div>
   </div>
 </body>
 </html>

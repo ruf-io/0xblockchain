@@ -1,19 +1,33 @@
-<div class="box wide">
-  <div class="legend">
-    Tags
-  </div>
-
-  <% is_admin = @user.try(:is_admin?) %>
-  <% if is_admin %>
-    <div>
-      <%= link_to 'Create New Tag', new_tag_path %>
+<div class="cf">
+  <div class="fl w-100">
+    <div class="cf">
+      <div class="fl w-50 ph3">
+        <h2>Tags</h2>
+      </div>
+      <div class="fl w-50 ph3 tr">
+        <% is_admin = @user.try(:is_admin?) %>
+        <% if is_admin %>
+          <%= link_to 'Create New Tag', new_tag_path, { :class=>"link underline-hover" } %>
+        <% end %>
+      </div>
     </div>
-  <% end %>
-  <% max_size = @tags.map{|t| t.stories_count }.max %>
-  <% @tags.each do |tag| %>
-    <% mod = (max_size.to_f / ((tag.stories_count.to_f == 0) ? 1 : tag.stories_count.to_f )) %>
-    <%= link_to tag.tag, is_admin ? edit_tag_path(tag.id) : tag_path(tag), :class => tag.css_class,
-      :style => "text-decoration: none; vertical-align: middle; " <<
-      "font-size: #{((52 / (mod + 1)) + 8).ceil}pt; line-height: 1.5em;" %>
-  <% end %>
+  </div>
 </div>
+
+<div class="cf pb3">
+  <div class="fl w-100 ph3">
+    <p>List of available tags:</p>
+    <ol class="">
+      <% max_size = @tags.map{|t| t.stories_count }.max %>
+      <% @tags.each do |tag| %>
+        <% mod = (max_size.to_f / ((tag.stories_count.to_f == 0) ? 1 : tag.stories_count.to_f )) %>
+        <li>
+          <p>
+            <%= link_to tag.tag, is_admin ? edit_tag_path(tag.id) : tag_path(tag), :class => "link black-80 underline-hover" %>
+          </p>
+        </li>
+      <% end %>
+    </ol>
+  </div>
+</div>
+
