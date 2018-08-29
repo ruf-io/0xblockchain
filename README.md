@@ -112,7 +112,7 @@ then load the schema again.
 
 - Put your site's custom CSS in `app/assets/stylesheets/local`.
 
-- Seed the database to create an initial administrator user, the `inactive-user`, and at least one tag:
+- Seed the database to create the tags:
 
   ```sh
   bundle exec rake db:seed
@@ -157,3 +157,17 @@ then load the schema again.
 
 Basic moderation happens on-site, but most other administrative tasks require use of the rails console in production.
 Administrators can create and edit tags at `/tags`.
+
+To grant admin access:
+
+```sh
+bundle exec rails console
+```
+
+Then find the user and grant the admin access:
+
+```ruby
+user = User.find_by(email: "admin@mail.com")
+user.is_admin = True
+user.save!
+```
