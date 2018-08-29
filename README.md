@@ -165,3 +165,41 @@ user = User.find_by(username: "username")
 user.is_admin = true
 user.save!
 ```
+
+#### Heroku
+
+To deploy on heroku, follow this step by step.
+
+First, login to your account:
+
+```sh
+heroku login
+```
+
+Then create application:
+
+```sh
+heroku create
+```
+
+Then deploy to heroku:
+
+```sh
+git push heroku master
+```
+
+Migrate and seed the database if there are any changes:
+
+```sh
+heroku run rake db:migate
+heroku run rake db:seed
+```
+
+To perform administrative task, run:
+
+```
+heroku run rails console
+```
+
+To use multiple environment (staging and production) on heroku
+read the following [guide](https://devcenter.heroku.com/articles/multiple-environments).
