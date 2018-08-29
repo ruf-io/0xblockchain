@@ -54,3 +54,5 @@ end
 
 # Github login
 gem 'omniauth-github'
+
+ruby "2.5.1"
