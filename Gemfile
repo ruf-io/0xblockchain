@@ -49,10 +49,8 @@ group :test, :development do
   gem "faker"
   gem "byebug"
   gem "rb-readline"
+  gem 'dotenv-rails'
 end
-
-# Configuration
-gem 'dotenv-rails'
 
 # Github login
 gem 'omniauth-github'

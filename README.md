@@ -64,7 +64,6 @@ Use the steps below for a local install.
       POSTGRES_PASSWORD='YOUR_PASS'
       POSTGRES_HOST='localhost'
       POSTGRES_DB='0xblockchain_dev'
-      POSTGRES_TEST_DB='0xblockchain_test'
       GITHUB_CLIENT_ID='UPDATE_HERE'
       GITHUB_CLIENT_SECRET='UPDATE_HERE'
       ```
@@ -77,33 +76,39 @@ Use the steps below for a local install.
 
 - If you have found a problem, run the following commands
   to debug the migrations:
-  `sh bin/rails db:environment:set RAILS_ENV=development bundle exec rake db:drop bundle exec rake db:create bundle exec rake db:migrate`
+
+  ```sh
+  bin/rails db:environment:set RAILS_ENV=development
+  bundle exec rake db:drop
+  bundle exec rake db:create
+  bundle exec rake db:migrate
+  ```
 
 then load the schema again.
 
 - Create a `config/initializers/secret_token.rb` file, using a randomly
   generated key from the output of `bundle exec rake secret`:
 
-      ```ruby
-      0xblockhain::Application.config.secret_key_base = 'your random secret here'
-      ```
+  ```ruby
+  0xblockhain::Application.config.secret_key_base = 'your random secret here'
+  ```
 
 - Define your site's name and default domain, which are used in various places,
   in a `config/initializers/production.rb` or similar file:
 
-      ```ruby
-      class << Rails.application
-        def domain
-          "example.com"
-        end
+  ```ruby
+  class << Rails.application
+    def domain
+        "example.com"
+    end
 
-        def name
-          "Example News"
-        end
-      end
+    def name
+        "Example News"
+    end
+  end
 
-      Rails.application.routes.default_url_options[:host] = Rails.application.domain
-      ```
+  Rails.application.routes.default_url_options[:host] = Rails.application.domain
+  ```
 
 - Put your site's custom CSS in `app/assets/stylesheets/local`.
 
@@ -116,9 +121,9 @@ then load the schema again.
 - Run the Rails server in development mode. You should be able to login to
   `http://localhost:3000` with your new `test` user:
 
-      ```sh
-      0xblockhain$ rails server
-      ```
+  ```sh
+  0xblockhain$ bundle exec rails server
+  ```
 
 - In production, set up crontab or another scheduler to run regular jobs:
 
@@ -127,6 +132,26 @@ then load the schema again.
   ```
 
 - In production, see `config/initializers/production.rb.sample` for GitHub/Twitter integration help.
+
+- For testing, create `.env.test` inside root directory with the
+  following content:
+
+      ```sh
+      POSTGRES_USER=$(whoami)
+      POSTGRES_PASSWORD='YOUR_PASS'
+      POSTGRES_HOST='localhost'
+      POSTGRES_DB='0xblockchain_test'
+      GITHUB_CLIENT_ID='UPDATE_HERE'
+      GITHUB_CLIENT_SECRET='UPDATE_HERE'
+      ```
+
+- Execute the following command to run the test:
+
+      ```sh
+      RAILS_ENV=test bundle exec rspec
+      # Or individual spec
+      RAILS_ENV=test bundle exec rspec spec/controllers/sessions_controller_spec.rb
+      ```
 
 #### Administration
 

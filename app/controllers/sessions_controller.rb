@@ -1,3 +1,8 @@
+class LoginBannedError < StandardError; end
+class LoginDeletedError < StandardError; end
+class LoginTOTPFailedError < StandardError; end
+class LoginFailedError < StandardError; end
+
 class SessionsController < ApplicationController
   def new; end
 
@@ -19,7 +24,8 @@ class SessionsController < ApplicationController
       end
 
       session[:u] = user.session_token
-      return redirect_to request.env['omniauth.origin']
+      origin_url = request.env['omniauth.origin'] || "/"
+      return redirect_to origin_url
     rescue LoginBannedError
       fail_reason = "Your account has been banned."
     rescue LoginDeletedError
@@ -33,16 +39,19 @@ class SessionsController < ApplicationController
     # Return to the pervious page with error message
     flash.now[:error] = fail_reason
     @referer = params[:referer]
-    return redirect_to request.env['omniauth.origin']
+    origin_url = request.env['omniauth.origin'] || "/"
+    return redirect_to origin_url
   end
 
   def destroy
     reset_session
-    redirect_to request.referer
+    referer_url = request.referer || "/"
+    redirect_to referer_url
   end
 
   def logout
     reset_session
-    redirect_to request.referer
+    referer_url = request.referer || "/"
+    redirect_to referer_url
   end
 end

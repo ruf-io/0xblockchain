@@ -2,5 +2,8 @@
   "ruby.format": "rubocop",
   "editor.formatOnSave": true,
   "editor.formatOnSaveTimeout": 2000,
-  "ruby.intellisense": "rubyLocate"
+  "ruby.intellisense": "rubyLocate",
+  "[ruby]": {
+    "editor.tabSize": 2
+  }
 }

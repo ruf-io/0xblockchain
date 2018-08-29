@@ -537,13 +537,11 @@ class User < ApplicationRecord
 
   # Omniauth, login via github
   def self.from_omniauth(auth)
-    user = User.where(github_uid: auth.uid).first_or_create.tap do |user|
-      user.username = auth.extra.raw_info.login
+    User.find_or_create_by(github_uid: auth.uid) do |user|
+      user.username = auth.info.nickname
       user.email = auth.info.email
       user.github_uid = auth.uid
       user.github_oauth_token = auth.credentials.token
-      user.save!
     end
-    return user
   end
 end
