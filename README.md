@@ -59,14 +59,14 @@ Use the steps below for a local install.
 - Create `.env.development` inside root directory with the
   following content:
 
-      ```sh
-      POSTGRES_USER=$(whoami)
-      POSTGRES_PASSWORD='YOUR_PASS'
-      POSTGRES_HOST='localhost'
-      POSTGRES_DB='0xblockchain_dev'
-      GITHUB_CLIENT_ID='UPDATE_HERE'
-      GITHUB_CLIENT_SECRET='UPDATE_HERE'
-      ```
+  ```sh
+    POSTGRES_USER=$(whoami)
+    POSTGRES_PASSWORD='YOUR_PASS'
+    POSTGRES_HOST='localhost'
+    POSTGRES_DB='0xblockchain_dev'
+    GITHUB_CLIENT_ID='UPDATE_HERE'
+    GITHUB_CLIENT_SECRET='UPDATE_HERE'
+  ```
 
 - Load the schema into the new database:
 
@@ -127,7 +127,7 @@ then load the schema again.
 
 - In production, set up crontab or another scheduler to run regular jobs:
 
-  ```
+  ```sh
   */5 * * * *  cd /path/to/0xblockhain && env RAILS_ENV=production sh -c 'bundle exec ruby script/mail_new_activity; bundle exec ruby script/post_to_twitter'
   ```
 
@@ -136,22 +136,22 @@ then load the schema again.
 - For testing, create `.env.test` inside root directory with the
   following content:
 
-      ```sh
-      POSTGRES_USER=$(whoami)
-      POSTGRES_PASSWORD='YOUR_PASS'
-      POSTGRES_HOST='localhost'
-      POSTGRES_DB='0xblockchain_test'
-      GITHUB_CLIENT_ID='UPDATE_HERE'
-      GITHUB_CLIENT_SECRET='UPDATE_HERE'
-      ```
+  ```sh
+  POSTGRES_USER=$(whoami)
+  POSTGRES_PASSWORD='YOUR_PASS'
+  POSTGRES_HOST='localhost'
+  POSTGRES_DB='0xblockchain_test'
+  GITHUB_CLIENT_ID='UPDATE_HERE'
+  GITHUB_CLIENT_SECRET='UPDATE_HERE'
+  ```
 
 - Execute the following command to run the test:
 
-      ```sh
-      RAILS_ENV=test bundle exec rspec
-      # Or individual spec
-      RAILS_ENV=test bundle exec rspec spec/controllers/sessions_controller_spec.rb
-      ```
+  ```sh
+  RAILS_ENV=test bundle exec rspec
+  # Or individual spec
+  RAILS_ENV=test bundle exec rspec spec/controllers/sessions_controller_spec.rb
+  ```
 
 #### Administration
 
