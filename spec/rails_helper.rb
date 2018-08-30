@@ -7,8 +7,8 @@ require 'rspec/rails'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
 
-Tag.destroy_all
-Tag.create!([{ tag: "tag1" }, { tag: "tag2" }])
+# Tag.destroy_all
+# Tag.create!([{ tag: "tag1" }, { tag: "tag2" }])
 
 RSpec.configure do |config|
   # ## Mock Framework

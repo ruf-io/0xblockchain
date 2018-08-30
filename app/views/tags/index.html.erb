@@ -2,12 +2,12 @@
   <div class="fl w-100">
     <div class="cf">
       <div class="fl w-50 ph3">
-        <h2>Tags</h2>
+        <h2 class="mv2">Tags</h2>
       </div>
       <div class="fl w-50 ph3 tr">
         <% is_admin = @user.try(:is_admin?) %>
         <% if is_admin %>
-          <%= link_to 'Create New Tag', new_tag_path, { :class=>"link underline-hover" } %>
+          <%= link_to 'Create New Tag', new_tag_path, { :class=>"link underline-hover dib mv2" } %>
         <% end %>
       </div>
     </div>
@@ -17,17 +17,29 @@
 <div class="cf pb3">
   <div class="fl w-100 ph3">
     <p>List of available tags:</p>
-    <ol class="">
-      <% max_size = @tags.map{|t| t.stories_count }.max %>
-      <% @tags.each do |tag| %>
-        <% mod = (max_size.to_f / ((tag.stories_count.to_f == 0) ? 1 : tag.stories_count.to_f )) %>
-        <li>
-          <p>
-            <%= link_to tag.tag, is_admin ? edit_tag_path(tag.id) : tag_path(tag), :class => "link black-80 underline-hover" %>
-          </p>
-        </li>
-      <% end %>
-    </ol>
+    <table class="w-100 collapse ba br2 b--black-10">
+      <thead>
+        <tr class="striped--light-gray ">
+          <th class="pv2 ph2 tl">Name</th>
+          <th class="pv2 ph2 tl">Description</th>
+          <% if is_admin %>
+            <th class="pv2 ph2 tl">Edit</th>
+          <% end %>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @tags.each do |tag| %>
+          <tr class="striped--near-white">
+            <td class="pv2 ph2 tl"><%= link_to tag.tag, tag_path(tag), :class => "link underline-hover" %></td>
+            <td class="pv2 ph2 tl"><%= tag.description %></td>
+            <% if is_admin %>
+              <td class="pv2 ph2 tl"><%= link_to "Edit", is_admin ? edit_tag_path(tag.id) : tag_path(tag), :class => "link underline-hover" %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
 
