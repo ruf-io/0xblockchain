@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :user do
     sequence(:email) {|n| "user-#{n}@example.com" }
     sequence(:username) {|n| "username#{n}" }
-    password { "blah blah" }
-    password_confirmation(&:password)
+    # password { "blah blah" }
+    # password_confirmation(&:password)
     trait(:banned) do
       transient do
         banner { nil }

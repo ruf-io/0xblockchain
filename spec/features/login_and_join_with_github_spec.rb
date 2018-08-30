@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.feature "Login & Join with github" do
+  before do
+    # Populate database using factory bot
+    create :story
+  end
+
   describe "Guest user" do
     scenario "Join via github" do
       # Perform authentication as user

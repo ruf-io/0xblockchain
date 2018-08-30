@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.feature "Logout" do
+  before do
+    # Populate database using factory bot
+    create :story
+  end
   describe "Guest user" do
     scenario "Join then Logout" do
       # Perform authentication as user
@@ -65,7 +69,6 @@ RSpec.feature "Logout" do
       expect(page).to have_current_path root_path
       expect(page).to have_content "Login"
       expect(page).to have_content "Join via GitHub"
-      save_and_open_page
     end
   end
 end
