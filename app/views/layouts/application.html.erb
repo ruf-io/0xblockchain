@@ -96,7 +96,7 @@
     <% [ :error, :success, :notice ].each do |f| %>
       <% if flash[f].present? %>
         <div class="cf pb3">
-        <div class="w-100 flash-<%= f %>"><%= flash[f] %></div>
+        <div class="w-100 ph3 <%= f %>-color"><%= flash[f] %></div>
         </div>
       <% end %>
     <% end %>

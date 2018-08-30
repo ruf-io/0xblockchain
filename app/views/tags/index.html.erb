@@ -7,7 +7,7 @@
       <div class="fl w-50 ph3 tr">
         <% is_admin = @user.try(:is_admin?) %>
         <% if is_admin %>
-          <%= link_to 'Create New Tag', new_tag_path, { :class=>"link underline-hover dib mv2" } %>
+          <%= link_to 'Create new tag', new_tag_path, { :class=>"link underline-hover dib mv2" } %>
         <% end %>
       </div>
     </div>
@@ -34,7 +34,11 @@
             <td class="pv2 ph2 tl"><%= link_to tag.tag, tag_path(tag), :class => "link underline-hover" %></td>
             <td class="pv2 ph2 tl"><%= tag.description %></td>
             <% if is_admin %>
-              <td class="pv2 ph2 tl"><%= link_to "Edit", is_admin ? edit_tag_path(tag.id) : tag_path(tag), :class => "link underline-hover" %></td>
+              <td class="pv2 ph2 tl">
+                <%= link_to "Edit",
+                    is_admin ? edit_tag_path(tag.id) : tag_path(tag),
+                    :class => "link underline-hover tag-%s" % tag.id %>
+              </td>
             <% end %>
           </tr>
         <% end %>

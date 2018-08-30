@@ -1,37 +1,40 @@
+
+
 <%= form_for @tag, url: @tag.persisted? ? update_tag_path : tags_path, method: :post do |f| %>
-  <div class="boxline">
-    <%= f.label :tag, 'Name:', class: 'required' %>
-    <%= f.text_field :tag  %>
+  <div class="measure">
+    <%= f.label :tag, class: "b db mb2" do %>
+      Tag <span class="normal red">*</span>
+    <% end%>
+    <%= f.text_field :tag, class: "input-reset ba b--black-20 pa2 mb2 db w-100", "aria-describedby" => "name-desc" %>
+    <small id="name-desc" class="fs-10pt black-60 db mb2">Name of the tag.</small>
   </div>
 
-  <div class="boxline">
-    <%= f.label :description, 'Description:' %>
-    <%= f.text_field :description %>
-  </div>
-
-  <div class="boxline">
-    <%= f.label :privileged, 'Privileged:' %>
-    <%= f.check_box :privileged %>
+  <div class="measure">
+    <%= f.label :description, class: "b db mb2" do %>
+      Description <span class="normal black-60">(optional)</span>
+    <% end%>
+    <%= f.text_field :description, class: "input-reset ba b--black-20 pa2 mb2 db w-100", "aria-describedby" => "desc-desc" %>
+    <small id="desc-desc" class="fs-10pt black-60 db mb2">Short description of the tag.</small>
   </div>
 
   <% unless @tag.persisted? %>
-    <div class="boxline">
-      <%= f.label :is_media, 'Is Media:' %>
-      <%= f.check_box :is_media %>
+    <div class="flex items-center mb2">
+      <%= f.check_box :is_media, class: "mt2" %>
+      <%= f.label :is_media, class: "mt2 ml2" do %>
+        Media type <span class="normal black-60">(optional)</span>
+      <% end%>
     </div>
   <% end %>
 
-  <div class="boxline">
-    <%= f.label :inactive, 'Inactive:' %>
-    <%= f.check_box :inactive %>
+
+  <div class="flex items-center mb2">
+    <%= f.check_box :inactive, class: "mt2" %>
+    <%= f.label :inactive, class: "mt2 ml2" do %>
+      Inactive tag <span class="normal black-60">(optional)</span>
+    <% end%>
   </div>
 
-  <div class="boxline">
-    <%= f.label :hotness_mod, 'Hotness Mod:' %>
-    <%= f.number_field :hotness_mod, step: 0.01 %>
-  </div>
-
-  <div class="boxline">
-    <%= f.submit @tag.persisted? ? 'Update Tag' : 'Create Tag' %>
+  <div class="measure tr">
+    <%= f.submit @tag.persisted? ? 'Update tag' : 'Create tag' %>
   </div>
 <% end %>
