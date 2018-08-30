@@ -59,7 +59,7 @@
       </div>
       <div class="fl w-80 ph3 tr">
         <% if !@user %>
-          <a href="/auth/github" class="link black-80 dim"><i class="fab fa-github-alt"></i>  <span class="b">Login</span></a>
+          <a href="/auth/github" class="link black-80 dim"><i class="fab fa-github"></i>  <span class="b">Login</span></a>
         <% else %>
           <% right_header_links.each do |u,v| %>
             <a href="<%= u %>" class="ml3 link gray underline-hover <%= v[:class].join(" ") %>"><%=
@@ -69,12 +69,19 @@
       </div>
     </div>
 
+    <%# Border %>
+    <div class="cf">
+      <div class="fl w-100 ph3-ns ">
+        <div class="bb mb3 b--light-gray"></div>
+      </div>
+    </div>
+
     <%# Join banner %>
     <% if !@user %>
       <div class="cf ba-ns bt bb b--light-gray mb3">
         <div class="fl w-100 ph3">
           <p><span class="code b">0xblockhain</span> is a Blockhain technology-focused community centered around link aggregation and discussion.</p>
-          <p><a href="/auth/github" class="link black-80 dim"><i class="fab fa-github-alt"></i>  <span class="b">Join via GitHub</span></a></p>
+          <p><a href="/auth/github" class="link black-80 dim"><i class="fab fa-github"></i>  <span class="b">Join via GitHub</span></a></p>
         </div>
       </div>
     <% end %>
@@ -89,6 +96,13 @@
             <%= v[:title] %>
           </a>
         <% end %>
+      </div>
+    </div>
+
+    <%# Border %>
+    <div class="cf">
+      <div class="fl w-100 ph3-ns ">
+        <div class="bb mb3 b--light-gray"> </div>
       </div>
     </div>
 
