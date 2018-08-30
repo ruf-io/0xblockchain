@@ -60,7 +60,8 @@ Use the steps below for a local install.
   following content:
 
   ```sh
-    DATABASER_URL="postgres://$(whoami):1234@localhost/0xblockchain_dev"
+    DATABASE_URL="postgres://$(whoami):1234@localhost/0xblockchain_dev"
+    DATABASE_TEST_URL="postgres://$(whoami):1234@localhost/0xblockchain_test"
     GITHUB_CLIENT_ID='UPDATE_HERE'
     GITHUB_CLIENT_SECRET='UPDATE_HERE'
   ```
@@ -130,21 +131,12 @@ then load the schema again.
 
 - In production, see `config/initializers/production.rb.sample` for GitHub/Twitter integration help.
 
-- For testing, create `.env.test` inside root directory with the
-  following content:
-
-  ```sh
-  DATABASER_URL="postgres://$(whoami):1234@localhost/0xblockchain_test"
-  GITHUB_CLIENT_ID='UPDATE_HERE'
-  GITHUB_CLIENT_SECRET='UPDATE_HERE'
-  ```
-
 - Execute the following command to run the test:
 
   ```sh
-  RAILS_ENV=test bundle exec rspec
+  bundle exec rspec
   # Or individual spec
-  RAILS_ENV=test bundle exec rspec spec/controllers/sessions_controller_spec.rb
+  bundle exec rspec spec/controllers/sessions_controller_spec.rb
   ```
 
 #### Administration
