@@ -19,6 +19,8 @@ PREDEFINED_TAGS = [
   { name: "networking", description: "Networking related links", is_media: false },
   { name: "database", description: "Databases (SQL, NoSQL)", is_media: false },
   { name: "ai", description: "Artificial Intelligence, Machine Learning", is_media: false },
+  { name: "ask", description: "Ask 0xblockchain", is_media: false },
+  { name: "meta", description: "0xblockhain-related bikeshedding", is_media: false },
 ].freeze
 
 PREDEFINED_TAGS.each do |tag|
