@@ -1,33 +1,26 @@
-<div class="box" id="story_box">
-  <div class="legend">
-    Submit a Story
+<div class="cf pb3">
+  <div class="fl w-100 ph3">
+    <h2 class="mv2">Submit a Story</h2>
   </div>
+</div>
+
+<div class="cf pb3">
+  <div class="fl w-100 ph3">
+    <%= form_for @story do |f| %>
+      <%= render :partial => "stories/form",
+          :locals => { :story => @story,
+          :f => f } %>
+
+      <%= submit_tag "Submit" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="box" id="story_box">
+
 
   <div id="story_holder">
-    <%= form_for @story do |f| %>
-      <%= render :partial => "stories/form", :locals => { :story => @story,
-        :f => f } %>
 
-      <p></p>
-
-      <div class="box">
-        <div class="boxline actions markdown_help_toggler">
-          <div class="markdown_help_label">
-            Markdown formatting available
-          </div>
-
-          <%= submit_tag "Submit" %>
-
-          &nbsp;
-          <button type="button" class="story-preview">Preview</button>
-
-          <div style="clear: both;"></div>
-
-          <%= render :partial => "global/markdownhelp",
-            :locals => { :allow_images => true } %>
-        </div>
-      </div>
-    <% end %>
   </div>
 </div>
 

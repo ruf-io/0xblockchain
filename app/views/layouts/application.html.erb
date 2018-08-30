@@ -48,21 +48,29 @@
 <body class="sans-serif fs-10pt black-80">
   <div class="mw7 center">
     <%# Logo and login button %>
-    <div class="cf pv3">
-      <div class="fl w-20 ph3">
+    <div class="cf pv3 ">
+      <div class="fl w-100 ph3 nowrap overflow-x-auto">
         <a
-          class="link black b code"
+          class="link white bg-black b pa2 code dib mr2"
           href="/"
-          title="<%= Rails.application.name %> (Current traffic: <%= @traffic.to_i %>)">
-          0xbn
+          title="<%= Rails.application.name %>"
+          style=" padding: 5px; font-size: 9pt; ">
+          0x
         </a>
-      </div>
-      <div class="fl w-80 ph3 tr">
         <% if !@user %>
-          <a href="/auth/github" class="link black-80 dim"><i class="fab fa-github"></i>  <span class="b">Login</span></a>
+          <% header_links.each do |u,v| %>
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
+              v[:title] %></a>
+          <% end %>
+          <a href="/auth/github" class="link black underline-hover fr pv2 dib"><i class="fab fa-github"></i>  <span class="b">Login</span></a>
         <% else %>
+          <% header_links.each do |u,v| %>
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
+              v[:title] %></a>
+          <% end %>
+
           <% right_header_links.each do |u,v| %>
-            <a href="<%= u %>" class="ml3 link gray underline-hover <%= v[:class].join(" ") %>"><%=
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
         <% end %>
@@ -70,41 +78,43 @@
     </div>
 
     <%# Border %>
-    <div class="cf">
+    <%# <div class="cf">
       <div class="fl w-100 ph3-ns ">
         <div class="bb mb3 b--light-gray"></div>
       </div>
-    </div>
-
-    <%# Join banner %>
-    <% if !@user %>
-      <div class="cf ba-ns bt bb b--light-gray mb3">
-        <div class="fl w-100 ph3">
-          <p><span class="code b">0xblockhain</span> is a Blockhain technology-focused community centered around link aggregation and discussion.</p>
-          <p><a href="/auth/github" class="link black-80 dim"><i class="fab fa-github"></i>  <span class="b">Join via GitHub</span></a></p>
-        </div>
-      </div>
-    <% end %>
+    </div> %>
 
     <%# Navigation %>
+    <!--
     <div class="cf pb3">
       <div class="fl w-100 ph3 nowrap overflow-x-auto">
         <% header_links.each do |u,v| %>
           <a
             href="<%= u %>"
-            class="mr3 link gray underline-hover <%= v[:class].join(" ") %>">
+            class="mr3 link black-80 underline-hover <%= v[:class].join(" ") %>">
             <%= v[:title] %>
           </a>
         <% end %>
       </div>
     </div>
+    -->
 
     <%# Border %>
-    <div class="cf">
+    <%# <div class="cf">
       <div class="fl w-100 ph3-ns ">
         <div class="bb mb3 b--light-gray"> </div>
       </div>
-    </div>
+    </div> %>
+
+    <%# Join banner %>
+    <% if !@user %>
+      <div class="cf ba-ns bt bb b--light-gray mb3">
+        <div class="fl w-100 ph3">
+          <p><span class="code b black">0xblockchain</span> is a blockchain technology-focused community centered around link aggregation and discussion.</p>
+          <p><a href="/auth/github" class="link black underline-hover"><i class="fab fa-github"></i>  <span class="b">Join via GitHub</span></a></p>
+        </div>
+      </div>
+    <% end %>
 
     <%# Flash messages %>
     <% [ :error, :success, :notice ].each do |f| %>
@@ -117,30 +127,6 @@
 
     <%# Content %>
     <%= yield %>
-
-    <div id="footer">
-        <% if lookup_context.template_exists?("footer", "layouts", true) %>
-          <%= render :partial => "layouts/footer" %>
-        <% else %>
-          <% if !@user && Rails.application.open_signups? %>
-            <a href="/invitations/open">Join <%= Rails.application.name %></a>
-          <% end %>
-          <a href="/moderations">Moderation Log</a>
-          <% if @user && @user.can_see_invitation_requests? &&
-          (iqc = InvitationRequest.verified_count) > 0 %>
-            <a href="/invitations">Invitation Queue (<%= iqc %>)</a>
-          <% end %>
-          <% if @user && @user.is_moderator? &&
-          (hrc = HatRequest.count) > 0 %>
-            <a href="/hats/requests">Hat Requests (<%= hrc %>)</a>
-          <% else %>
-            <a href="/hats">Hats</a>
-          <% end %>
-          <a href="/chat">Chat</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/about">About</a>
-        <% end %>
-      </div>
   </div>
 </body>
 </html>

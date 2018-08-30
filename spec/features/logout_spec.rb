@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.feature "Login & Join with github" do
+RSpec.feature "Logout" do
   describe "Guest user" do
-    scenario "Join via github" do
+    scenario "Join then Logout" do
       # Perform authentication as user
       user = {
         github_username: "test",
@@ -13,17 +13,18 @@ RSpec.feature "Login & Join with github" do
       # Stub is available at support/authentication_helper.rb
       stub_join_as user
 
-      # Test the response
-      # test homepage
+      # On the homepge here, Then logout
+      click_link "%s (0)" % user[:github_username]
+      click_link "Logout"
+      # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
-      expect(page).to_not have_content "Login"
-      expect(page).to_not have_content "Join via GitHub"
-      expect(page).to have_content user[:github_username]
+      expect(page).to have_content "Login"
+      expect(page).to have_content "Join via GitHub"
     end
   end
 
-  describe "Existing user (Non-admin)" do
-    scenario "Login via github" do
+  describe "Existing user" do
+    scenario "Login then Logout" do
       # Perform authentication as user
       user = {
         github_username: "test",
@@ -34,17 +35,18 @@ RSpec.feature "Login & Join with github" do
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 
-      # Test the response
-      # test homepage
+      # On the homepge here, Then logout
+      click_link "%s (0)" % user[:github_username]
+      click_link "Logout"
+      # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
-      expect(page).to_not have_content "Login"
-      expect(page).to_not have_content "Join via GitHub"
-      expect(page).to have_content user[:github_username]
+      expect(page).to have_content "Login"
+      expect(page).to have_content "Join via GitHub"
     end
   end
 
   describe "Existing user (Admin)" do
-    scenario "Login via github" do
+    scenario "Login then Logout" do
       # Perform authentication as user
       user = {
         github_username: "test",
@@ -56,12 +58,14 @@ RSpec.feature "Login & Join with github" do
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 
-      # Test the response
-      # test homepage
+      # On the homepge here, Then logout
+      click_link "%s (0)" % user[:github_username]
+      click_link "Logout"
+      # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
-      expect(page).to_not have_content "Login"
-      expect(page).to_not have_content "Join via GitHub"
-      expect(page).to have_content user[:github_username]
+      expect(page).to have_content "Login"
+      expect(page).to have_content "Join via GitHub"
+      save_and_open_page
     end
   end
 end

@@ -38,9 +38,9 @@ module ApplicationHelper
     return @header_links if @header_links
 
     @header_links = {
-      # root_path => { :title => @cur_url == "/" ? Rails.application.name : "Home" },
+      root_path => { :title => "Front page" },
       recent_path => { :title => "Recent" },
-      comments_path => { :title => "Comments" },
+      # comments_path => { :title => "Comments" },
     }
 
     if @user
@@ -48,7 +48,7 @@ module ApplicationHelper
     end
 
     if @user && @user.can_submit_stories?
-      @header_links[new_story_path] = { :title => "Submit Story" }
+      @header_links[new_story_path] = { :title => "Submit" }
     end
 
     if @user
@@ -61,7 +61,7 @@ module ApplicationHelper
       v[:class] ||= []
 
       if k == @cur_url
-        v[:class].push "cur_url"
+        v[:class].push "current_url"
       end
     end
 
