@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Create and edit tags" do
+RSpec.feature "Create & edit tag" do
   describe "Guest user" do
     it "should not be able to see 'create new tag' and 'edit' link" do
       # Go to tags page
@@ -12,10 +12,16 @@ RSpec.feature "Create and edit tags" do
     end
   end
 
-  describe "Non-admin user" do
+  describe "Existing user (Non-admin)" do
     before do
+      user = {
+        github_username: "test",
+        github_uid: "1234",
+        github_email: "test@mail.com",
+        github_oauth_token: "1234",
+      }
       # Stub available at support/authentication_helper.rb
-      stub_login_as_nonadmin_user
+      stub_login_as user
     end
 
     it "should not be able to see 'create new tag' and 'edit' link" do
@@ -30,8 +36,15 @@ RSpec.feature "Create and edit tags" do
 
   describe "Admin user" do
     before do
+      user = {
+        github_username: "test",
+        github_uid: "1234",
+        github_email: "test@mail.com",
+        github_oauth_token: "1234",
+        is_admin: true,
+      }
       # Stub available at support/authentication_helper.rb
-      stub_login_as_admin_user
+      stub_login_as user
     end
 
     it "should be able to see 'create new tag' and 'edit' link" do
