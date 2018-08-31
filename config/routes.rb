@@ -57,12 +57,12 @@ Rails.application.routes.draw do
   post "/logout" => "sessions#logout"
   delete 'signout', to: 'sessions#destroy', as: 'signout'
 
-  get "/login/forgot_password" => "login#forgot_password",
-    :as => "forgot_password"
-  post "/login/reset_password" => "login#reset_password",
-    :as => "reset_password"
-  match "/login/set_new_password" => "login#set_new_password",
-    :as => "set_new_password", :via => [:get, :post]
+  # get "/login/forgot_password" => "login#forgot_password",
+  #   :as => "forgot_password"
+  # post "/login/reset_password" => "login#reset_password",
+  #   :as => "reset_password"
+  # match "/login/set_new_password" => "login#set_new_password",
+  #   :as => "set_new_password", :via => [:get, :post]
 
   get "/t/:tag" => "home#tagged", :as => "tag"
   get "/t/:tag/page/:page" => "home#tagged"
