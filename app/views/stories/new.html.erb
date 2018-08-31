@@ -1,6 +1,68 @@
-<div class="cf pb3">
+<div class="cf">
   <div class="fl w-100 ph3">
-    <h2 class="mv2">Submit a Story</h2>
+    <h2 class="mv2">Submit Story</h2>
+    <p>
+      Leave url blank to submit a question for discussion. If there is no url,
+      the text (if any) will appear at the top of the thread.
+    </p>
+
+    <p>
+      Read <a href="#guideline" id="guideline-toggler">Story submission guidelines</a>.
+    </p>
+    <ul id="guideline" class="ph3" style="display: none;">
+      <li>
+        Do not editorialize story titles, but when the original story's title has no
+        context or is unclear, please change it.
+      </li>
+      <li>
+        Please remove extraneous components from titles such as the
+        name of the site, blog, section, and author.
+      </li>
+      <li>
+        When the story being submitted is more than a year or so old,
+        please add the year the story was written to the post title in
+        parentheses.
+      </li>
+      <li>
+        If no <a href="/tags">tags</a> clearly apply to the story you are submitting, chances
+        are the tag is not added yet, feel free to propose new tag via <a href="/tags">meta post</a>.
+      </li>
+      <li>
+        Do not overreach with tags if they are not the primary focus of the story.
+      </li>
+      <li>
+        When submitting a URL, the text field is optional and should only
+        be used when additional context or explanation of the URL is
+        needed.
+      </li>
+      <li>
+        Commentary or opinion should be reserved for a comment,
+        so that it can be voted on separately from the story.
+      </li>
+      <li>
+        To be able to easily submit a page you're viewing in your browser
+        to <span class="code b">0xblockchain</span>, drag this bookmarklet to your
+        bookmark bar:
+        [<a href="javascript:{window.open(%22<%= Rails.application.root_url
+        %>stories/new?url=%22+encodeURIComponent(document.location)+<%
+        %>%22&title=%22+encodeURIComponent(document.title));%20void(0);}<%
+        %>">Submit to 0xblockchain</a>].
+        You'll be taken to this page with the viewed page's URL and title.
+      </li>
+    </ul>
+
+    <script>
+      const guideline = document.getElementById("guideline");
+      const toggler = document.getElementById("guideline-toggler");
+
+      toggler.addEventListener("click", function() {
+        if (guideline.style.display === "none") {
+          guideline.style.display = "block";
+        } else {
+          guideline.style.display = "none";
+        }
+      })
+    </script>
   </div>
 </div>
 
@@ -10,8 +72,13 @@
       <%= render :partial => "stories/form",
           :locals => { :story => @story,
           :f => f } %>
-
-      <%= submit_tag "Submit" %>
+      <div class="cf mb3">
+        <div class="fl w-20 white">Submit
+        </div>
+        <div class="fl w-80 measure">
+          <%= submit_tag "Submit Story", :class => "pv2 ph3" %>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="form_errors_header">
+<div class="cf mb3">
   <% if story.errors.count == 1 && story.already_posted_story %>
     <div class="flash-error">
     <h2>Error: This story was already submitted <%=
@@ -9,7 +9,19 @@
     </p>
     </div>
   <% elsif story.errors.any? %>
-    <%= error_messages_for story %>
+    <%# error_messages_for story %>
+    <div class="fl w-20">
+      <%= f.label :error, class: "b db mb2 error-color" do %>
+        Oops
+      <% end%>
+    </div>
+    <div class="fl w-80 measure">
+      <ul class="pl3 ma0">
+        <% story.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
   <% elsif !story.errors.any? && story.already_posted_story %>
     <div class="flash-notice">
     <h2>Note: This story was already submitted <%=
