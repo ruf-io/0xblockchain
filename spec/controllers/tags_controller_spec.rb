@@ -72,6 +72,7 @@ RSpec.describe TagsController, type: :controller do
       # expect success
       expect(response).to redirect_to tags_path
       expect(flash[:success]).to eq "Tag \"test\" has been created"
+      expect(Tag.find_by(tag: "test")).to be_valid
     end
 
     scenario "Create new invalid tag" do
