@@ -10,6 +10,24 @@ RSpec.describe StoriesController, type: :controller do
       expect(response).to redirect_to root_path
       expect(response).to have_http_status :found # 302
     end
+
+    scenario "Submit story" do
+      # Perform request
+      # Create dummy tag
+      tag1 = create :tag
+      tag2 = create :tag
+      post :create, :params => {
+        :story => {
+          :title => "test",
+          :url => "https://0xblockchain.network",
+          :tags_a => [tag1.tag, tag2.tag],
+        },
+      }
+      # Make sure it is redirected to the home page
+      # and contains error message
+      expect(response).to redirect_to root_path
+      expect(response).to have_http_status :found # 302
+    end
   end
 
   describe "Authenticated user" do
