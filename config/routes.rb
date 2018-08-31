@@ -52,10 +52,10 @@ Rails.application.routes.draw do
   # get "/signup/invite" => "signup#invite"
 
   # Login via github
-  get "/auth/:provider/callback", to: "sessions#create"
-  get 'auth/failure', to: redirect('/')
-  post "/logout" => "sessions#logout"
-  delete 'signout', to: 'sessions#destroy', as: 'signout'
+  get "/auth/:provider/callback", :to => "sessions#create", :format => false
+  get 'auth/failure', :to => redirect("/"), :format => false
+  post "/logout" => "sessions#logout", :format => false
+  # delete 'signout', to: 'sessions#destroy', as: 'signout'
 
   # get "/login/forgot_password" => "login#forgot_password",
   #   :as => "forgot_password"

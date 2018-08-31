@@ -19,7 +19,7 @@ RSpec.describe SessionsController, type: :controller do
   describe "#create" do
     it "should successfully create a user & session" do
       # Post the data
-      post :create
+      post :create, :params => { :provider => "github" }
 
       # Make sure user are created
       user = User.find_by!(github_uid: github_uid)
@@ -36,13 +36,13 @@ RSpec.describe SessionsController, type: :controller do
       # Set origin to nil
       request.env['omniauth.origin'] = nil
       # Perform post request
-      post :create
+      post :create, :params => { :provider => "github" }
       expect(response).to redirect_to "/"
 
       # Set origin to "/recent"
       request.env['omniauth.origin'] = "/recent"
       # Perform post request
-      post :create
+      post :create, :params => { :provider => "github" }
       expect(response).to redirect_to "/recent"
     end
 
@@ -67,7 +67,7 @@ RSpec.describe SessionsController, type: :controller do
         :info => { :email => banned_email, :nickname => banned_username },
         :credentials => { :token => banned_oauth_token }
       )
-      post :create
+      post :create, :params => { :provider => "github" }
       expect(flash[:error]).to eq "Your account has been banned."
     end
     it "should raise LoginDeletedError if user is deleted" do
@@ -91,14 +91,14 @@ RSpec.describe SessionsController, type: :controller do
         :info => { :email => deleted_email, :nickname => deleted_username },
         :credentials => { :token => deleted_oauth_token }
       )
-      post :create
+      post :create, :params => { :provider => "github" }
       expect(flash[:error]).to eq "Your account has been deleted."
     end
   end
 
   describe "#logout" do
     it "should clear the session and redirect to homepage" do
-      post :create
+      post :create, :params => { :provider => "github" }
       expect(session[:u]).to_not be_nil
       post :logout
       expect(session[:u]).to be_nil
