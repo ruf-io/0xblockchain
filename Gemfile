@@ -49,7 +49,7 @@ group :test, :development do
   gem "faker"
   gem "byebug"
   gem "rb-readline"
-  gem 'dotenv-rails'
+  gem "dotenv-rails"
 end
 
 # Github login
