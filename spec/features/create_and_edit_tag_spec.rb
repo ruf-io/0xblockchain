@@ -3,10 +3,16 @@ require 'rails_helper'
 RSpec.feature "Create & edit tag" do
   describe "Guest user" do
     it "should not be able to see 'create new tag' and 'edit' link" do
+      # Create dummy tag first
+      create :tag
+
       # Go to tags page
       visit tags_path
 
-      # Test the response
+      # Make sure dummy tags are listed
+      expect(page).to have_content "tag-"
+
+      # Make sure private link are not shown
       expect(page).to_not have_content "Edit"
       expect(page).to_not have_content "Create New Tag"
     end
@@ -25,10 +31,16 @@ RSpec.feature "Create & edit tag" do
     end
 
     it "should not be able to see 'create new tag' and 'edit' link" do
+      # Create dummy tag first
+      create :tag
+
       # Go to tags page
       visit tags_path
 
-      # Test the response
+      # Make sure dummy tags are listed
+      expect(page).to have_content "tag-"
+
+      # Make sure private link are not shown
       expect(page).to_not have_content "Edit"
       expect(page).to_not have_content "Create New Tag"
     end
