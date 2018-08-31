@@ -54,6 +54,6 @@ group :test, :development do
 end
 
 # Github login
-gem 'omniauth-github'
+gem "omniauth-github"
 
 ruby "2.5.1"
