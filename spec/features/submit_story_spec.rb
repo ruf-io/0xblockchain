@@ -34,8 +34,8 @@ RSpec.feature "Submit story" do
       story_title = "Test new story"
       fill_in "story[title]", with: story_title
       fill_in "story[url]", with: "https://test.com/story"
-      select @tag1.tag, from:  "story[tags_a][]"
-      select @tag2.tag, from:  "story[tags_a][]"
+      select @tag1.description, from:  "story[tag_names][]"
+      select @tag2.description, from:  "story[tag_names][]"
 
       # Then submit
       click_button "Submit Story"
@@ -56,8 +56,8 @@ RSpec.feature "Submit story" do
       story_title = "Test new story"
       fill_in "story[title]", with: story_title
       fill_in "story[description]", with: "My description"
-      select @tag1.tag, from:  "story[tags_a][]"
-      select @tag2.tag, from:  "story[tags_a][]"
+      select @tag1.description, from:  "story[tag_names][]"
+      select @tag2.description, from:  "story[tag_names][]"
 
       # Then submit
       click_button "Submit Story"
@@ -79,8 +79,8 @@ RSpec.feature "Submit story" do
       fill_in "story[title]", with: story_title
       fill_in "story[url]", with: "https://0xblockchain.network/test"
       fill_in "story[description]", with: "My description"
-      select @tag1.tag, from:  "story[tags_a][]"
-      select @tag2.tag, from:  "story[tags_a][]"
+      select @tag1.description, from:  "story[tag_names][]"
+      select @tag2.description, from:  "story[tag_names][]"
 
       # Then submit
       click_button "Submit Story"
@@ -143,6 +143,31 @@ RSpec.feature "Submit story" do
       expect(page).to have_current_path stories_path
       expect(page).to have_content "Oops"
       expect(page).to have_content "Must have at least one non-media (PDF, video) tag. If no tags apply to your content, it probably doesn't belong here."
+    end
+
+    scenario "Submit already posted story" do
+      # First create dummy story using FactoryBot
+      story = create :story
+
+      # Click the link
+      click_link "Submit"
+
+      # Fill in the form
+      story_title = "Test new story"
+      fill_in "story[title]", with: story_title
+      # Submit the same url
+      fill_in "story[url]", with: story.url
+      select @tag1.description, from: "story[tag_names][]"
+      select @tag2.description, from: "story[tag_names][]"
+
+      # Then submit
+      click_button "Submit Story"
+
+      # Expectation it will redirected to stories path
+      # and display an error
+      expect(page).to have_current_path stories_path
+      expect(page).to have_content "Oops"
+      expect(page).to have_content "This story was already submitted"
     end
   end
 end

@@ -127,7 +127,7 @@ class Story < ApplicationRecord
 
   attr_accessor :already_posted_story, :editing_from_suggestions, :editor,
                 :fetching_ip, :is_hidden_by_cur_user, :is_saved_by_cur_user,
-                :moderation_reason, :previewing, :seen_previous, :vote
+                :moderation_reason, :previewing, :is_previewed, :vote
   attr_writer :fetched_content
 
   before_validation :assign_short_id_and_upvote, :on => :create
@@ -146,11 +146,11 @@ class Story < ApplicationRecord
       errors.add(:description, "must contain text if no URL posted")
     end
 
-    if self.title.starts_with?("Ask") && self.tags_a.include?('ask')
+    if self.title.starts_with?("Ask") && self.tag_names.include?('ask')
       errors.add(:title, " starting 'Ask #{Rails.application.name}' or similar is redundant " <<
                           "with the ask tag.")
     end
-    if self.title.match(GRAPHICS_RE)
+    if self.title.match?(GRAPHICS_RE)
       errors.add(:title, " may not contain graphic codepoints")
     end
 
@@ -228,7 +228,7 @@ class Story < ApplicationRecord
   end
 
   def self.votes_cast_type
-    Story.connection.adapter_name.match(/mysql/i) ? "signed" : "integer"
+    Story.connection.adapter_name.match?(/mysql/i) ? "signed" : "integer"
   end
 
   def archive_url
@@ -344,7 +344,7 @@ class Story < ApplicationRecord
     return true
   end
 
-  # this has to happen just before save rather than in tags_a= because we need
+  # this has to happen just before save rather than in tag_names= because we need
   # to have a valid user_id
   def check_tags
     u = self.editor || self.user
@@ -597,21 +597,21 @@ class Story < ApplicationRecord
   end
 
   def tagging_changes
-    old_tags_a = self.taggings.reject(&:new_record?).map {|tg| tg.tag.tag }.join(" ")
-    new_tags_a = self.taggings.reject(&:marked_for_destruction?).map {|tg| tg.tag.tag }.join(" ")
+    old_tag_names = self.taggings.reject(&:new_record?).map {|tg| tg.tag.tag }.join(" ")
+    new_tag_names = self.taggings.reject(&:marked_for_destruction?).map {|tg| tg.tag.tag }.join(" ")
 
-    if old_tags_a == new_tags_a
+    if old_tag_names == new_tag_names
       {}
     else
-      { "tags" => [old_tags_a, new_tags_a] }
+      { "tags" => [old_tag_names, new_tag_names] }
     end
   end
 
-  def tags_a
-    @_tags_a ||= self.taggings.reject(&:marked_for_destruction?).map {|t| t.tag.tag }
+  def tag_names
+    @_tag_names ||= self.taggings.reject(&:marked_for_destruction?).map {|t| t.tag.tag }
   end
 
-  def tags_a=(new_tag_names_a)
+  def tag_names=(new_tag_names_a)
     self.taggings.each do |tagging|
       if !new_tag_names_a.include?(tagging.tag.tag)
         tagging.mark_for_destruction
@@ -631,7 +631,7 @@ class Story < ApplicationRecord
     end
   end
 
-  def save_suggested_tags_a_for_user!(new_tag_names_a, user)
+  def save_suggested_tag_names_for_user!(new_tag_names_a, user)
     st = self.suggested_taggings.where(:user_id => user.id)
 
     st.each do |tagging|
@@ -675,13 +675,13 @@ class Story < ApplicationRecord
       end
     end
 
-    if final_tags.any? && (final_tags.sort != self.tags_a.sort)
+    if final_tags.any? && (final_tags.sort != self.tag_names.sort)
       Rails.logger.info "[s#{self.id}] promoting suggested tags " <<
-                        "#{final_tags.inspect} instead of #{self.tags_a.inspect}"
+                        "#{final_tags.inspect} instead of #{self.tag_names.inspect}"
       self.editor = nil
       self.editing_from_suggestions = true
       self.moderation_reason = "Automatically changed from user suggestions"
-      self.tags_a = final_tags.sort
+      self.tag_names = final_tags.sort
       if !self.save
         Rails.logger.error "[s#{self.id}] failed auto promoting: " <<
                            self.errors.inspect
@@ -919,7 +919,7 @@ class Story < ApplicationRecord
         title = title[0, title.length - site_name.length]
 
         # remove title/site name separator
-        if title.match(/ [ \-\|\u2013] $/)
+        if title.match?(/ [ \-\|\u2013] $/)
           title = title[0, title.length - 3]
         end
       end

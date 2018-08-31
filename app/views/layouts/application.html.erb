@@ -9,7 +9,6 @@
   <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="referrer" content="always" />
-  <meta name="theme-color" content="#AC130D" />
   <% if @meta_tags %>
     <% @meta_tags.each do |k,v| %>
       <meta name="<%= k %>" content="<%= v %>" />
@@ -20,15 +19,10 @@
     <link rev="canonical" rel="self alternate shorter shorturl shortlink"
       href="<%= @short_url %>" />
   <% end %>
-  <title><%= @title.present? ? "#{@title} | " : "" %><%=
-    Rails.application.name %></title>
-  <%= stylesheet_link_tag "application", :media => "all" %>
-  <% if @user %>
-    <%= javascript_include_tag "application" %>
-    <script>
-      Lobsters.curUser = '<%= @user.id %>';
-    </script>
-  <% end %>
+
+  <title>
+    <%= @title.present? ? "#{@title} | " : "" %><%= Rails.application.name %>
+  </title>
   <%= csrf_meta_tags %>
   <% if @rss_link %>
     <link rel="alternate" type="application/rss+xml"
@@ -40,9 +34,12 @@
       href="<%= @comments_rss_link[:href] %>" />
   <% end %>
 
-  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/brands.css" integrity="sha384-nT8r1Kzllf71iZl81CdFzObMsaLOhqBU1JD2+XoAALbdtWaXDOlWOZTR4v1ktjPE" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
+
+  <%# Include css & javascript per controller %>
+  <%= stylesheet_link_tag params[:controller], :media => "all" %>
+  <%= javascript_include_tag params[:controller] %>
 </head>
 
 <body class="sans-serif fs-10pt black-80">
@@ -83,21 +80,6 @@
         <div class="bb mb3 b--light-gray"></div>
       </div>
     </div> %>
-
-    <%# Navigation %>
-    <!--
-    <div class="cf pb3">
-      <div class="fl w-100 ph3 nowrap overflow-x-auto">
-        <% header_links.each do |u,v| %>
-          <a
-            href="<%= u %>"
-            class="mr3 link black-80 underline-hover <%= v[:class].join(" ") %>">
-            <%= v[:title] %>
-          </a>
-        <% end %>
-      </div>
-    </div>
-    -->
 
     <%# Border %>
     <%# <div class="cf">

@@ -20,7 +20,7 @@ RSpec.describe StoriesController, type: :controller do
         :story => {
           :title => "i'm a guest user",
           :url => "https://0xblockchain.network",
-          :tags_a => [tag1.tag, tag2.tag],
+          :tag_names => [tag1.tag, tag2.tag],
         },
       }
       # Make sure it is redirected to the home page
@@ -60,7 +60,7 @@ RSpec.describe StoriesController, type: :controller do
         :story => {
           :title => "test",
           :url => "https://0xblockchain.network",
-          :tags_a => [tag1.tag, tag2.tag],
+          :tag_names => [tag1.tag, tag2.tag],
         },
       }
       # Make sure it is success
@@ -74,7 +74,7 @@ RSpec.describe StoriesController, type: :controller do
         :story => {
           :title => "test lagi bosku",
           :description => "Test my description",
-          :tags_a => [tag1.tag],
+          :tag_names => [tag1.tag],
         },
       }
       # Make sure it is success

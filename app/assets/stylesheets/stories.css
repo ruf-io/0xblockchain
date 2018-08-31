@@ -1,0 +1,71 @@
+/*
+ * Include all dependencies from {vendor,libs}/assets
+ *= require tachyons
+ *= require typography
+ *= require navigation
+ *= require notification
+ *= require form
+ *= require selectize.default
+ */
+
+/* Customize the form appearance */
+.selectize-input {
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+}
+
+.selectize-input.focus {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+}
+
+.selectize-control.multi .selectize-input [data-value],
+.selectize-control.multi .selectize-input [data-value].active {
+  text-shadow: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  background-color: #fafafa;
+  background-image: none;
+}
+
+.selectize-control.multi .selectize-input > div {
+  cursor: pointer;
+  background-color: #fafafa;
+  border-bottom-color: #bbb;
+  border: 1px solid #ccc;
+  color: #333333;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove {
+  border-left: 1px solid #ccc;
+}
+.selectize-control.plugin-remove_button [data-value].active .remove {
+  border-left-color: #ccc;
+}
+.selectize-control.multi .selectize-input > div.active {
+  background: #fafafa;
+  color: #333;
+  border: 1px solid #ccc;
+}

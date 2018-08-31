@@ -1,6 +1,6 @@
 <div class="cf">
   <div class="fl w-100 ph3">
-    <h2 class="mv2">Submit Story</h2>
+    <h4 class="mv2">Submit Story</h4>
     <p>
       Leave url blank to submit a question for discussion. If there is no url,
       the text (if any) will appear at the top of the thread.
@@ -52,6 +52,7 @@
     </ul>
 
     <script>
+      // Implement submission guideline toggler
       const guideline = document.getElementById("guideline");
       const toggler = document.getElementById("guideline-toggler");
 
@@ -76,31 +77,11 @@
         <div class="fl w-20 white">Submit
         </div>
         <div class="fl w-80 measure">
-          <%= submit_tag "Submit Story", :class => "pv2 ph3" %>
+          <%= submit_tag "Submit Story", :class => "pv1 ph2 mr3" %>
         </div>
       </div>
     <% end %>
-  </div>
-</div>
-
-<div class="box" id="story_box">
-
-
-  <div id="story_holder">
 
   </div>
 </div>
 
-<div id="story_preview">
-  <% if @story.previewing && @story.valid? %>
-    <%= render :template => "stories/show" %>
-  <% end %>
-</div>
-
-<script>
-  $(document).ready(function() {
-    <% if !@story.previewing %>
-      $("#story_url").focus();
-    <% end %>
-  });
-</script>

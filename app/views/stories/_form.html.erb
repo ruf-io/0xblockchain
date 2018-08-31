@@ -85,29 +85,17 @@
 <%# Tags %>
 <div class="cf mb3">
   <div class="fl w-20">
-    <%= f.label :tags_a, class: "b db mb2" do %>
+    <%= f.label :tag_names, class: "b db mb2" do %>
       Tags
     <% end%>
   </div>
   <div class="fl w-80 measure">
-    <%= f.select "tags_a", options_for_select(
-    Tag.all_with_filtered_counts_for(@user).map { |t|
-      html = "<strong>#{h(t.tag)}</strong> - #{h(t.description.to_s)}"
-
-      if t.hotness_mod != 0
-        html << " (hotness mod #{t.hotness_mod > 0 ? "+" : ""}#{t.hotness_mod})"
-      end
-      if t.filtered_count > 0
-        html << " <em>#{t.filtered_count} user" <<
-        (t.filtered_count == 1 ? "" : "s") << " filtering</em>"
-      end
-
-      [ "#{t.tag} - #{t.description}", t.tag, { "data-html" => raw(html) } ]
-    },
-    f.object.tags_a),
-    {},
-    { :multiple => true} %>
-  </div>
+    <%= f.select :tag_names, options_for_select(
+      Tag.all_with_filtered_counts_for(@user).map { |t|
+        [t.description, t.tag]
+      }
+    ), {}, { :multiple => true, :required => true }%>
+ </div>
 </div>
 
 <%# Tag suggestions %>

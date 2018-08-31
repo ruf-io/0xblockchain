@@ -18,7 +18,7 @@ class StoriesController < ApplicationController
     @story = Story.new(story_params)
     @story.user_id = @user.id
 
-    if @story.valid? && !(@story.already_posted_story && !@story.seen_previous)
+    if @story.valid? && !(@story.already_posted_story && !@story.is_previewed)
       if @story.save
         ReadRibbon.where(user: @user, story: @story).first_or_create
         return redirect_to @story.comments_path
@@ -115,7 +115,7 @@ class StoriesController < ApplicationController
 
     @story.valid?
 
-    @story.seen_previous = true
+    @story.is_previewed = true
 
     return render :action => "new", :layout => false
   end
@@ -176,7 +176,7 @@ class StoriesController < ApplicationController
     end
 
     if (suggested_tags = @story.suggested_taggings.where(:user_id => @user.id)).any?
-      @story.tags_a = suggested_tags.map {|st| st.tag.tag }
+      @story.tag_names = suggested_tags.map {|st| st.tag.tag }
     end
     if (tt = @story.suggested_titles.where(:user_id => @user.id).first)
       @story.title = tt.title
@@ -199,9 +199,9 @@ class StoriesController < ApplicationController
         dsug = true
       end
 
-      sugtags = params[:story][:tags_a].reject {|t| t.to_s.strip == "" }.sort
-      if @story.tags_a.sort != sugtags
-        @story.save_suggested_tags_a_for_user!(sugtags, @user)
+      sugtags = params[:story][:tag_names].reject {|t| t.to_s.strip == "" }.sort
+      if @story.tag_names.sort != sugtags
+        @story.save_suggested_tag_names_for_user!(sugtags, @user)
         dsug = true
       end
 
@@ -356,8 +356,8 @@ private
 
   def story_params
     p = params.require(:story).permit(
-      :title, :url, :description, :moderation_reason, :seen_previous,
-      :merge_story_short_id, :is_unavailable, :user_is_author, :tags_a => [],
+      :title, :url, :description, :moderation_reason, :is_previewed,
+      :merge_story_short_id, :is_unavailable, :user_is_author, :tag_names => [],
     )
 
     if @user.is_moderator?
