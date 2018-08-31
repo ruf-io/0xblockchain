@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.feature "Create & edit tag" do
+  before do
+    # Create dummy story
+    create :story
+  end
+
   describe "Guest user" do
     it "should not be able to see 'create new tag' and 'edit' link" do
       # Create dummy tag first
@@ -15,6 +20,14 @@ RSpec.feature "Create & edit tag" do
       # Make sure private link are not shown
       expect(page).to_not have_content "Edit"
       expect(page).to_not have_content "Create New Tag"
+    end
+
+    it "should not be able to access new tag page" do
+      # Go to new tag page
+      visit new_tag_path
+
+      # Make sure it is redirected to home page
+      expect(page).to have_current_path root_path
     end
   end
 
@@ -43,6 +56,16 @@ RSpec.feature "Create & edit tag" do
       # Make sure private link are not shown
       expect(page).to_not have_content "Edit"
       expect(page).to_not have_content "Create New Tag"
+    end
+
+    it "should not be able to access new tag page" do
+      # Go to new tag page
+      visit new_tag_path
+
+      # Make sure it is redirected to home page
+      # with error message
+      expect(page).to have_current_path root_path
+      expect(page).to have_content "You are not authorized to access that resource."
     end
   end
 
