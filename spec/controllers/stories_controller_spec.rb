@@ -18,15 +18,17 @@ RSpec.describe StoriesController, type: :controller do
       tag2 = create :tag
       post :create, :params => {
         :story => {
-          :title => "test",
+          :title => "i'm a guest user",
           :url => "https://0xblockchain.network",
           :tags_a => [tag1.tag, tag2.tag],
         },
       }
       # Make sure it is redirected to the home page
-      # and contains error message
+      # and story is not inserted to the database
       expect(response).to redirect_to root_path
       expect(response).to have_http_status :found # 302
+      story = Story.find_by(title: "i'm a guest user")
+      expect(story).to be_nil
     end
   end
 
