@@ -40,6 +40,8 @@ module ApplicationHelper
     @header_links = {
       root_path => { :title => "Front page" },
       recent_path => { :title => "Recent" },
+      tag_url("ask") => { :title => "Ask" },
+      tag_url("show") => { :title => "Show" },
       # comments_path => { :title => "Comments" },
     }
 
@@ -55,11 +57,10 @@ module ApplicationHelper
       @header_links[saved_path] = { :title => "Saved" }
     end
 
-    @header_links[search_path] = { :title => "Search" }
+    # @header_links[search_path] = { :title => "Search" }
 
     @header_links.each do |k, v|
       v[:class] ||= []
-
       if k == @cur_url
         v[:class].push "current_url"
       end

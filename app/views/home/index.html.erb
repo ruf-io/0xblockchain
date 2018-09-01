@@ -28,8 +28,10 @@
         <div id="story_<%= story.short_id %>"
           class="pr3 flex">
           <%# Voting %>
+          <%# TODO(pyk): Upvote if user login %>
           <div class="voting-column tc mr2">
             <% if @user %>
+              <%# TODO (pyk): Update this to link_to %>
               <a href="#"
                 class="link black-50 tc ">
                 <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
@@ -37,7 +39,8 @@
                 </svg>
               </a>
             <% else %>
-              <a href="#"
+              <%# TODO (pyk): Update this to link_to %>
+              <a href="/login"
                 class="link black-50 tc">
                 <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
                   <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
@@ -77,16 +80,25 @@
                 <% end %>
               </h4>
               <p class="ma0 gray mt1 lh-copy">
-                <% if (@user && @user.show_avatars?) || !@user %>
-                  <a href="/u/<%= story.user.username %>"><%= avatar_img(story.user, 16) %></a>
+                <%# Display current points %>
+                <% if story.score >= 2 %>
+                  <%= story.score %> points
+                <% else %>
+                  <%= story.score %> point
                 <% end %>
+
                 <% if story.user_is_author? %>
                   authored by
                 <% else %>
                   via
                 <% end %>
+                <% if (@user && @user.show_avatars?) || !@user %>
+                  <a href="/u/<%= story.user.username %>"><%= avatar_img(story.user, 16) %></a>
+                <% end %>
                 <a href="/u/<%= story.user.username %>"
-                  class="<%= story.html_class_for_user %> gray underline-hover link"><%= story.user.username %></a>
+                  class="<%= story.html_class_for_user %> gray underline-hover link">
+                  <%= story.user.username %>
+                </a>
                 <%= time_ago_in_words_label(story.created_at) %>
 
                 <%# Show link to cache url, if story url is present %>
@@ -102,7 +114,16 @@
                 | <a href="<%= edit_story_path(story.short_id)%>"
                   class="gray underline-hover link">edit</a>
                 <% end %>
-                </span>
+
+                <%# Show link to comments %>
+                | <a class="gray underline-hover link" href="<%= story.comments_path %>">
+                  <% if story.comments_count == 0 %>
+                  discuss
+                  <% else %>
+                  <%= story.comments_count %>
+                  comment<%= story.comments_count == 1 ? "" : "s" %>
+                  <% end %>
+                </a>
               </p>
 
             <% end %>
