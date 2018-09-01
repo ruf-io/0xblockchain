@@ -195,3 +195,15 @@ heroku run rails console
 
 To use multiple environment (staging and production) on heroku
 read the following [guide](https://devcenter.heroku.com/articles/multiple-environments).
+
+To get the logs you can run the following command:
+
+```
+heroku logs --app APP_NAME
+```
+
+or to follow the logs:
+
+```
+heroku logs --app APP_NAME --tail
+```
