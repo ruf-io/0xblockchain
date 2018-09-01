@@ -13,6 +13,12 @@ RSpec.feature "Link to comment spec" do
       expect(page).to have_content story.title
       expect(page).to have_content story.user.username
       expect(page).to have_content "discuss"
+
+      # Make sure the link is work
+      click_link "discuss"
+      expect(page).to have_content story.title
+      expect(page).to have_content story.user.username
+      expect(page).to have_current_path story.comments_path
     end
 
     scenario "story with 1 comment" do
@@ -30,6 +36,12 @@ RSpec.feature "Link to comment spec" do
       expect(page).to have_content story.title
       expect(page).to have_content story.user.username
       expect(page).to have_content "1 comment"
+
+      # Make sure the link is work
+      click_link "1 comment"
+      expect(page).to have_content story.title
+      expect(page).to have_content story.user.username
+      expect(page).to have_current_path story.comments_path
     end
 
     scenario "story with 3 comments" do
@@ -48,6 +60,13 @@ RSpec.feature "Link to comment spec" do
       expect(page).to have_content story.title
       expect(page).to have_content story.user.username
       expect(page).to have_content "3 comments"
+
+      # Make sure the link is work
+      click_link "3 comments"
+      expect(page).to have_content story.title
+      expect(page).to have_content story.user.username
+      expect(page).to have_content story.user.username
+      expect(page).to have_current_path story.comments_path
     end
   end
 end
