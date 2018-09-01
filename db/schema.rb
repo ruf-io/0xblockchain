@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_31_084612) do
+ActiveRecord::Schema.define(version: 2018_09_01_112325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gin"
@@ -219,6 +219,8 @@ ActiveRecord::Schema.define(version: 2018_08_31_084612) do
     t.boolean "is_media", default: false
     t.boolean "inactive", default: false
     t.float "hotness_mod", default: 0.0
+    t.string "background_color", default: "#fef2c0"
+    t.string "text_color", default: "#000"
     t.index ["tag"], name: "tag", unique: true
   end
 

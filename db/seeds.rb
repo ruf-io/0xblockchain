@@ -34,7 +34,7 @@ PREDEFINED_TAGS = [
   { name: "rust", description: "Rust programming language", is_media: false },
   { name: "scala", description: "Scala programming language", is_media: false },
   { name: "security", description: "Netsec, appsec, and infosec related to blockchain", is_media: false },
-  { name: "show", description: "Show blockchain related projects", is_media: false },
+  { name: "show", description: "Show blockchain related projects", is_media: false, background_color: "#5319e7", text_color: "#fff" },
   { name: "slide", description: "Link to slide", is_media: true },
   { name: "smart-contract", description: "Smart contract related links", is_media: false },
   { name: "solidity", description: "Solidity programming language", is_media: false },

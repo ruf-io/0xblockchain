@@ -16,85 +16,104 @@
 
 <%# List of stories %>
 <div class="cf">
-  <% @stories.each do |story| %>
-    <div id="story_<%= story.short_id %>"
-      class="ph3 flex mb2">
-      <%# Voting %>
-      <div class="voting-column tc mr2">
-        <% if @user %>
-          <a href="#"
-            class="link gray tc"><i class="fas fa-caret-up"></i><br/><%= story.score %></a>
-        <% else %>
-          <a href="#"
-            class="link gray tc"><i class="fas fa-caret-up"></i><br/><%= story.score %></a>
-        <% end %>
-      </div>
-
-      <%# Detail %>
-      <div class="detail-column">
-        <% if story.can_be_seen_by_user?(@user) %>
-          <h4 class="ma0 lh-copy">
-            <a href="<%= story.url_or_comments_path %>"
-            class="link underline-hover black-80 mr1">
-            <%= break_long_words(story.title) %>
-            </a>
-
-            <% if story.markeddown_description.present? %>
-              <a class="link gray mr1"
-                title="<%= truncate(story.description, :length => 250) %>"
-                href="<%= story.comments_path %>"><i class="fas fa-align-left"></i></a>
-            <% end %>
-            <span class="tags">
-              <% story.tags.each do |tag| %>
-                <a href="<%= tag_path(tag) %>"
-                  class="<%= tag.css_class %> underline-hover mr1 gray"
-                  title="<%= tag.description %>"><%= tag.tag %></a>
-              <% end %>
-            </span>
-
-            <% if story.domain.present? %>
-              <a class="domain gray underline-hover"
-                href="<%= story.domain_search_url %>">
-                <%= break_long_words(story.domain) %>
+  <%# Set start number of list of stories, page 2 from 26 etc %>
+  <% if @page >= 2 %>
+    <ol class="gray" style="padding-left: 34px;" start="<%= ((@page - 1) * 25 ) + 1%>">
+  <% else %>
+    <ol class="gray" style="padding-left: 34px;" start="1">
+  <% end %>
+    <%# Render each story/row %>
+    <% @stories.each do |story| %>
+      <li class="mb2">
+        <div id="story_<%= story.short_id %>"
+          class="pr3 flex">
+          <%# Voting %>
+          <div class="voting-column tc mr2">
+            <% if @user %>
+              <a href="#"
+                class="link black-50 tc ">
+                <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+                  <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+                </svg>
+              </a>
+            <% else %>
+              <a href="#"
+                class="link black-50 tc">
+                <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+                  <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+                </svg>
               </a>
             <% end %>
-          </h4>
-          <p class="ma0 gray mt1 lh-copy">
-            <% if (@user && @user.show_avatars?) || !@user %>
-              <a href="/u/<%= story.user.username %>"><%= avatar_img(story.user, 16) %></a>
-            <% end %>
-            <% if story.user_is_author? %>
-              authored by
-            <% else %>
-              via
-            <% end %>
-            <a href="/u/<%= story.user.username %>"
-              class="<%= story.html_class_for_user %> gray underline-hover link"><%= story.user.username %></a>
-            <%= time_ago_in_words_label(story.created_at) %>
+          </div>
 
-            <%# Show link to cache url, if story url is present %>
-            <% if story.url.present? %>
-            | <a href="<%= story.archive_url %>"
-                 rel="nofollow"
-                 target="_blank"
-                 class="gray underline-hover link">cached</a>
-            <% end %>
+          <%# Detail %>
+          <div class="detail-column">
+            <% if story.can_be_seen_by_user?(@user) %>
+              <h4 class="ma0 lh-copy">
+                <a href="<%= story.url_or_comments_path %>"
+                class="link underline-hover black-80 mr1">
+                <%= break_long_words(story.title) %>
+                </a>
 
-            <%# Show link to edit story, if story is editable by current user %>
-            <% if story.is_editable_by_user?(@user) %>
-            | <a href="<%= edit_story_path(story.short_id)%>"
-              class="gray underline-hover link">edit</a>
-            <% end %>
-            </span>
-          </p>
+                <% if story.markeddown_description.present? %>
+                  <a class="link gray mr1"
+                    title="<%= truncate(story.description, :length => 250) %>"
+                    href="<%= story.comments_path %>"><i class="fas fa-align-left"></i></a>
+                <% end %>
+                <span>
+                  <% story.tags.each do |tag| %>
+                    <a href="<%= tag_path(tag) %>"
+                      class="<%= tag.css_class %> tag mr1 gray"
+                      title="<%= tag.description %>"
+                      style="background-color: <%= tag.background_color %>; color: <%= tag.text_color %>;"><%= tag.tag %></a>
+                  <% end %>
+                </span>
 
-        <% end %>
-        <% if story.is_gone? %>
-          [Story removed by <%= story.is_moderated? ? "moderator" : "original submitter" %>]
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+                <% if story.domain.present? %>
+                  <a class="domain gray underline-hover"
+                    href="<%= story.domain_search_url %>">
+                    <%= break_long_words(story.domain) %>
+                  </a>
+                <% end %>
+              </h4>
+              <p class="ma0 gray mt1 lh-copy">
+                <% if (@user && @user.show_avatars?) || !@user %>
+                  <a href="/u/<%= story.user.username %>"><%= avatar_img(story.user, 16) %></a>
+                <% end %>
+                <% if story.user_is_author? %>
+                  authored by
+                <% else %>
+                  via
+                <% end %>
+                <a href="/u/<%= story.user.username %>"
+                  class="<%= story.html_class_for_user %> gray underline-hover link"><%= story.user.username %></a>
+                <%= time_ago_in_words_label(story.created_at) %>
+
+                <%# Show link to cache url, if story url is present %>
+                <% if story.url.present? %>
+                | <a href="<%= story.archive_url %>"
+                    rel="nofollow"
+                    target="_blank"
+                    class="gray underline-hover link">cached</a>
+                <% end %>
+
+                <%# Show link to edit story, if story is editable by current user %>
+                <% if story.is_editable_by_user?(@user) %>
+                | <a href="<%= edit_story_path(story.short_id)%>"
+                  class="gray underline-hover link">edit</a>
+                <% end %>
+                </span>
+              </p>
+
+            <% end %>
+            <% if story.is_gone? %>
+              [Story removed by <%= story.is_moderated? ? "moderator" : "original submitter" %>]
+            <% end %>
+          </div>
+        </div>
+      </li>
+    <% end %>
+  </ol>
 </div>
 
 <%# More link %>

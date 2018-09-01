@@ -2,7 +2,7 @@
   <div class="fl w-100">
     <div class="cf">
       <div class="fl w-50 ph3">
-        <h2 class="mv2">Tags</h2>
+        <h4 class="mv2">Tags</h4>
       </div>
       <div class="fl w-50 ph3 tr">
         <% is_admin = @user.try(:is_admin?) %>
@@ -17,33 +17,26 @@
 <div class="cf pb3">
   <div class="fl w-100 ph3">
     <p>List of available tags:</p>
-    <table class="w-100 collapse ba br2 b--black-10">
-      <thead>
-        <tr class="striped--light-gray ">
-          <th class="pv2 ph2 tl">Name</th>
-          <th class="pv2 ph2 tl">Description</th>
-          <% if is_admin %>
-            <th class="pv2 ph2 tl">Edit</th>
+    <ol class="pl3">
+      <% @tags.each do |tag| %>
+        <li class="mb3">
+          <p>
+          <%= link_to tag.tag, tag_path(tag),
+          :class => "tag",
+          :style => "background-color:" + tag.background_color + "; color:" + tag.text_color
+          %>
+          <% if tag.description.present? %>
+          - <%= tag.description %>
           <% end %>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @tags.each do |tag| %>
-          <tr class="striped--near-white">
-            <td class="pv2 ph2 tl"><%= link_to tag.tag, tag_path(tag), :class => "link underline-hover" %></td>
-            <td class="pv2 ph2 tl"><%= tag.description %></td>
-            <% if is_admin %>
-              <td class="pv2 ph2 tl">
-                <%= link_to "Edit",
-                    is_admin ? edit_tag_path(tag.id) : tag_path(tag),
-                    :class => "link underline-hover tag-%s" % tag.id %>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+          <% if is_admin %>
+          | <%= link_to "Edit",
+              is_admin ? edit_tag_path(tag.id) : tag_path(tag),
+              :class => "link underline-hover tag-%s" % tag.id %>
+          <% end %>
+          </p>
+        </li>
+      <% end %>
+    <ol>
   </div>
 </div>
 

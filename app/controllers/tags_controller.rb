@@ -54,6 +54,8 @@ private
       :privileged,
       :inactive,
       :hotness_mod,
+      :background_color,
+      :text_color,
       action_name == 'create' ? :is_media : nil
     ).merge(edit_user_id: @user.id)
   end

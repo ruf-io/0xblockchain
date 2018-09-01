@@ -5,4 +5,7 @@
  *= require navigation
  *= require notification
  *= require form
+ *= require link
+ *= require fontawesome.all
+ *= require tag
  */
