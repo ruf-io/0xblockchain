@@ -6,6 +6,9 @@
  *= require notification
  *= require form
  *= require selectize.default
+ *= require fontawesome.all
+ *= require link
+ *= require tag
  */
 
 /* Customize the form appearance */

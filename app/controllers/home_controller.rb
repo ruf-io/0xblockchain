@@ -31,6 +31,21 @@ class HomeController < ApplicationController
     end
   end
 
+  def login
+    begin
+      @title = "Login"
+      if @user
+        redirect_to root_path
+      else
+        render :action => "login"
+      end
+    rescue ActionView::MissingTemplate
+      render :html => ("<div class=\"box wide\">" <<
+        "A mystery." <<
+        "</div>").html_safe, :layout => "application"
+    end
+  end
+
   def chat
     begin
       @title = "Chat"

@@ -200,4 +200,5 @@ Rails.application.routes.draw do
   get "/privacy" => "home#privacy"
   get "/about" => "home#about"
   get "/chat" => "home#chat"
+  get "/login" => "home#login"
 end
