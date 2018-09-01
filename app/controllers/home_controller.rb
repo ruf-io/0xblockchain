@@ -69,6 +69,7 @@ class HomeController < ApplicationController
     @stories, @show_more = get_from_cache(hottest: true) {
       paginate stories.hottest
     }
+    puts @stories
 
     @rss_link ||= {
       :title => "RSS 2.0",
