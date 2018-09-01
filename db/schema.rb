@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_01_112325) do
+ActiveRecord::Schema.define(version: 2018_09_01_140552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gin"
@@ -33,9 +33,11 @@ ActiveRecord::Schema.define(version: 2018_09_01_112325) do
     t.boolean "is_from_email", default: false
     t.integer "hat_id"
     t.string "short_id", limit: 10, default: "", null: false
+    t.integer "thread_id"
     t.index ["comment"], name: "index_comments_on_comment", using: :gin
     t.index ["confidence"], name: "confidence_idx"
     t.index ["short_id"], name: "index_comments_on_short_id", unique: true
+    t.index ["thread_id"], name: "index_comments_on_thread_id", unique: true
     t.index ["user_id", "story_id", "downvotes", "created_at"], name: "downvote_index"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
