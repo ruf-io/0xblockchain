@@ -340,7 +340,7 @@ class Comment < ApplicationRecord
 
   def is_downvotable?
     if self.created_at && self.score > DOWNVOTABLE_MIN_SCORE
-      Time.current - self.created_at <= DOWNVOTABLE_DAYS.days
+      Time.now.utc - self.created_at <= DOWNVOTABLE_DAYS.days
     else
       false
     end
@@ -351,7 +351,7 @@ class Comment < ApplicationRecord
       if self.is_moderated?
         return false
       else
-        return (Time.current.to_i - (self.updated_at ? self.updated_at.to_i :
+        return (Time.now.utc.to_i - (self.updated_at ? self.updated_at.to_i :
           self.created_at.to_i) < (60 * MAX_EDIT_MINS))
       end
     else

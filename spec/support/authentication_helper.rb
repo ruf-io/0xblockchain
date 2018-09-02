@@ -7,20 +7,20 @@ module AuthenticationHelper
     # omniauth will use when a user tries to authenticate:
     OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new(
       :provider => "github",
-      :uid => user[:github_uid],
+      :uid => user.github_uid,
       :info => {
-        :email => user[:github_email],
-        :nickname => user[:github_username],
+        :email => user.email,
+        :nickname => user.username,
       },
-      :credentials => { :token => user[:github_oauth_token] }
+      :credentials => { :token => user.github_oauth_token }
     )
 
     User.create(
-      username: user[:github_username],
-      email: user[:github_email],
-      github_oauth_token: user[:github_oauth_token],
-      github_uid: user[:github_uid],
-      is_admin: user[:is_admin]
+      username: user.username,
+      email: user.email,
+      github_oauth_token: user.github_oauth_token,
+      github_uid: user.github_uid,
+      is_admin: user.is_admin
     )
 
     # Visit HomePage and Perform authentication
@@ -37,12 +37,12 @@ module AuthenticationHelper
 
     OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new(
       :provider => "github",
-      :uid => user[:github_uid],
+      :uid => user.github_uid,
       :info => {
-        :email => user[:github_email],
-        :nickname => user[:github_username],
+        :email => user.email,
+        :nickname => user.username,
       },
-      :credentials => { :token => user[:github_oauth_token] }
+      :credentials => { :token => user.github_oauth_token }
     )
 
     # Visit HomePage and Perform authentication

@@ -12,12 +12,7 @@ RSpec.feature "Submit story" do
 
   describe "Authenticated user" do
     before do
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = create :user
       # Stub available at support/authentication_helper.rb
       stub_login_as user
 

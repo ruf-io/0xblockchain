@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     @traffic = 1.0
 
     Keystore.transaction do
-      now_i = Time.now.to_i
+      now_i = Time.now.utc.to_i
       date_kv = Keystore.find_or_create_key_for_update("traffic:date", now_i)
       traffic_kv = Keystore.find_or_create_key_for_update("traffic:hits", 0)
 

@@ -91,10 +91,13 @@
   </div>
   <div class="fl w-80 measure">
     <%= f.select :tag_names, options_for_select(
-      Tag.all_with_filtered_counts_for(@user).map { |t|
+      Tag.all_with_filtered_counts_for(@user).map do |t|
         [t.description, t.tag]
-      }
-    ), {}, { :multiple => true, :required => true }%>
+      end,
+      f.object.tag_names
+    ),
+    {},
+    { :multiple => true, :required => true }%>
  </div>
 </div>
 
@@ -106,7 +109,7 @@
   <% tag_votes[tl] ||= 0 %>
   <% tag_votes[tl] += 1 %>
   <% end %>
-  <% tag_votes.delete(f.object.tags_a.sort.join(", ")) %>
+  <% tag_votes.delete(f.object.tag_names.sort.join(", ")) %>
   <% if tag_votes.any? %>
   <div class="boxline actions">
   Users have suggested changing this story's tags to:

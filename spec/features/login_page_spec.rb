@@ -14,12 +14,7 @@ RSpec.feature "Login page" do
   describe "Authenticated user" do
     scenario "Login then access the page" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = create :user
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 

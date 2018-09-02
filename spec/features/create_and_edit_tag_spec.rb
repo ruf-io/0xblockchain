@@ -33,12 +33,7 @@ RSpec.feature "Create & edit tag" do
 
   describe "Existing user (Non-admin)" do
     before do
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = create :user
       # Stub available at support/authentication_helper.rb
       stub_login_as user
     end
@@ -71,13 +66,7 @@ RSpec.feature "Create & edit tag" do
 
   describe "Admin user" do
     before do
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-        is_admin: true,
-      }
+      user = create :user, is_admin: true
       # Stub available at support/authentication_helper.rb
       stub_login_as user
     end

@@ -59,7 +59,7 @@ class SignupController < ApplicationController
 
     if @new_user.save
       if @invitation
-        @invitation.update(used_at: Time.current, new_user: @new_user)
+        @invitation.update(used_at: Time.now.utc, new_user: @new_user)
       end
       session[:u] = @new_user.session_token
       flash[:success] = "Welcome to #{Rails.application.name}, " <<

@@ -97,7 +97,8 @@ class Story < ApplicationRecord
   DOWNVOTABLE_MIN_SCORE = -5
 
   # after this many minutes old, a story cannot be edited
-  MAX_EDIT_MINS = (60 * 6)
+  ONE_MINUTE = 60 # 60 seconds
+  SIX_HOURS = 21_600 # 6(hours) * 60(minutes) * 60(seconds)
 
   # days a story is considered recent, for resubmitting
   RECENT_DAYS = 30
@@ -321,7 +322,7 @@ class Story < ApplicationRecord
     end
 
     return -((order * sign) + base +
-      ((self.created_at || Time.current).to_f / HOTNESS_WINDOW)).round(7)
+      ((self.created_at || Time.now.utc).to_f / HOTNESS_WINDOW)).round(7)
   end
 
   def can_be_seen_by_user?(user)
@@ -454,7 +455,7 @@ class Story < ApplicationRecord
 
   def is_downvotable?
     if self.created_at && self.score >= DOWNVOTABLE_MIN_SCORE
-      Time.current - self.created_at <= DOWNVOTABLE_DAYS.days
+      Time.now.utc - self.created_at <= DOWNVOTABLE_DAYS.days
     else
       false
     end
@@ -467,7 +468,9 @@ class Story < ApplicationRecord
       if self.is_moderated?
         return false
       else
-        return (Time.current.to_i - self.created_at.to_i < (60 * MAX_EDIT_MINS))
+        # User cannot edit story if story is created more than
+        # six hours
+        return (Time.now.utc.to_i - self.created_at.to_i < SIX_HOURS)
       end
     else
       return false
@@ -495,7 +498,7 @@ class Story < ApplicationRecord
   end
 
   def is_unavailable=(what)
-    self.unavailable_at = (what.to_i == 1 && !self.is_unavailable ? Time.current : nil)
+    self.unavailable_at = (what.to_i == 1 && !self.is_unavailable ? Time.now.utc : nil)
   end
 
   def is_undeletable_by_user?(user)
@@ -763,7 +766,7 @@ class Story < ApplicationRecord
 
   def update_availability
     if self.is_unavailable && !self.unavailable_at
-      self.unavailable_at = Time.current
+      self.unavailable_at = Time.now.utc
     elsif self.unavailable_at && !self.is_unavailable
       self.unavailable_at = nil
     end

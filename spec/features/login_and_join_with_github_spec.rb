@@ -9,12 +9,7 @@ RSpec.feature "Login & Join with github" do
   describe "Guest user" do
     scenario "Join via github" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = build :user
       # Stub is available at support/authentication_helper.rb
       stub_join_as user
 
@@ -30,12 +25,7 @@ RSpec.feature "Login & Join with github" do
   describe "Existing user (Non-admin)" do
     scenario "Login via github" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = create :user
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 
@@ -51,13 +41,7 @@ RSpec.feature "Login & Join with github" do
   describe "Existing user (Admin)" do
     scenario "Login via github" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-        is_admin: true,
-      }
+      user = create :user, is_admin: true
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 

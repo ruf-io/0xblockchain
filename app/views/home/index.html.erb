@@ -96,11 +96,14 @@
                   <%= story.score %> point
                 <% end %>
 
+                <%# Display 'authored by' or 'via' %>
                 <% if story.user_is_author? %>
                   authored by
                 <% else %>
                   via
                 <% end %>
+
+                <%# User avatar and username%>
                 <% if (@user && @user.show_avatars?) || !@user %>
                   <a href="/u/<%= story.user.username %>"><%= avatar_img(story.user, 16) %></a>
                 <% end %>
@@ -108,6 +111,8 @@
                   class="<%= story.html_class_for_user %> gray underline-hover link">
                   <%= story.user.username %>
                 </a>
+
+                <%# Time story submitted %>
                 <%= time_ago_in_words_label(story.created_at) %>
 
                 <%# Show link to cache url, if story url is present %>

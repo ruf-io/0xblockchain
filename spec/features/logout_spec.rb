@@ -8,12 +8,7 @@ RSpec.feature "Logout" do
   describe "Guest user" do
     scenario "Join then Logout" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = build :user
       # Stub is available at support/authentication_helper.rb
       stub_join_as user
 
@@ -30,12 +25,7 @@ RSpec.feature "Logout" do
   describe "Existing user" do
     scenario "Login then Logout" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-      }
+      user = create :user
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 
@@ -52,13 +42,7 @@ RSpec.feature "Logout" do
   describe "Existing user (Admin)" do
     scenario "Login then Logout" do
       # Perform authentication as user
-      user = {
-        github_username: "test",
-        github_uid: "1234",
-        github_email: "test@mail.com",
-        github_oauth_token: "1234",
-        is_admin: true,
-      }
+      user = create :user
       # Stub is available at support/authentication_helper.rb
       stub_login_as user
 

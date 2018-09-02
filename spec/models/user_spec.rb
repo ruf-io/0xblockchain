@@ -49,8 +49,8 @@ describe User do
   end
 
   it "shows a user is recent or not" do
-    user = create(:user, :created_at => Time.current)
-    u = create(:user, :created_at => Time.current - 8.days)
+    user = create(:user, :created_at => Time.now.utc)
+    u = create(:user, :created_at => Time.now.utc - 8.days)
     expect(user.is_new?).to be true
     expect(u.is_new?).to be false
   end

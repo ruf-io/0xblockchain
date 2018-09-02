@@ -14,7 +14,7 @@ class Hat < ApplicationRecord
     m.action = "Doffed hat \"#{self.hat}\": #{reason}"
     m.save!
 
-    self.doffed_at = Time.current
+    self.doffed_at = Time.now.utc
     self.save!
   end
 

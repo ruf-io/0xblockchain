@@ -57,7 +57,7 @@ RSpec.describe SessionsController, type: :controller do
         email: banned_email,
         github_uid: banned_uid,
         github_oauth_token: banned_oauth_token,
-        banned_at: Time.current
+        banned_at: Time.now.utc
       )
 
       # Login with banned user

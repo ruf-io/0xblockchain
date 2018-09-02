@@ -1,74 +1,30 @@
-<div class="box" id="story_box">
-  <div class="legend">
-    Edit Story
+<div class="cf">
+  <div class="fl w-100 ph3">
+    <h3>Edit Story</h3>
+    <p>Edit story <%= link_to @story.title, story_path(@story) %>.</p>
   </div>
+</div>
 
-  <%= form_for @story, :url => story_path(@story.short_id),
-  :method => :put, :html => { :id => "edit_story" } do |f| %>
-    <%= render :partial => "stories/form", :locals => { :story => @story,
-      :f => f } %>
-
-    <% if @user.is_moderator? %>
-      <br />
-      <div class="box">
-        <div class="boxline">
-          <%= f.label :merge_story_short_id, "Merge Into:",
-            :class => "required" %>
-          <%= f.text_field :merge_story_short_id, :autocomplete => "off",
-            :placeholder => "Short id of story into which this story " <<
-            "be merged" %>
+<div class="cf pb3">
+  <div class="fl w-100 ph3">
+    <%= form_for @story,
+      :url => story_path(@story.short_id),
+      :method => :put,
+      :html => { :id => "edit_story" } do |f| %>
+      <%= render :partial => "stories/form",
+          :locals => { :story => @story,
+          :f => f } %>
+      <div class="cf mb3">
+        <div class="fl w-20 white">Submit
         </div>
-        <div class="boxline">
-          <%= f.label :unavailable_at, "Unavailable:",
-            :class => "required" %>
-          <%= f.check_box :is_unavailable %>
-          <%= f.label :unavailable_at, "Source URL is unavailable, " <<
-            "enable display of cached text", :class => "normal" %>
+        <div class="fl w-80 measure">
+          <%= submit_tag "Update Story", :class => "pv1 ph2 mr3" %>
+          Or
+          <%= link_to "Cancel Edit",
+            request.referer || story_path(@story) %>
         </div>
-        <% if @story.user_id != @user.id %>
-          <div class="boxline">
-            <%= f.label :moderation_reason, "Mod Reason:",
-              :class => "required" %>
-            <%= f.text_field :moderation_reason %>
-          </div>
-        <% end %>
       </div>
     <% end %>
 
-    <p></p>
-
-    <div class="box">
-      <div class="boxline actions markdown_help_toggler">
-        <div class="markdown_help_label">
-          Markdown formatting available
-        </div>
-
-        <%= submit_tag "Save" %>
-
-        <% if @story.is_gone? && @story.is_undeletable_by_user?(@user) %>
-          &nbsp; | &nbsp;
-          <%= link_to "Undelete", story_undelete_path(@story.short_id),
-            :method => :post, :data => {
-            :confirm => "Are you sure you want to undelete this story?" },
-            :class => "button" %>
-        <% elsif !@story.is_gone? %>
-          &nbsp; | &nbsp;
-          <% if @story.user_id != @user.id && @user.is_moderator? %>
-            <%= link_to "Delete", story_path(@story.short_id),
-              :method => :delete, :class => "button mod_story_link deletion" %>
-          <% else %>
-            <%= link_to "Delete", story_path(@story.short_id),
-              :method => :delete, :data => {
-              :confirm => "Are you sure you want to delete this story?" },
-              :class => "button" %>
-          <% end %>
-        <% end %>
-
-        <div style="clear: both;"></div>
-
-        <%= render :partial => "global/markdownhelp",
-          :locals => { :allow_images => true } %>
-      </div>
-    </div>
-  <% end %>
+  </div>
 </div>

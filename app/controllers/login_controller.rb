@@ -112,7 +112,7 @@ class LoginController < ApplicationController
     @title = "Reset Password"
 
     if (m = params[:token].to_s.match(/^(\d+)-/)) &&
-       (Time.current - Time.zone.at(m[1].to_i)) < 24.hours
+       (Time.now.utc - Time.zone.at(m[1].to_i)) < 24.hours
       @reset_user = User.where(:password_reset_token => params[:token].to_s).first
     end
 

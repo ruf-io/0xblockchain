@@ -59,7 +59,7 @@ class SettingsController < ApplicationController
 
   def twofa_auth
     if @user.authenticate(params[:user][:password].to_s)
-      session[:last_authed] = Time.now.to_i
+      session[:last_authed] = Time.now.utc.to_i
       session.delete(:totp_secret)
 
       if @user.has_2fa?
@@ -78,7 +78,7 @@ class SettingsController < ApplicationController
   def twofa_enroll
     @title = "Two-Factor Authentication"
 
-    if (Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT
+    if (Time.now.utc.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT
       flash[:error] = "Your enrollment period timed out."
       return redirect_to twofa_url
     end
@@ -103,7 +103,7 @@ class SettingsController < ApplicationController
   def twofa_verify
     @title = "Two-Factor Authentication"
 
-    if ((Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
+    if ((Time.now.utc.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
        !session[:totp_secret]
       flash[:error] = "Your enrollment period timed out."
       return redirect_to twofa_url
@@ -111,7 +111,7 @@ class SettingsController < ApplicationController
   end
 
   def twofa_update
-    if ((Time.now.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
+    if ((Time.now.utc.to_i - session[:last_authed].to_i) > TOTP_SESSION_TIMEOUT) ||
        !session[:totp_secret]
       flash[:error] = "Your enrollment period timed out."
       return redirect_to twofa_url
