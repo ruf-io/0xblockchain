@@ -55,9 +55,18 @@
   border: 1px solid #ccc;
 }
 
-#story_title,
+/* #story_title,
 #story_url,
 #story_description,
 .selectize-input > input {
   font-size: 16px;
 }
+
+@media (--breakpoint-not-small) {
+  #story_title,
+  #story_url,
+  #story_description,
+  .selectize-input > input {
+    font-size: 10pt;
+  }
+} */

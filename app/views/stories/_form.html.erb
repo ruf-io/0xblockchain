@@ -2,12 +2,12 @@
     :locals => { :f => f, :story => f.object } %>
 
 <div class="cf mb3">
-  <div class="fl w-20">
+  <div class="fl w-20-ns w-100">
   <%= f.label :title, class: "b db mb2" do %>
     Title
   <% end%>
   </div>
-  <div class="fl w-80 measure">
+  <div class="fl w-80-ns w-100 measure">
   <%= f.text_field :title,
       class: "input-reset ba b--black-20 pa2 mb2 db w-100",
       :maxlength => 100 %>
@@ -16,12 +16,12 @@
 
 <%# URL Form %>
 <div class="cf mb3">
-  <div class="fl w-20">
+  <div class="fl w-20-ns w-100">
     <%= f.label :url, class: "b db mb2" do %>
       URL
     <% end%>
   </div>
-  <div class="fl w-80 measure">
+  <div class="fl w-80-ns w-100 measure">
     <%= f.text_field :url,
         class: "input-reset ba b--black-20 pa2 mb2 db w-100",
         :autocomplete => "off" %>
@@ -30,12 +30,12 @@
 
 <%# Text %>
 <div class="cf mb3">
-  <div class="fl w-20">
+  <div class="fl w-20-ns w-100">
     <%= f.label :description, class: "b db mb2" do %>
       Text
     <% end%>
   </div>
-  <div class="fl w-80 measure">
+  <div class="fl w-80-ns w-100 measure">
     <%= f.text_area :description,
       :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
       :rows => 15 %>
@@ -47,12 +47,12 @@
 
 <%# Tags %>
 <div class="cf mb3">
-  <div class="fl w-20">
+  <div class="fl w-20-ns w-100">
     <%= f.label :tag_names, class: "b db mb2" do %>
       Tags
     <% end%>
   </div>
-  <div class="fl w-80 measure f6">
+  <div class="fl w-80-ns w-100 measure">
     <%= f.select :tag_names, options_for_select(
       Tag.all_with_filtered_counts_for(@user).map do |t|
         if t.description.present?
