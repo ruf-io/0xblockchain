@@ -1,78 +1,175 @@
-<ol class="stories">
-  <%= render :partial => "stories/listdetail",
-    :locals => { :story => @story, :single_story => true } %>
-</ol>
+<%# Display single story %>
+<div class="cf">
+  <ol class="gray list ph3 mb0">
+    <li class="mb2">
+      <div id="story_<%= @story.short_id %>"
+        class="flex">
+        <%# Voting %>
+        <%# TODO(pyk): Upvote if user login %>
+        <div class="tc mr2" style="min-width: 28px;">
+          <% if @user %>
+            <%# TODO (pyk): Update this to link_to %>
+            <a href="#"
+              class="link black-50 tc ">
+              <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+                <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+              </svg>
+            </a>
+          <% else %>
+            <%# TODO (pyk): Update this to link_to %>
+            <a href="/login"
+              class="link black-50 tc">
+              <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+                <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+              </svg>
+            </a>
+          <% end %>
 
-<div class="story_content">
-  <% if @story.markeddown_description.present? %>
-    <div class="story_text">
-      <%= raw @story.markeddown_description %>
-    </div>
-  <% end %>
+          <%# Display index number %>
+          <br/>
+          <span class="gray">
+          </span>
+        </div>
 
-  <% if @story.is_unavailable && @story.story_cache.present? %>
-    <a id="story_text_expander">Source URL considered unavailable as of <%=
-    time_ago_in_words_label(@story.unavailable_at) %>, cached text
-    available</a>
-    <div id="collapsed_story_text">
-      <p>
-      <em>All story content copyright of its respective owner.</em>
-      </p>
+        <%# Detail %>
+        <div class="w-100">
+          <% if @story.can_be_seen_by_user?(@user) %>
+            <h3 class="ma0 lh-copy">
+              <a href="<%= @story.url_or_comments_path %>"
+              class="link underline-hover black-80 mr1">
+              <%= break_long_words(@story.title) %>
+              </a>
 
-      <div class="story_text">
-        <blockquote>
-          <%= simple_format(@story.story_cache) %>
-        </blockquote>
+              <% if @story.markeddown_description.present? %>
+                <a class="link gray mr1"
+                  title="<%= truncate(@story.description, :length => 250) %>"
+                  href="<%= @story.comments_path %>"><i class="fas fa-align-left"></i></a>
+              <% end %>
+              <span>
+                <% @story.tags.each do |tag| %>
+                  <a href="<%= tag_path(tag) %>"
+                    class="<%= tag.css_class %> tag mr1 gray"
+                    title="<%= tag.description %>"
+                    style="background-color: <%= tag.background_color %>; color: <%= tag.text_color %>;"><%= tag.tag %></a>
+                <% end %>
+              </span>
+
+              <%# Show domain if any %>
+              <% if @story.domain.present? %>
+                <a class="link gray underline-hover normal"
+                  href="<%= @story.domain_search_url %>" >
+                  <%= break_long_words(@story.domain) %>
+                </a>
+              <% end %>
+            </h3>
+            <p class="ma0 gray mt1 lh-copy">
+              <%# Display current points %>
+              <% if @story.score >= 2 %>
+                <%= @story.score %> points
+              <% else %>
+                <%= @story.score %> point
+              <% end %>
+
+              <%# Display 'authored by' or 'via' %>
+              <% if @story.user_is_author? %>
+                authored by
+              <% else %>
+                via
+              <% end %>
+
+              <%# User avatar and username%>
+              <% if (@user && @user.show_avatars?) || !@user %>
+                <a href="/u/<%= @story.user.username %>"><%= avatar_img(@story.user, 16) %></a>
+              <% end %>
+              <a href="/u/<%= @story.user.username %>"
+                class="<%= @story.html_class_for_user %> gray underline-hover link">
+                <%= @story.user.username %>
+              </a>
+
+              <%# Time story submitted %>
+              <%= time_ago_in_words_label(@story.created_at) %>
+
+              <%# Show link to cache url, if story url is present %>
+              <% if @story.url.present? %>
+              | <a href="<%= @story.archive_url %>"
+                  rel="nofollow"
+                  target="_blank"
+                  class="gray underline-hover link">cached</a>
+              <% end %>
+
+              <%# Show link to edit story, if story is editable by current user %>
+              <% if @story.is_editable_by_user?(@user) %>
+              | <a href="<%= edit_story_path(@story.short_id)%>"
+                class="gray underline-hover link">edit</a>
+              <% end %>
+
+              <%# Show link to comments %>
+              | <span class="gray ">
+                <% if @story.comments_count == 0 %>
+                no comments
+                <% else %>
+                <%= @story.comments_count %>
+                comment<%= @story.comments_count == 1 ? "" : "s" %>
+                <% end %>
+              </span>
+            </p>
+
+          <% end %>
+          <% if @story.is_gone? %>
+            [Story removed by <%= @story.is_moderated? ? "moderator" : "original submitter" %>]
+          <% end %>
+        </div>
       </div>
-    </div>
-
-    <script>
-      document.getElementById("story_text_expander").addEventListener("click",
-        function() {
-          document.getElementById("collapsed_story_text").style.display = "block";
-          return false;
-        });
-    </script>
-  <% end %>
+      </li>
+  </ol>
 </div>
 
-<% if !@story.previewing %>
-  <ol class="comments comments1">
-    <% if !@story.is_gone? && !@story.previewing %>
-      <li class="comments_subtree"><%= render "comments/commentbox", :comment => @comment %></li>
-      <% if @user %><script>autosize($("#comment")[0]);</script><% end %>
-    <% end %>
-
-    <% comments_by_parent = @comments.group_by(&:parent_comment_id) %>
-    <% subtree = comments_by_parent[nil] %>
-    <% ancestors = [] %>
-
-    <% while subtree %>
-      <% if (comment = subtree.shift) %>
-        <li class="comments_subtree">
-
-        <% children = comments_by_parent[comment.id] %>
-        <%= render "comments/comment", :comment => comment,
-          :show_story => (comment.story_id != @story.id),
-          :show_tree_lines => true,
-          :was_merged => (comment.story_id != @story.id),
-          :children => children,
-	  :is_unread => is_unread?(comment) %>
-
-        <% if ancestors.present? %>
-          <div class="comment_siblings_tree_line"></div>
-        <% end %>
-
-        <% if children %>
-          <% ancestors << subtree %>
-          <% subtree = children %>
-          <ol class="comments">
-        <% else %>
-          <ol class="comments"></ol></li>
-        <% end %>
-      <% elsif (subtree = ancestors.pop) %>
-        </ol></li>
-      <% end %>
-    <% end %>
+<div class="cf">
+  <ol class="gray list ph3 mv0">
+    <li class="mb2">
+      <div class="flex">
+        <div class="mr2" style="min-width: 28px;">
+        </div>
+        <%# Detail %>
+        <div class="mw6">
+          <%# Display story text if any %>
+          <% if @story.markeddown_description.present? %>
+            <div class="black-80 lh-copy fs-11pt">
+              <%= raw @story.markeddown_description %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      </li>
   </ol>
-<% end %>
+</div>
+
+<div class="cf">
+  <div class="fl w-100 ph3">
+
+    <%# Display comment box %>
+    <%= form_for @comment,
+      :html => {:class => "mt3"} do |f| %>
+      <%# Show errors if posted comment is invalid %>
+      <% if @comment.errors.any? %>
+        <%= errors_for @comment %>
+      <% end %>
+
+      <%# Hidden fields for controller %>
+      <%= f.hidden_field :story_id,
+        :value => @comment.story.short_id %>
+
+      <%# Display text area for comment %>
+      <%= f.text_area :comment,
+        :class => "input-reset ba b--black-20 pa2 mb2 db w-100 measure",
+        :rows => 5 %>
+      <small id="name-desc" class="fr f7 black-60 db mb2">
+      Markdown are supported
+      </small>
+
+
+      <%= f.submit "Post",
+        :class => "pv1 ph2 mr3" %>
+    <% end %>
+  </div>
+</div>
