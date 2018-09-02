@@ -21,10 +21,6 @@
   box-shadow: none;
 }
 
-.selectize-input > input {
-  font-size: 1em;
-}
-
 .selectize-input.focus {
   border-radius: 0px;
   box-shadow: none;
@@ -57,4 +53,11 @@
   background: #fafafa;
   color: #333;
   border: 1px solid #ccc;
+}
+
+#story_title,
+#story_url,
+#story_description,
+.selectize-input > input {
+  font-size: 16px;
 }
