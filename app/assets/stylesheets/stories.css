@@ -17,37 +17,23 @@
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   width: 100%;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  -o-border-radius: 0px;
   border-radius: 0px;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -o-box-shadow: none;
   box-shadow: none;
 }
 
+.selectize-input > input {
+  font-size: 1em;
+}
+
 .selectize-input.focus {
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  -o-border-radius: 0px;
   border-radius: 0px;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -o-box-shadow: none;
   box-shadow: none;
 }
 
 .selectize-control.multi .selectize-input [data-value],
 .selectize-control.multi .selectize-input [data-value].active {
   text-shadow: none;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -o-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -o-box-shadow: none;
   box-shadow: none;
   background-color: #fafafa;
   background-image: none;
