@@ -9,7 +9,7 @@
   </div>
   <div class="fl w-80 measure">
   <%= f.text_field :title,
-      class: "input-reset ba b--black-20 pa2 mb2 db w-100",
+      class: "input-reset ba b--black-20 pa2 mb2 db w-100 f6",
       :maxlength => 100 %>
   </div>
 </div>
@@ -23,7 +23,7 @@
   </div>
   <div class="fl w-80 measure">
     <%= f.text_field :url,
-        class: "input-reset ba b--black-20 pa2 mb2 db w-100",
+        class: "input-reset ba b--black-20 pa2 mb2 db w-100 f6",
         :autocomplete => "off" %>
   </div>
 </div>
@@ -39,7 +39,7 @@
     <%= f.text_area :description,
       :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
       :rows => 15 %>
-      <small id="name-desc" class="fs-10pt black-60 db mb2">
+      <small id="name-desc" class="fs-10pt black-60 db mb2 f6">
         Markdown are supported
       </small>
   </div>
@@ -52,7 +52,7 @@
       Tags
     <% end%>
   </div>
-  <div class="fl w-80 measure">
+  <div class="fl w-80 measure f6">
     <%= f.select :tag_names, options_for_select(
       Tag.all_with_filtered_counts_for(@user).map do |t|
         if t.description.present?

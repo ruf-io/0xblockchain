@@ -39,7 +39,7 @@
   <%= javascript_include_tag params[:controller] %>
 </head>
 
-<body class="sans-serif black-80">
+<body class="sans-serif fs-10pt black-80">
   <div class="mw7 center">
     <%# Logo and login button %>
     <div class="cf pv3 ">
@@ -53,18 +53,18 @@
         </a>
         <% if !@user %>
           <% header_links.each do |u,v| %>
-            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr3 dib <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
           <a href="/auth/github" class="link black underline-hover pv2 dib fr-ns"><i class="fab fa-github"></i>  <span class="b">Login</span></a>
         <% else %>
           <% header_links.each do |u,v| %>
-            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr3 dib <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
 
           <% right_header_links.each do |u,v| %>
-            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr2 dib <%= v[:class].join(" ") %>"><%=
+            <a href="<%= u %>" class="link black-80 underline-hover pv2 mr3 dib <%= v[:class].join(" ") %>"><%=
               v[:title] %></a>
           <% end %>
         <% end %>
