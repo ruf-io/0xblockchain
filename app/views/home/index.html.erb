@@ -17,16 +17,18 @@
 <%# List of stories %>
 <div class="cf">
   <%# Set start number of list of stories, page 2 from 26 etc %>
-  <% if @page >= 2 %>
-    <ol class="gray" style="padding-left: 34px;" start="<%= ((@page - 1) * 25 ) + 1%>">
-  <% else %>
-    <ol class="gray" style="padding-left: 34px;" start="1">
-  <% end %>
+  <ol class="gray list ph3">
     <%# Render each story/row %>
+    <%# Set start number of list of stories, page 2 from 26 etc %>
+    <% if @page >= 2 %>
+      <% story_index = ((@page - 1) * 25 ) + 1 %>
+    <% else %>
+      <% story_index = 1 %>
+    <% end %>
     <% @stories.each do |story| %>
       <li class="mb2">
         <div id="story_<%= story.short_id %>"
-          class="pr3 flex">
+          class="flex">
           <%# Voting %>
           <%# TODO(pyk): Upvote if user login %>
           <div class="voting-column tc mr2">
@@ -47,6 +49,13 @@
                 </svg>
               </a>
             <% end %>
+
+            <%# Display index number %>
+            <br/>
+            <span class="gray">
+              <%= story_index %>.
+              <% story_index += 1 %>
+            </span>
           </div>
 
           <%# Detail %>

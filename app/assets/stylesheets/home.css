@@ -15,6 +15,7 @@ a.domain {
 }
 
 .voting-column {
+  min-width: 28px;
 }
 
 /* avatar */
