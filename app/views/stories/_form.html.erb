@@ -14,73 +14,36 @@
   </div>
 </div>
 
-<% unless defined?(suggesting) %>
-  <% if f.object.url_is_editable_by_user?(@user) %>
-      <%# button_tag "Fetch Title",
-        :id => "story_fetch_title",
-        :type => "button",
-        :class => "link ba ph2 pv1 mb2 dib black" %>
-    <div class="cf mb3">
-      <div class="fl w-20">
-        <%= f.label :url, class: "b db mb2" do %>
-          URL
-        <% end%>
-      </div>
-      <div class="fl w-80 measure">
-        <%= f.text_field :url,
-            class: "input-reset ba b--black-20 pa2 mb2 db w-100",
-            :autocomplete => "off" %>
-      </div>
-    </div>
-
-  <% elsif !f.object.new_record? && !f.object.url.blank? %>
-    <div class="measure mb3">
-      <%= f.label :url, class: "b db mb2" do %>
-        URL <span class="normal red">*</span>
-      <% end%>
-      <p>
-      <a href="<%= f.object.url %>" class="link underline-hover"><%= f.object.url %></a>
-      </p>
-    </div>
-  <% end %>
-<% end %>
+<%# URL Form %>
+<div class="cf mb3">
+  <div class="fl w-20">
+    <%= f.label :url, class: "b db mb2" do %>
+      URL
+    <% end%>
+  </div>
+  <div class="fl w-80 measure">
+    <%= f.text_field :url,
+        class: "input-reset ba b--black-20 pa2 mb2 db w-100",
+        :autocomplete => "off" %>
+  </div>
+</div>
 
 <%# Text %>
-<% unless defined?(suggesting) %>
-  <div class="cf mb3">
-    <div class="fl w-20">
-      <%= f.label :description, class: "b db mb2" do %>
-        Text
-      <% end%>
-    </div>
-    <div class="fl w-80 measure">
-      <%= f.text_area :description,
-        :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
-        :rows => 15 %>
-        <small id="name-desc" class="fs-10pt black-60 db mb2">Markdown are supported</small>
-    </div>
+<div class="cf mb3">
+  <div class="fl w-20">
+    <%= f.label :description, class: "b db mb2" do %>
+      Text
+    <% end%>
   </div>
-<% end %>
-
-
-<% if f.object.id && !defined?(suggesting) %>
-  <% title_votes = {} %>
-  <% f.object.suggested_titles.each do |st| %>
-    <% title_votes[st.title] ||= 0 %>
-    <% title_votes[st.title] += 1 %>
-  <% end %>
-
-  <% title_votes.delete(f.object.title) %>
-  <% if title_votes.any? %>
-    <div class="boxline actions">
-      Users have suggested changing this story's title to:
-      <br>
-      <% title_votes.each do |ti,c| %>
-        <%= h(ti) %><%= c == 1 ? "" : " (#{c} votes)" %><br>
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
+  <div class="fl w-80 measure">
+    <%= f.text_area :description,
+      :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
+      :rows => 15 %>
+      <small id="name-desc" class="fs-10pt black-60 db mb2">
+        Markdown are supported
+      </small>
+  </div>
+</div>
 
 <%# Tags %>
 <div class="cf mb3">
@@ -92,7 +55,11 @@
   <div class="fl w-80 measure">
     <%= f.select :tag_names, options_for_select(
       Tag.all_with_filtered_counts_for(@user).map do |t|
-        [t.description, t.tag]
+        if t.description.present?
+          [t.description, t.tag]
+        else
+          [t.tag, t.tag]
+        end
       end,
       f.object.tag_names
     ),
@@ -100,38 +67,3 @@
     { :multiple => true, :required => true }%>
  </div>
 </div>
-
-<%# Tag suggestions %>
-<% if f.object.id && !defined?(suggesting) %>
-  <% tag_votes = {} %>
-  <% f.object.suggested_taggings.group_by(&:user_id).each do |u,stg| %>
-  <% tl = stg.map{|st| st.tag.tag }.sort.join(", ") %>
-  <% tag_votes[tl] ||= 0 %>
-  <% tag_votes[tl] += 1 %>
-  <% end %>
-  <% tag_votes.delete(f.object.tag_names.sort.join(", ")) %>
-  <% if tag_votes.any? %>
-  <div class="boxline actions">
-  Users have suggested changing this story's tags to:
-  <br>
-  <% tag_votes.each do |ts,c| %>
-  <%= ts %><%= c == 1 ? "" : " (#{c} votes)" %><br>
-  <% end %>
-  </div>
-  <% end %>
-<% end %>
-
-
-<% unless defined?(suggesting) %>
-  <div class="cf mb3">
-    <div class="fl w-20 white">is author?
-    </div>
-    <div class="fl w-80 measure">
-      <%= f.check_box :user_is_author %>
-      <%= f.label :user_is_author,
-      (f.object.id && f.object.user_id != @user.id ? "Submitter is" : "I am") +
-      " the author of the story at this URL (or this text)",
-      :class => "normal" %>
-    </div>
-  </div>
-<% end %>

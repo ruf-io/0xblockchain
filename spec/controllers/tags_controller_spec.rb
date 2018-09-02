@@ -7,13 +7,10 @@ RSpec.describe TagsController, type: :controller do
       get :index
       expect(response).to have_http_status :success # 200
     end
+
     scenario "Access new tag page" do
-      # Perform request
       get :new
-      # Make sure it is redirected to the home page
-      # and contains error message
       expect(response).to redirect_to root_path
-      expect(response).to have_http_status :found # 302
     end
   end
 

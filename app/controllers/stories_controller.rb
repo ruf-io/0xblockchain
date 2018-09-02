@@ -2,14 +2,35 @@ class StoriesController < ApplicationController
   caches_page :show, if: CACHE_PAGE
 
   before_action :require_logged_in_user_or_400,
-                :only => [:upvote, :downvote, :unvote, :hide, :unhide, :preview, :save, :unsave,
-                          :check_url_dupe,]
+                :only => [
+                  :upvote,
+                  :downvote,
+                  :unvote,
+                  :hide,
+                  :unhide,
+                  :preview,
+                  :save,
+                  :unsave,
+                  :check_url_dupe,
+                ]
   before_action :require_logged_in_user,
-                :only => [:destroy, :create, :edit, :fetch_url_attributes, :new, :suggest]
-  before_action :verify_user_can_submit_stories, :only => [:new, :create]
-  before_action :find_user_story, :only => [:destroy, :edit, :undelete, :update]
-  before_action :find_story!, :only => [:suggest, :submit_suggestions]
-  around_action :track_story_reads, only: [:show], if: -> { @user.present? }
+                :only => [
+                  :destroy,
+                  :create,
+                  :edit,
+                  :fetch_url_attributes,
+                  :new,
+                  :suggest,
+                  :update,
+                ]
+  before_action :verify_user_can_submit_stories,
+                :only => [:new, :create]
+  before_action :find_user_story,
+                :only => [:destroy, :edit, :undelete, :update]
+  before_action :find_story!,
+                :only => [:suggest, :submit_suggestions]
+  around_action :track_story_reads,
+                only: [:show], if: -> { @user.present? }
 
   def create
     @title = "Submit Story"
@@ -232,17 +253,18 @@ class StoriesController < ApplicationController
   def update
     if !@story.is_editable_by_user?(@user)
       flash[:error] = "You cannot edit that story."
-      return redirect_to "/"
+      return redirect_to "/", status: :unauthorized
     end
 
     @story.is_expired = false
     @story.editor = @user
 
-    if @story.url_is_editable_by_user?(@user)
-      @story.attributes = story_params
-    else
-      @story.attributes = story_params.except(:url)
-    end
+    # if @story.url_is_editable_by_user?(@user)
+    #   @story.attributes = story_params
+    # else
+    #   @story.attributes = story_params.except(:url)
+    # end
+    @story.attributes = story_params
 
     if @story.save
       return redirect_to @story.comments_path
@@ -388,14 +410,16 @@ private
     if @user.is_moderator?
       @story = Story.where(:short_id => params[:story_id] || params[:id]).first
     else
-      @story = Story.where(:user_id => @user.id, :short_id =>
-        (params[:story_id] || params[:id])).first
+      @story = Story.where(
+        :user_id => @user.id,
+        :short_id => (params[:story_id] || params[:id])
+      ).first
     end
 
     if !@story
       flash[:error] = "Could not find story or you are not authorized " <<
                       "to manage it."
-      redirect_to "/"
+      redirect_to "/", status: :unauthorized
       return false
     end
   end
