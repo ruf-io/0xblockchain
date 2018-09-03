@@ -53,18 +53,20 @@
       href="javascript:void(0)">
       [ - ]
     </a>
-  <p>
+  </p>
 
   <%# We group the comment data into one to make it collapseable %>
   <div id="comment_data_<%= comment.short_id %>">
     <%# Comment content %>
-    <%= comment.comment %>
+    <div class="ml3">
+      <%= comment.comment %>
 
-    <p>
-      <a onclick="toggleReplyForm('new_reply_<%= comment.short_id %>')"
-        href="javascript:void(0)"
-        class="gray link underline-hover">reply</a>
-    </p>
+      <p>
+        <a onclick="toggleReplyForm('new_reply_<%= comment.short_id %>')"
+          href="javascript:void(0)"
+          class="gray link underline-hover">reply</a>
+      </p>
+    </div>
 
     <%# Display comment box %>
     <% parent_comment = comment %>
@@ -72,7 +74,7 @@
       <%= form_for @comment,
         :html => {
           :id => "new_reply_" + parent_comment.short_id,
-          :class => "mt3 mb3 measure",
+          :class => "ml3 mt3 mb3 measure",
           :style => "display: none;"} do |f| %>
         <%# Show errors if posted comment is invalid %>
         <% if @comment.errors.any? %>
