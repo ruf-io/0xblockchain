@@ -1,0 +1,12 @@
+/* avatar */
+img.avatar {
+  margin-bottom: -5px;
+}
+img.avatar {
+  border-radius: 8px;
+  height: 16px;
+  margin-bottom: 2px;
+  margin-right: 2px;
+  vertical-align: middle;
+  width: 16px;
+}

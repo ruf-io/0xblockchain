@@ -12,23 +12,28 @@ class CommentsController < ApplicationController
   before_action :find_user_from_rss_token, :only => [:index]
 
   def create
-    if !(story = Story.where(:short_id => params[:story_id]).first) ||
-       story.is_gone?
+    story_id = params[:comment][:story_id]
+    story = Story.where(:short_id => story_id).first
+    if !story || story.is_gone?
+      # TODO(pyk): Render template based error
       return render :plain => "can't find story", :status => 400
     end
 
     comment = story.comments.build
-    comment.comment = params[:comment].to_s
+    comment.comment = params[:comment][:comment].to_s
     comment.user = @user
 
     if params[:hat_id] && @user.wearable_hats.where(:id => params[:hat_id])
       comment.hat_id = params[:hat_id]
     end
 
-    if params[:parent_comment_short_id].present?
-      if (pc = Comment.where(:story_id => story.id, :short_id => params[:parent_comment_short_id])
-        .first)
-        comment.parent_comment = pc
+    if params[:comment][:parent_id].present?
+      parent_comment = Comment.where(
+        :story_id => story.id,
+        :short_id => params[:comment][:parent_id]
+      ).first
+      if parent_comment
+        comment.parent_comment = parent_comment
       else
         return render :json => { :error => "invalid parent comment", :status => 400 }
       end
@@ -48,7 +53,8 @@ class CommentsController < ApplicationController
       end
     end
 
-    if comment.valid? && params[:preview].blank? && comment.save
+    if comment.valid? &&
+       params[:preview].blank? && comment.save
       comment.current_vote = { :vote => 1 }
 
       if request.xhr?

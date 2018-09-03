@@ -41,3 +41,25 @@ $(document).ready(function() {
     }
   });
 });
+
+// Function to toggle reply form
+function toggleReplyForm(formId) {
+  const replyForm = document.getElementById(formId);
+  if (replyForm.style.display === "none") {
+    replyForm.style.display = "block";
+  } else {
+    replyForm.style.display = "none";
+  }
+}
+
+// Function to expand or collapse comment
+function expandOrCollapseComment(button, commentDataId) {
+  const commentData = document.getElementById(commentDataId);
+  if (commentData.style.display === "none") {
+    commentData.style.display = "block";
+    button.text = "[ - ]";
+  } else {
+    commentData.style.display = "none";
+    button.text = "[ + ]";
+  }
+}
