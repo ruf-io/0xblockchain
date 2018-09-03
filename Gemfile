@@ -17,6 +17,7 @@ gem "dynamic_form"
 gem "jquery-rails", "~> 4.3"
 gem "json"
 gem "uglifier", ">= 1.3.0"
+gem "sassc-rails"
 
 # deployment
 gem "actionpack-page_caching"
