@@ -34,7 +34,7 @@
         <%# Detail %>
         <div class="w-100">
           <% if @story.can_be_seen_by_user?(@user) %>
-            <h3 class="ma0 lh-copy">
+            <h4 class="ma0 lh-copy">
               <a href="<%= @story.url_or_comments_path %>"
               class="link underline-hover black-80 mr1">
               <%= break_long_words(@story.title) %>
@@ -61,7 +61,7 @@
                   <%= break_long_words(@story.domain) %>
                 </a>
               <% end %>
-            </h3>
+            </h4>
             <p class="ma0 gray mt1 lh-copy">
               <%# Display current points %>
               <% if @story.score >= 2 %>
@@ -125,51 +125,42 @@
 </div>
 
 <div class="cf">
-  <ol class="gray list ph3 mv0">
-    <li class="mb2">
-      <div class="flex">
-        <div class="mr2" style="min-width: 28px;">
-        </div>
-        <%# Detail %>
-        <div class="mw6">
-          <%# Display story text if any %>
-          <% if @story.markeddown_description.present? %>
-            <div class="black-80 lh-copy fs-11pt">
-              <%= raw @story.markeddown_description %>
-            </div>
-          <% end %>
-        </div>
+    <%# Display story text if any %>
+    <% if @story.markeddown_description.present? %>
+      <div class="fl w-100 ph3 black-80 lh-copy fs-11pt ml4-ns">
+        <%= raw @story.markeddown_description %>
       </div>
-      </li>
-  </ol>
+    <% end %>
+
+  <div class="fl w-100 ph3 ml4-ns">
+  <%# Display comment box %>
+  <%= form_for @comment,
+    :html => {:class => "mt3 measure"} do |f| %>
+    <%# Show errors if posted comment is invalid %>
+    <% if @comment.errors.any? %>
+      <%= errors_for @comment %>
+    <% end %>
+
+    <%# Hidden fields for controller %>
+    <%= f.hidden_field :story_id,
+      :value => @comment.story.short_id %>
+
+    <%# Display text area for comment %>
+    <%= f.text_area :comment,
+      :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
+      :rows => 5 %>
+    <small id="name-desc" class="fr f7 black-60 db mb2">
+    Markdown are supported
+    </small>
+
+
+    <%= f.submit "Add comment",
+      :class => "pv1 ph2 mr3" %>
+  <% end %>
+  </div>
 </div>
 
 <div class="cf">
   <div class="fl w-100 ph3">
-
-    <%# Display comment box %>
-    <%= form_for @comment,
-      :html => {:class => "mt3"} do |f| %>
-      <%# Show errors if posted comment is invalid %>
-      <% if @comment.errors.any? %>
-        <%= errors_for @comment %>
-      <% end %>
-
-      <%# Hidden fields for controller %>
-      <%= f.hidden_field :story_id,
-        :value => @comment.story.short_id %>
-
-      <%# Display text area for comment %>
-      <%= f.text_area :comment,
-        :class => "input-reset ba b--black-20 pa2 mb2 db w-100 measure",
-        :rows => 5 %>
-      <small id="name-desc" class="fr f7 black-60 db mb2">
-      Markdown are supported
-      </small>
-
-
-      <%= f.submit "Post",
-        :class => "pv1 ph2 mr3" %>
-    <% end %>
   </div>
 </div>

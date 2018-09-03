@@ -61,7 +61,7 @@
           <%# Detail %>
           <div class="detail-column">
             <% if story.can_be_seen_by_user?(@user) %>
-              <h3 class="ma0 lh-copy">
+              <h4 class="ma0 lh-copy">
                 <a href="<%= story.url_or_comments_path %>"
                 class="link underline-hover black-80 mr1">
                 <%= break_long_words(story.title) %>
@@ -87,7 +87,7 @@
                     <%= break_long_words(story.domain) %>
                   </a>
                 <% end %>
-              </h3>
+              </h4>
               <p class="ma0 gray mt1 lh-copy">
                 <%# Display current points %>
                 <% if story.score >= 2 %>
