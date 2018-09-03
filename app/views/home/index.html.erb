@@ -62,13 +62,15 @@
           <div class="detail-column">
             <% if story.can_be_seen_by_user?(@user) %>
               <h4 class="ma0 lh-copy">
-                <a href="<%= story.url_or_comments_path %>"
-                class="link underline-hover black-80 mr1">
+                <a id="link-<%= story.short_id %>"
+                  href="<%= story.url_or_comments_path %>"
+                  class="link underline-hover black-80 mr1">
                 <%= break_long_words(story.title) %>
                 </a>
 
                 <% if story.markeddown_description.present? %>
-                  <a class="link gray mr1"
+                  <a id="description-<%= story.short_id %>"
+                    class="link gray mr1"
                     title="<%= truncate(story.description, :length => 250) %>"
                     href="<%= story.comments_path %>"><i class="fas fa-align-left"></i></a>
                 <% end %>
@@ -130,7 +132,9 @@
                 <% end %>
 
                 <%# Show link to comments %>
-                | <a class="gray underline-hover link" href="<%= story.comments_path %>">
+                | <a id="comments-<%= story.short_id %>"
+                    class="gray underline-hover link"
+                    href="<%= story.comments_path %>">
                   <% if story.comments_count == 0 %>
                   discuss
                   <% else %>
