@@ -132,7 +132,7 @@
                 <% end %>
 
                 <%# Show link to comments %>
-                | <a id="comments-<%= story.short_id %>"
+                | <a id="comments_<%= story.short_id %>"
                     class="gray underline-hover link"
                     href="<%= story.comments_path %>">
                   <% if story.comments_count == 0 %>

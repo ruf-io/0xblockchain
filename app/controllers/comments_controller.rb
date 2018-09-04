@@ -1,3 +1,8 @@
+class CommentStoryNotFoundError < StandardError; end
+class CommentAlreadyPostedError < StandardError; end
+class CommentParentNotFoundError < StandardError; end
+class CommentInvalidError < StandardError; end
+
 class CommentsController < ApplicationController
   COMMENTS_PER_PAGE = 20
 
@@ -5,70 +10,102 @@ class CommentsController < ApplicationController
 
   # for rss feeds, load the user's tag filters if a token is passed
   before_action :find_user_from_rss_token, :only => [:index]
-  before_action :require_logged_in_user_or_400,
+  before_action :require_logged_in_user,
                 :only => [:create, :preview, :upvote, :downvote, :unvote]
 
   # for rss feeds, load the user's tag filters if a token is passed
   before_action :find_user_from_rss_token, :only => [:index]
 
+  # Create new comment
   def create
+    puts "======================= DEBUG ++++++++++++++++++++++++++"
+    # Get the story
     story_id = params[:comment][:story_id]
-    story = Story.where(:short_id => story_id).first
-    if !story || story.is_gone?
-      # TODO(pyk): Render template based error
-      return render :plain => "can't find story", :status => 400
-    end
-
-    comment = story.comments.build
+    comment = Comment.new
     comment.comment = params[:comment][:comment].to_s
     comment.user = @user
+    is_error = false
+    html_data = nil
+    parent_comment_id = nil
 
-    if params[:hat_id] && @user.wearable_hats.where(:id => params[:hat_id])
-      comment.hat_id = params[:hat_id]
-    end
+    begin
+      story = Story.where(:short_id => story_id).first
+      if !story || story.is_gone?
+        raise CommentStoryNotFoundError
+      end
+      comment.story_id = story.id
 
-    if params[:comment][:parent_id].present?
-      parent_comment = Comment.where(
-        :story_id => story.id,
-        :short_id => params[:comment][:parent_id]
-      ).first
-      if parent_comment
-        comment.parent_comment = parent_comment
+      # Setup reply if the comment is reply to comment
+      if params[:comment][:parent_id].present?
+        parent_comment = Comment.where(
+          :story_id => story.id,
+          :short_id => params[:comment][:parent_id]
+        ).first
+        if parent_comment
+          comment.parent_comment = parent_comment
+          parent_comment_id = parent_comment.short_id
+        else
+          raise CommentParentNotFoundError
+        end
+      end
+
+      # Burst spam protection
+      last_user_comment = Comment.order(created_at: :desc).find_by(
+        story_id: story.id,
+        user_id: @user.id,
+        parent_comment_id: comment.parent_comment_id
+      )
+      if last_user_comment &&
+         (Time.now.utc - last_user_comment.created_at) < 5.minutes
+        raise CommentAlreadyPostedError
+      end
+
+      # Save the comment or raise an error
+      if comment.valid? && comment.save
+        comment.current_vote = { :vote => 1 }
       else
-        return render :json => { :error => "invalid parent comment", :status => 400 }
+        raise CommentInvalidError
       end
+
+    rescue CommentStoryNotFoundError
+      comment.errors.add(:comment, "We can't find the story that you comment")
+      is_error = true
+    rescue CommentAlreadyPostedError
+      comment.errors.add(:comment, "You have already posted a comment here recently.")
+      is_error = true
+    rescue CommentParentNotFoundError
+      comment.errors.add(:comment, "Parent comment not found")
+      is_error = true
+    rescue CommentInvalidError
+      is_error = true
     end
 
-    # prevent double-clicks of the post button
-    if params[:preview].blank? &&
-       (pc = Comment.where(:story_id => story.id,
-                           :user_id => @user.id,
-                           :parent_comment_id => comment.parent_comment_id).first)
-      if (Time.now.utc - pc.created_at) < 5.minutes && !@user.is_moderator?
-        comment.errors.add(:comment, "^You have already posted a comment " <<
-          "here recently.")
-
-        return render :partial => "commentbox", :layout => false,
-          :content_type => "text/html", :locals => { :comment => comment }
-      end
-    end
-
-    if comment.valid? &&
-       params[:preview].blank? && comment.save
-      comment.current_vote = { :vote => 1 }
-
-      if request.xhr?
-        render :partial => "comments/postedreply", :layout => false,
-          :content_type => "text/html", :locals => { :comment => comment }
-      else
-        redirect_to comment.path
-      end
+    # If error, render the form again.
+    # Otherwise render the comment
+    if is_error
+      html_data = render_to_string :partial => "comments/comment_form",
+        :layout => false,
+        :content_type => "text/html",
+        :locals => {
+          :comment => comment,
+          :story_id => story_id,
+        }
+      is_error = true
     else
-      comment.upvotes = 1
-      comment.current_vote = { :vote => 1 }
-
-      preview comment
+      html_data = render_to_string :partial => "comments/comment",
+        :layout => false,
+        :content_type => "text/html",
+        :locals => {
+          :comment => comment,
+          :story_id => story_id,
+        }
+      is_error = false
     end
+    return render :json => {
+      :is_error => is_error,
+      :html_data => html_data,
+      :parent_comment_id => parent_comment_id,
+    }
   end
 
   def show

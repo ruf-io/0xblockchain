@@ -54,7 +54,7 @@
     </h4>
 
     <%# Display meta data %>
-    <p class="ma0 gray mt1 lh-copy">
+    <p class="ma0 ml3 gray mt1 lh-copy">
       <%# Display current points %>
       <% if @story.score >= 2 %>
         <%= @story.score %> points
@@ -108,7 +108,9 @@
 
     <%# Display story text if any %>
     <% if @story.markeddown_description.present? %>
-      <%= raw @story.markeddown_description %>
+      <div class="ml3">
+        <%= raw @story.markeddown_description %>
+      </div>
     <% end %>
   </div>
 </div>
@@ -118,50 +120,30 @@
   <div class="fl w-100 ph3">
     <%# Display comment box %>
     <% if @user %>
-      <%= form_for @comment,
-        :html => {:class => "mt3 mb5 measure"} do |f| %>
-        <%# Show errors if posted comment is invalid %>
-        <% if @comment.errors.any? %>
-          <%= errors_for @comment %>
-        <% end %>
-
-        <%# Hidden fields for controller %>
-        <%= f.hidden_field :story_id,
-          :value => @comment.story.short_id %>
-
-        <%# Display text area for comment %>
-        <%= f.text_area :comment,
-          :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
-          :rows => 5 %>
-        <small id="name-desc" class="fr f7 black-60 db mb2">
-        Markdown are supported
-        </small>
-        <%= f.submit "Add comment",
-          :class => "pv1 ph2 mr3" %>
-      <% end %>
+      <%= render partial: "comments/comment_form",
+        locals: {
+          comment: @comment,
+          story_id: @comment.story.short_id
+        }
+      %>
     <% else %>
-      <%# Disable the form if user is not logged in %>
-      <%= form_for @comment, :html => {:class => "mt3 measure"} do |f| %>
-        <%# Display text area for comment %>
-        <%= f.text_area :comment,
-          :class => "input-reset ba b--black-20 pa2 mb2 db w-100",
-          :rows => 5,
-          :disabled => true,
-          :placeholder => "You must be logged in to leave a comment." %>
-        <small id="name-desc" class="fr f7 black-60 db mb2">
-        Markdown are supported
-        </small>
-        <%= f.submit "Add comment",
-          :disabled => true,
-          :class => "pv1 ph2 mr3" %>
-      <% end %>
+      <%# Disable comment form for unauthenticated user %>
+      <%= render partial: "comments/comment_form",
+        locals: {
+          comment: @comment,
+          story_id: @comment.story.short_id,
+          disabled: true
+        }
+      %>
     <% end %>
 
     <%# Display comments %>
-    <ol class="list pl0">
+    <ol
+      id="comments"
+      class="list pl0 mt5">
       <% replies_data = @comments.group_by(&:parent_comment_id)%>
       <% root_comments = replies_data[nil] %>
-      <%= render partial: "comment",
+      <%= render partial: "comments/comment",
         collection: root_comments,
         as: :comment,
         locals: {replies_data: replies_data} %>

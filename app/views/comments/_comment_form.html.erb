@@ -1,0 +1,102 @@
+
+<%# Get the button text variable %>
+<% if local_assigns[:button_text] %>
+  <% button_text = local_assigns[:button_text] %>
+<% else %>
+  <% button_text = "Add comment" %>
+<% end %>
+
+<%# Get the css id variable %>
+<% if local_assigns[:css_id] %>
+  <% css_id = local_assigns[:css_id] %>
+<% else %>
+  <% css_id = "new_comment" %>
+<% end %>
+
+<%# Get the css class variable %>
+<% if local_assigns[:css_classes] %>
+  <% css_classes = local_assigns[:css_classes] %>
+<% else %>
+  <% css_classes = "ml3 mt3 new_comment_or_reply" %>
+<% end %>
+
+<%# Get the css class variable %>
+<% if local_assigns[:parent_id] %>
+  <% parent_id = local_assigns[:parent_id] %>
+  <% css_id = "reply_" + parent_id %>
+<% else %>
+  <% parent_id = nil %>
+<% end %>
+
+<%# Get the disabled status %>
+<% if local_assigns[:disabled] %>
+  <% disabled = local_assigns[:disabled] %>
+<% else %>
+  <% disabled = false %>
+<% end %>
+
+<%# Define the comment form %>
+<%= form_with model: Comment.new,
+  id: css_id,
+  class: css_classes  do |f| %>
+
+  <%# Show errors if posted comment is invalid %>
+  <% if comment.errors.any? %>
+    <div class="mv3 lh-copy">
+      <span class="black">🙅</span> <span class="b">Oops</span>
+      <ul class="pl3 error-color">
+      <% comment.errors[:comment].each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Hidden fields for controller %>
+  <%= f.hidden_field :story_id, :value => story_id %>
+
+  <%# Set parent_id if any %>
+  <% if parent_id %>
+    <%= f.hidden_field :parent_id, :value => local_assigns[:parent_id] %>
+  <% end %>
+
+  <%# Display text area for comment
+    We use text_area_id to disinguish all the form.
+    This mae easier to test %>
+  <% text_area_id = "text_comment_" + story_id %>
+  <% if parent_id %>
+    <% text_area_id = text_area_id + "_" + parent_id %>
+  <% end %>
+  <% if disabled %>
+    <% f.text_area :comment,
+      :class => "input-reset ba b--black-20 pa2 mb2 db w-100 pa2",
+      :rows => 8,
+      :disabled => true,
+      :placeholder => "You must be logged in to leave a comment.",
+      :id => text_area_id,
+      :value => comment.comment %>
+  <% else %>
+    <%= f.text_area :comment,
+      :class => "input-reset ba b--black-20 pa2 mb2 db w-100 pa2",
+      :rows => 8,
+      :id => text_area_id,
+      :value => comment.comment  %>
+  <% end %>
+
+  <%# Show markdown helper %>
+  <small id="name-desc" class="fr f7 black-60 db mb2">
+    Markdown are supported
+  </small>
+
+  <%# Show button %>
+  <% if disabled %>
+    <%= f.submit button_text,
+      :disabled => true,
+      :class => "pv1 ph2 mr3" %>
+  <% else %>
+    <%= f.submit button_text,
+      :data => { "disable-with": "Processing..." },
+      :class => "pv1 ph2 mr3" %>
+  <% end %>
+
+<% end %>

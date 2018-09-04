@@ -121,7 +121,7 @@ class ApplicationController < ActionController::Base
       if request.get?
         session[:redirect_to] = request.original_fullpath
       end
-      redirect_to "/"
+      redirect_to login_path
     end
   end
 
