@@ -131,14 +131,6 @@ then load the schema again.
 
 - In production, see `config/initializers/production.rb.sample` for GitHub/Twitter integration help.
 
-- Execute the following command to run the test:
-
-  ```sh
-  bundle exec rspec
-  # Or individual spec
-  bundle exec rspec spec/controllers/sessions_controller_spec.rb
-  ```
-
 #### Administration
 
 Basic moderation happens on-site, but most other administrative tasks require use of the rails console in production.
@@ -198,12 +190,40 @@ read the following [guide](https://devcenter.heroku.com/articles/multiple-enviro
 
 To get the logs you can run the following command:
 
-```
+```shell
 heroku logs --app APP_NAME
 ```
 
 or to follow the logs:
 
-```
+```shell
 heroku logs --app APP_NAME --tail
+```
+
+#### Testing
+
+You need to install [chromedriver](https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver).
+
+In ubuntu, add the following to your `.bashrc`:
+
+```shell
+export PATH=$PATH:/usr/lib/chromium-browser/
+```
+
+Make sure you have restart your current shell session
+before run the tests:
+
+```shell
+exec $SHELL
+```
+
+Execute the following command to run the test:
+
+```shell
+# Precompile the assets
+bundle exec rake assets:precompile
+# Run all specs
+bundle exec rspec
+# Or individual spec
+bundle exec rspec spec/controllers/sessions_controller_spec.rb
 ```

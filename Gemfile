@@ -41,6 +41,7 @@ gem "sitemap_generator" # for better search engine indexing
 group :test, :development do
   gem "bullet"
   gem "capybara"
+  gem "selenium-webdriver"
   gem "launchy"
   gem "listen"
   gem "rspec-rails"

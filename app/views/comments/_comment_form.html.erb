@@ -1,4 +1,3 @@
-
 <%# Get the button text variable %>
 <% if local_assigns[:button_text] %>
   <% button_text = local_assigns[:button_text] %>
@@ -38,7 +37,8 @@
 <%# Define the comment form %>
 <%= form_with model: Comment.new,
   id: css_id,
-  class: css_classes  do |f| %>
+  class: css_classes,
+  html: {"data-type": "json"} do |f| %>
 
   <%# Show errors if posted comment is invalid %>
   <% if comment.errors.any? %>
@@ -68,7 +68,7 @@
     <% text_area_id = text_area_id + "_" + parent_id %>
   <% end %>
   <% if disabled %>
-    <% f.text_area :comment,
+    <%= f.text_area :comment,
       :class => "input-reset ba b--black-20 pa2 mb2 db w-100 pa2",
       :rows => 8,
       :disabled => true,

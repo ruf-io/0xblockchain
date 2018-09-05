@@ -73,9 +73,8 @@
       </p>
     </div>
 
-    <%# Display comment box %>
-    <% parent_comment = comment %>
     <%# Display reply box %>
+    <% parent_comment = comment %>
     <% if @user %>
       <%= render partial: "comments/comment_form",
         locals: {

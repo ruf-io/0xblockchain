@@ -1,6 +1,6 @@
 // Import all dependencies
+//= require rails-ujs
 //= require jquery
-//= require jquery_ujs
 //= require selectize
 
 $(document).ready(function() {
@@ -44,18 +44,18 @@ $(document).ready(function() {
 
   // Handle post new comment or reply via ajax
   $(document)
-    .on("ajax:success", ".new_comment_or_reply", function(
-      event,
-      data,
-      status,
-      xhr
-    ) {
+    .on("ajax:success", ".new_comment_or_reply", function(event) {
       var currentForm = this;
-      var serverResponse = JSON.parse(data);
+      console.log(event.detail);
+      // Get the JSON response from server and parse it as
+      // javascript object
+      var serverResponse = JSON.parse(event.detail[2].responseText);
+      // Get the HTML data
       var html_data = serverResponse.html_data;
+      // Get the parent comment id (if any)
       var parent_id = serverResponse.parent_comment_id;
-
       if (serverResponse.is_error) {
+        // Display errror on the form if error
         $(currentForm).replaceWith(html_data);
       } else {
         // Comment or reply is successfully added
@@ -63,18 +63,21 @@ $(document).ready(function() {
           // Add new reply to the list of replies
           var parentCommentReplies = $("#replies_" + parent_id);
           var successMessage =
-            '<li class="success-color mb3 ml3">Reply added</li>';
-          parentCommentReplies.prepend(html_data);
-          parentCommentReplies.prepend(successMessage);
+            '<p class="success-color mb3 ml3">Reply added</p>';
+          parentCommentReplies.append(html_data);
+          $(currentForm).before(successMessage);
+          // Hide the form if this is a reply
           currentForm.style.display = "none";
         } else {
+          // Add new comment to the list of comments
           var storyComments = $("#comments");
           var successMessage =
-            '<li class="success-color mb3 ml3">Comment added</li>';
-          storyComments.prepend(html_data);
-          storyComments.prepend(successMessage);
+            '<p class="success-color mb3 ml3">Comment added</p>';
+          storyComments.append(html_data);
+          $(currentForm).before(successMessage);
         }
-        // Set form to empty
+
+        // Remove posted text comment from the form
         $(currentForm)
           .children("textarea[name='comment[comment]']")
           .val("");

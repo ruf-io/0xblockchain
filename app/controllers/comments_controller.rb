@@ -18,7 +18,6 @@ class CommentsController < ApplicationController
 
   # Create new comment
   def create
-    puts "======================= DEBUG ++++++++++++++++++++++++++"
     # Get the story
     story_id = params[:comment][:story_id]
     comment = Comment.new
@@ -101,11 +100,27 @@ class CommentsController < ApplicationController
         }
       is_error = false
     end
-    return render :json => {
-      :is_error => is_error,
-      :html_data => html_data,
-      :parent_comment_id => parent_comment_id,
-    }
+
+    respond_to do |format|
+      format.html do
+        # Generate HTML
+        return render :partial => "comments/comment",
+          :layout => false,
+          :content_type => "text/html",
+          :locals => {
+            :comment => comment,
+            :story_id => story_id,
+          }
+      end
+
+      format.json do
+        return render :json => {
+          :is_error => is_error,
+          :html_data => html_data,
+          :parent_comment_id => parent_comment_id,
+        }
+      end
+    end
   end
 
   def show
