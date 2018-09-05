@@ -19,12 +19,11 @@
   <% css_classes = "ml3 mt3 new_comment_or_reply" %>
 <% end %>
 
-<%# Get the css class variable %>
-<% if local_assigns[:parent_id] %>
-  <% parent_id = local_assigns[:parent_id] %>
-  <% css_id = "reply_" + parent_id %>
-<% else %>
-  <% parent_id = nil %>
+<%# Check wether comment has parent or not, if yes
+  then overwrite css id as reply. we use this for toggler
+  feature %>
+<% if comment.has_parent? %>
+  <% css_id = "reply_" + comment.parent.short_id %>
 <% end %>
 
 <%# Get the disabled status %>
@@ -35,7 +34,7 @@
 <% end %>
 
 <%# Define the comment form %>
-<%= form_with model: Comment.new,
+<%= form_with model: comment,
   id: css_id,
   class: css_classes,
   html: {"data-type": "json"} do |f| %>
@@ -53,19 +52,19 @@
   <% end %>
 
   <%# Hidden fields for controller %>
-  <%= f.hidden_field :story_id, :value => story_id %>
+  <%= f.hidden_field :story_short_id, :value => story_short_id %>
 
   <%# Set parent_id if any %>
-  <% if parent_id %>
-    <%= f.hidden_field :parent_id, :value => local_assigns[:parent_id] %>
+  <% if comment.has_parent? %>
+    <%= f.hidden_field :parent_id, :value => comment.parent.short_id %>
   <% end %>
 
   <%# Display text area for comment
     We use text_area_id to disinguish all the form.
     This mae easier to test %>
-  <% text_area_id = "text_comment_" + story_id %>
-  <% if parent_id %>
-    <% text_area_id = text_area_id + "_" + parent_id %>
+  <% text_area_id = "text_comment_" + story_short_id %>
+  <% if comment.has_parent? %>
+    <% text_area_id = text_area_id + "_" + comment.parent.short_id %>
   <% end %>
   <% if disabled %>
     <%= f.text_area :comment,

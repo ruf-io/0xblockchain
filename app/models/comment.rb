@@ -1,13 +1,22 @@
 class Comment < ApplicationRecord
+  # Tree structure support
+  has_ancestry
+
   belongs_to :user
   belongs_to :story,
              :inverse_of => :comments
   has_many :votes,
            :dependent => :delete_all
-  belongs_to :parent_comment,
-             :class_name => "Comment",
-             :inverse_of => false,
-             :required => false
+  # belongs_to :parent_comment,
+  #            :class_name => "Comment",
+  #            :foreign_key => "parent_comment_id",
+  #            :inverse_of => :replies,
+  #            :optional => true
+  # has_many :replies,
+  #          :class_name => "Comment",
+  #          :foreign_key => "parent_comment_id",
+  #          :dependent => :restrict_with_error,
+  #          :inverse_of => :parent_comment
   has_one :moderation,
           :class_name => "Moderation",
           :inverse_of => :comment,
@@ -23,8 +32,11 @@ class Comment < ApplicationRecord
     self.assign_initial_confidence
     self.assign_thread_id
   end
-  after_create :record_initial_upvote, :mark_submitter, :deliver_reply_notifications,
-               :deliver_mention_notifications, :log_hat_use
+  after_create :record_initial_upvote,
+               :mark_submitter,
+               :deliver_reply_notifications,
+               :deliver_mention_notifications,
+               :log_hat_use
   after_destroy :unassign_votes
 
   scope :active, -> { where(:is_deleted => false, :is_moderated => false) }
@@ -169,8 +181,8 @@ class Comment < ApplicationRecord
   end
 
   def assign_thread_id
-    if self.parent_comment_id.present?
-      self.thread_id = self.parent_comment.thread_id
+    if self.has_parent?
+      self.thread_id = self.parent.thread_id
     else
       self.thread_id = Keystore.incremented_value_for("thread_id")
     end
@@ -255,8 +267,8 @@ class Comment < ApplicationRecord
   end
 
   def deliver_reply_notifications
-    if self.parent_comment_id &&
-       (u = self.parent_comment.try(:user)) &&
+    if self.has_parent? &&
+       (u = self.parent.try(:user)) &&
        u.id != self.user.id
       if u.email_replies?
         begin

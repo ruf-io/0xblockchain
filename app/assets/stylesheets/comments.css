@@ -1,0 +1,12 @@
+/*
+ * Include all dependencies from {vendor,libs}/assets
+ *= require tachyons
+ *= require typography
+ *= require navigation
+ *= require notification
+ *= require form
+ *= require fontawesome.all
+ *= require link
+ *= require tag
+ *= require avatar
+ */

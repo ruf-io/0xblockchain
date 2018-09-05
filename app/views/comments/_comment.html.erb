@@ -1,11 +1,8 @@
 <%# Ger replies data %>
-<% if local_assigns[:replies_data] %>
-  <% replies = local_assigns[:replies_data][comment.id] %>
-<% else %>
-  <% replies = nil %>
-<% end %>
 
-<li id="c_<%= comment.short_id%>" class="ml3 mb3">
+<%# Define comment ID %>
+<% comment_id ="c_" + comment.short_id %>
+<li id="<%= comment_id %>" class="ml3 mb3">
   <%# Comment meta data %>
   <p>
     <%# Comment upvote button %>
@@ -52,11 +49,20 @@
       <%= time_ago_in_words_label(comment.created_at) %>
     </a>
 
-    <%# Show collapse button %>
+    <% if comment.is_editable_by_user?(@user) %>
+      <span class="gray">|
+        <%= link_to "edit", edit_comment_path(comment),
+          :id => "edit_" + comment_id,
+          :class => "gray link underline-hover" %>
+        |
+      </span>
+    <% end %>
+
+      <%# Show collapse button %>
     <a onclick="expandOrCollapseComment(this, 'comment_data_<%= comment.short_id %>')"
       class="link gray underline-hover"
       href="javascript:void(0)">
-      [ - ]
+       [ - ]
     </a>
   </p>
 
@@ -74,13 +80,11 @@
     </div>
 
     <%# Display reply box %>
-    <% parent_comment = comment %>
     <% if @user %>
       <%= render partial: "comments/comment_form",
         locals: {
-          comment: Comment.new,
-          story_id: comment.story.short_id,
-          parent_id: parent_comment.short_id,
+          comment: Comment.new(:parent => comment),
+          story_short_id: comment.story.short_id,
           css_classes: "ml3 mt3 new_comment_or_reply dn",
           button_text: "Add reply"
         }
@@ -89,9 +93,8 @@
       <%# Disable comment form for unauthenticated user %>
       <%= render partial: "comments/comment_form",
         locals: {
-          comment: Comment.new,
-          story_id: comment.story.short_id,
-          parent_id: parent_comment.short_id,
+          comment: Comment.new(:parent => comment),
+          story_short_id: comment.story.short_id,
           css_classes: "ml3 mt3 new_comment_or_reply dn",
           disabled: true,
           button_text: "Add reply"
@@ -101,17 +104,19 @@
 
     <%# Get and show the replies data, if any
       We use recursive technique to render the comments tree %>
+    <% replies ||= comment.children %>
     <ol id="replies_<%= comment.short_id%>" class="list pl3">
-    <% if replies.present? %>
-        <%= render partial: "comments/comment",
-          collection: replies,
-          as: :comment,
+      <% if replies.present? %>
+        <% replies.each do |reply| %>
+          <%= render partial: "comments/comment",
           locals: {
-            replies_data: replies_data
-          }
-        %>
-      </ol>
-    <% end %>
+          comment: reply,
+          replies: reply.children
+          } %>
+        <% end %>
+      <% end %>
+    </ol>
   </div>
 
 </li>
+

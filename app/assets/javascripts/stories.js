@@ -53,7 +53,7 @@ $(document).ready(function() {
       // Get the HTML data
       var html_data = serverResponse.html_data;
       // Get the parent comment id (if any)
-      var parent_id = serverResponse.parent_comment_id;
+      var parent_id = serverResponse.parent_short_id;
       if (serverResponse.is_error) {
         // Display errror on the form if error
         $(currentForm).replaceWith(html_data);

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_03_160123) do
+ActiveRecord::Schema.define(version: 2018_09_05_164954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gin"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 2018_09_03_160123) do
     t.text "comment", null: false
     t.integer "story_id", null: false
     t.integer "user_id", null: false
-    t.integer "parent_comment_id"
+    t.integer "parent_id"
     t.integer "upvotes", default: 0, null: false
     t.integer "downvotes", default: 0, null: false
     t.datetime "created_at"
@@ -34,6 +34,8 @@ ActiveRecord::Schema.define(version: 2018_09_03_160123) do
     t.integer "hat_id"
     t.string "short_id", limit: 10, default: "", null: false
     t.integer "thread_id"
+    t.string "ancestry"
+    t.index ["ancestry"], name: "index_comments_on_ancestry"
     t.index ["comment"], name: "index_comments_on_comment", using: :gin
     t.index ["confidence"], name: "confidence_idx"
     t.index ["short_id"], name: "index_comments_on_short_id", unique: true
@@ -285,7 +287,7 @@ ActiveRecord::Schema.define(version: 2018_09_03_160123) do
       SELECT read_ribbons.user_id,
       comments.id AS comment_id,
       read_ribbons.story_id,
-      comments.parent_comment_id,
+      comments.parent_id AS parent_comment_id,
       comments.created_at AS comment_created_at,
       parent_comments.user_id AS parent_comment_author_id,
       comments.user_id AS comment_author_id,
@@ -300,7 +302,7 @@ ActiveRecord::Schema.define(version: 2018_09_03_160123) do
      FROM (((read_ribbons
        JOIN comments ON ((comments.story_id = read_ribbons.story_id)))
        JOIN stories ON ((stories.id = comments.story_id)))
-       LEFT JOIN comments parent_comments ON ((parent_comments.id = comments.parent_comment_id)))
+       LEFT JOIN comments parent_comments ON ((parent_comments.id = comments.parent_id)))
     WHERE ((read_ribbons.is_following = true) AND (comments.user_id <> read_ribbons.user_id) AND (comments.is_deleted = false) AND (comments.is_moderated = false) AND ((parent_comments.user_id = read_ribbons.user_id) OR ((parent_comments.user_id IS NULL) AND (stories.user_id = read_ribbons.user_id))) AND ((comments.upvotes - comments.downvotes) >= 0) AND ((parent_comments.id IS NULL) OR ((parent_comments.upvotes - parent_comments.downvotes) >= 0)));
   SQL
 

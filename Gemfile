@@ -58,4 +58,8 @@ end
 # Github login
 gem "omniauth-github"
 
+# To support tree structure for comments
+# https://github.com/stefankroes/ancestry
+gem "ancestry"
+
 ruby "2.5.1"

@@ -1,0 +1,22 @@
+<div class="cf">
+  <div class="fl w-100 ph3 fs-11pt lh-copy">
+    <p class="ml3 gray">
+      On <%= link_to @comment.story.title,
+        @comment.story.comments_path,
+        :class => "gray" %>
+      <% if @comment.has_parent? %>
+        | <%= link_to "parent",
+          comment_path(@comment.parent),
+          :class => "gray" %>
+      <% end %>
+    </p>
+    <ol id="comments" class="list pl0 mt3">
+    <%= render partial: "comments/comment",
+      locals: {
+        comment: @comment,
+        replies: @comment.children
+      } %>
+    </ol>
+  </div>
+</div>
+

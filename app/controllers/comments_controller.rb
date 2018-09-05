@@ -19,45 +19,69 @@ class CommentsController < ApplicationController
   # Create new comment
   def create
     # Get the story
-    story_id = params[:comment][:story_id]
-    comment = Comment.new
-    comment.comment = params[:comment][:comment].to_s
-    comment.user = @user
+    story_short_id = params[:comment][:story_short_id]
+    parent_id = params[:comment][:parent_id]
     is_error = false
     html_data = nil
-    parent_comment_id = nil
+    parent_short_id = nil
+    # Initialize root comment, if parent_id exists
+    # we will re-initialize it as child comment (reply)
+    comment = Comment.new
 
     begin
-      story = Story.where(:short_id => story_id).first
+      story = Story.find_by(:short_id => story_short_id)
       if !story || story.is_gone?
         raise CommentStoryNotFoundError
       end
-      comment.story_id = story.id
-
-      # Setup reply if the comment is reply to comment
-      if params[:comment][:parent_id].present?
-        parent_comment = Comment.where(
+      # If parent id exists, check the parent comment first
+      # then re-initialize comment as child comment
+      if parent_id
+        parent_comment = Comment.find_by(
           :story_id => story.id,
-          :short_id => params[:comment][:parent_id]
-        ).first
-        if parent_comment
-          comment.parent_comment = parent_comment
-          parent_comment_id = parent_comment.short_id
-        else
+          :short_id => parent_id
+        )
+        if parent_comment.nil?
           raise CommentParentNotFoundError
         end
+        # Re-initialize the comment as a child comment
+        comment = Comment.new(:parent => parent_comment)
+        # We use this ID to render the reply via javascript
+        # on the correct location
+        parent_short_id = parent_comment.short_id
       end
 
       # Burst spam protection
-      last_user_comment = Comment.order(created_at: :desc).find_by(
-        story_id: story.id,
-        user_id: @user.id,
-        parent_comment_id: comment.parent_comment_id
-      )
+      # Get the last user comment and get the created at
+      last_user_comment = nil
+      if comment.parent
+        last_user_comment = Comment
+        .order(:created_at => :desc)
+        .find_by(
+          :user_id => @user.id,
+          :story_id => story.id,
+          :parent_id => comment.parent.id
+        )
+      else
+        last_user_comment = Comment
+          .order(:created_at => :desc)
+          .find_by(:user_id => @user.id, :story_id => story.id)
+      end
+      # Raise an error if she create the comment in less than
+      # 5 minutes on different thread
       if last_user_comment &&
          (Time.now.utc - last_user_comment.created_at) < 5.minutes
         raise CommentAlreadyPostedError
       end
+      # last_user_comment = Comment.order(created_at: :desc).find_by(
+      #   story_id: story.id,
+      #   user_id: @user.id,
+      #   parent_comment_id: comment.parent_id
+      # )
+
+      # Setup comment data
+      comment.comment = params[:comment][:comment].to_s
+      comment.user = @user
+      comment.story = story
 
       # Save the comment or raise an error
       if comment.valid? && comment.save
@@ -87,7 +111,7 @@ class CommentsController < ApplicationController
         :content_type => "text/html",
         :locals => {
           :comment => comment,
-          :story_id => story_id,
+          :story_short_id => story_short_id,
         }
       is_error = true
     else
@@ -96,45 +120,38 @@ class CommentsController < ApplicationController
         :content_type => "text/html",
         :locals => {
           :comment => comment,
-          :story_id => story_id,
         }
       is_error = false
     end
 
     respond_to do |format|
-      format.html do
-        # Generate HTML
-        return render :partial => "comments/comment",
-          :layout => false,
-          :content_type => "text/html",
-          :locals => {
-            :comment => comment,
-            :story_id => story_id,
-          }
-      end
-
+      # Response to JSON request
+      # TODO(pyk): Disable other request format here
       format.json do
         return render :json => {
           :is_error => is_error,
           :html_data => html_data,
-          :parent_comment_id => parent_comment_id,
+          :parent_short_id => parent_short_id,
         }
       end
     end
   end
 
+  # Show comments
   def show
-    if !((comment = find_comment) && comment.is_editable_by_user?(@user))
-      return render :plain => "can't find comment", :status => 400
-    end
+    @comment = Comment
+      .includes(:story, :user)
+      .find_by(:short_id => params[:id])
 
-    render :partial => "comment",
-           :layout => false,
-           :content_type => "text/html",
-           :locals => {
-             :comment => comment,
-             :show_tree_lines => params[:show_tree_lines],
-           }
+    # TODO: cek apakah comment hilang/diremove
+    if @comment.nil?
+      flash[:error] = "Comment is not available"
+      return redirect_to root_path
+    end
+    # Get the replies
+    @replies = @comment.descendants
+
+    render :action => "show"
   end
 
   def show_short_id
@@ -158,8 +175,11 @@ class CommentsController < ApplicationController
       return render :plain => "can't find comment", :status => 400
     end
 
-    render :partial => "commentbox", :layout => false,
-      :content_type => "text/html", :locals => { :comment => comment }
+    # render :partial => "commentbox", :layout => false,
+    #   :content_type => "text/html", :locals => { :comment => comment }
+
+    @comment = find_comment
+    render :action => "edit"
   end
 
   def reply
@@ -209,30 +229,38 @@ class CommentsController < ApplicationController
       :content_type => "text/html", :locals => { :comment => comment }
   end
 
+  # Update comment
   def update
-    if !((comment = find_comment) && comment.is_editable_by_user?(@user))
-      return render :plain => "can't find comment", :status => 400
+    # if !((comment = find_comment) && comment.is_editable_by_user?(@user))
+    #   return render :plain => "can't find comment", :status => 400
+    # end
+
+    # comment.comment = params[:comment][:comment]
+    # comment.hat_id = nil
+    # if params[:hat_id] && @user.wearable_hats.where(:id => params[:hat_id])
+    #   comment.hat_id = params[:hat_id]
+    # end
+
+    @comment = find_comment
+    @comment.comment = params[:comment][:comment]
+    if @comment.save
+      redirect_to comment_path(@comment)
     end
 
-    comment.comment = params[:comment]
-    comment.hat_id = nil
-    if params[:hat_id] && @user.wearable_hats.where(:id => params[:hat_id])
-      comment.hat_id = params[:hat_id]
-    end
+    # if params[:preview].blank? && comment.save
+    #   votes = Vote.comment_votes_by_user_for_comment_ids_hash(@user.id, [comment.id])
+    #   comment.current_vote = votes[comment.id]
 
-    if params[:preview].blank? && comment.save
-      votes = Vote.comment_votes_by_user_for_comment_ids_hash(@user.id, [comment.id])
-      comment.current_vote = votes[comment.id]
+    #   # render :partial => "comments/comment",
+    #   #        :layout => false,
+    #   #        :content_type => "text/html",
+    #   #        :locals => { :comment => comment, :show_tree_lines => params[:show_tree_lines] }
+    #   render
+    # else
+    #   comment.current_vote = { :vote => 1 }
 
-      render :partial => "comments/comment",
-             :layout => false,
-             :content_type => "text/html",
-             :locals => { :comment => comment, :show_tree_lines => params[:show_tree_lines] }
-    else
-      comment.current_vote = { :vote => 1 }
-
-      preview comment
-    end
+    #   preview comment
+    # end
   end
 
   def unvote

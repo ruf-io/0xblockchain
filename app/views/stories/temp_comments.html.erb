@@ -1,0 +1,31 @@
+
+<%# Comments %>
+<div class="cf">
+  <div class="fl w-100 ph3">
+    <%# Display comment box %>
+    <% if @user %>
+      <%= render partial: "comments/comment_form",
+        locals: {
+          comment: @new_comment,
+        }
+      %>
+    <% else %>
+      <%# Disable comment form for unauthenticated user %>
+      <%= render partial: "comments/comment_form",
+        locals: {
+          comment: @new_comment,
+          disabled: true
+        }
+      %>
+    <% end %>
+
+    <%# Display comments %>
+    <ol
+      id="comments"
+      class="list pl0 mt5">
+      <%= render partial: "comments/comment",
+        collection: @comments,
+        as: :comment %>
+    </ol>
+  </div>
+</div>

@@ -117,21 +117,21 @@
 
 <%# Comments %>
 <div class="cf">
-  <div class="fl w-100 ph3">
+  <div class="fl w-100 ph3 fs-11pt lh-copy">
     <%# Display comment box %>
     <% if @user %>
       <%= render partial: "comments/comment_form",
         locals: {
-          comment: @comment,
-          story_id: @comment.story.short_id
+          comment: @new_comment,
+          story_short_id: @new_comment.story.short_id,
         }
       %>
     <% else %>
       <%# Disable comment form for unauthenticated user %>
       <%= render partial: "comments/comment_form",
         locals: {
-          comment: @comment,
-          story_id: @comment.story.short_id,
+          comment: @new_comment,
+          story_short_id: @new_comment.story.short_id,
           disabled: true
         }
       %>
@@ -141,12 +141,10 @@
     <ol
       id="comments"
       class="list pl0 mt5">
-      <% replies_data = @comments.group_by(&:parent_comment_id)%>
-      <% root_comments = replies_data[nil] %>
       <%= render partial: "comments/comment",
-        collection: root_comments,
-        as: :comment,
-        locals: {replies_data: replies_data} %>
+        collection: @comments,
+        as: :comment %>
     </ol>
   </div>
 </div>
+

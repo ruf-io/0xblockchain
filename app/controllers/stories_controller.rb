@@ -29,8 +29,8 @@ class StoriesController < ApplicationController
                 :only => [:destroy, :edit, :undelete, :update]
   before_action :find_story!,
                 :only => [:suggest, :submit_suggestions]
-  around_action :track_story_reads,
-                only: [:show], if: -> { @user.present? }
+  # around_action :track_story_reads,
+  #               only: [:show], if: -> { @user.present? }
 
   def create
     @title = "Submit Story"
@@ -141,53 +141,68 @@ class StoriesController < ApplicationController
     return render :action => "new", :layout => false
   end
 
+  # Show story
   def show
+    puts "================= DEBUG START SHOW ======================="
     # @story was already loaded by track_story_reads for logged-in users
-    @story ||= Story.where(short_id: params[:id]).first!
-    if @story.merged_into_story
-      flash[:success] = "\"#{@story.title}\" has been merged into this story."
-      return redirect_to @story.merged_into_story.comments_path
-    end
+    # @story ||= Story.where(short_id: params[:id]).first!
+    # if @story.merged_into_story
+    #   flash[:success] = "\"#{@story.title}\" has been merged into this story."
+    #   return redirect_to @story.merged_into_story.comments_path
+    # end
 
-    if !@story.can_be_seen_by_user?(@user)
-      raise ActionController::RoutingError.new("story gone")
-    end
+    # if !@story.can_be_seen_by_user?(@user)
+    #   raise ActionController::RoutingError.new("story gone")
+    # end
 
-    @comments = get_arranged_comments_from_cache(params[:id]) do
-      @story.merged_comments
-            .includes(:user, :story, :hat, :votes => :user)
-            .arrange_for_user(@user)
-    end
-
+    # @comments = get_arranged_comments_from_cache(params[:id]) do
+    #   @story.merged_comments
+    #         .includes(:user, :story, :hat, :votes => :user)
+    #         .arrange_for_user(@user)
+    # end
+    # Get the current story
+    @story = Story
+      .includes(:user, :tags)
+      .where(:short_id => params[:id])
+      .first
+    # TODO(pyk): check wether story is exists or not
     @title = @story.title
     @short_url = @story.short_id_url
+    @new_comment = Comment.new(:story => @story)
+    # Get the comments and the user
+    # TODO(pyk): Order the comment
+    @comments = Comment
+      .roots
+      .order(:created_at => :desc)
+      .where(:story_id => @story.id)
 
-    respond_to do |format|
-      format.html {
-        @comment = @story.comments.build
+    return render :action => "show"
+    # respond_to do |format|
+    #   format.html {
+    #     @comment = @story.comments.build
 
-        @meta_tags = {
-          "twitter:card" => "summary",
-          "twitter:site" => "@lobsters",
-          "twitter:title" => @story.title,
-          "twitter:description" => @story.comments_count.to_s + " " +
-                                   'comment'.pluralize(@story.comments_count),
-          "twitter:image" => Rails.application.root_url +
-                             "apple-touch-icon-144.png",
-        }
+    #     @meta_tags = {
+    #       "twitter:card" => "summary",
+    #       "twitter:site" => "@lobsters",
+    #       "twitter:title" => @story.title,
+    #       "twitter:description" => @story.comments_count.to_s + " " +
+    #                                'comment'.pluralize(@story.comments_count),
+    #       "twitter:image" => Rails.application.root_url +
+    #                          "apple-touch-icon-144.png",
+    #     }
 
-        if @story.user.twitter_username.present?
-          @meta_tags["twitter:creator"] = "@" + @story.user.twitter_username
-        end
+    #     if @story.user.twitter_username.present?
+    #       @meta_tags["twitter:creator"] = "@" + @story.user.twitter_username
+    #     end
 
-        load_user_votes
+    #     load_user_votes
 
-        render :action => "show"
-      }
-      format.json {
-        render :json => @story.as_json(:with_comments => @comments)
-      }
-    end
+    #     render :action => "show"
+    #   }
+    #   format.json {
+    #     render :json => @story.as_json(:with_comments => @comments)
+    #   }
+    # end
   end
 
   def suggest
