@@ -143,28 +143,15 @@ class StoriesController < ApplicationController
 
   # Show story
   def show
-    # @story was already loaded by track_story_reads for logged-in users
-    # @story ||= Story.where(short_id: params[:id]).first!
-    # if @story.merged_into_story
-    #   flash[:success] = "\"#{@story.title}\" has been merged into this story."
-    #   return redirect_to @story.merged_into_story.comments_path
-    # end
-
-    # if !@story.can_be_seen_by_user?(@user)
-    #   raise ActionController::RoutingError.new("story gone")
-    # end
-
-    # @comments = get_arranged_comments_from_cache(params[:id]) do
-    #   @story.merged_comments
-    #         .includes(:user, :story, :hat, :votes => :user)
-    #         .arrange_for_user(@user)
-    # end
-    # Get the current story
+    # Get the requested story
     @story = Story
       .includes(:user, :tags)
-      .where(:short_id => params[:id])
-      .first
-    # TODO(pyk): check wether story is exists or not
+      .find_by(:short_id => params[:id])
+    if @story.nil?
+      return redirect_to root_path
+    end
+    # TODO(pyk): handle when story is deleted
+
     @title = @story.title
     @short_url = @story.short_id_url
     @new_comment = Comment.new(:story => @story)
@@ -172,6 +159,7 @@ class StoriesController < ApplicationController
     # TODO(pyk): Order the comment
     @comments = Comment
       .roots
+      .includes(:user, :story)
       .order(:created_at => :desc)
       .where(:story_id => @story.id)
 

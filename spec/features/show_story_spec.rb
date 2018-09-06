@@ -68,4 +68,10 @@ RSpec.feature "Show story" do
     find("#comments_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
   end
+
+  scenario "Story not exists" do
+    # Visit story that not exists
+    visit "/s/test_story_id/test_title"
+    expect(page).to have_current_path root_path
+  end
 end

@@ -68,7 +68,7 @@
   <% end %>
   <% if disabled %>
     <%= f.text_area :comment,
-      :class => "input-reset ba b--black-20 pa2 mb2 db w-100 pa2",
+      :class => "input-reset ba b--black-20 pa3 mb2 db w-100 pa2",
       :rows => 8,
       :disabled => true,
       :placeholder => "You must be logged in to leave a comment.",
@@ -76,7 +76,7 @@
       :value => comment.comment %>
   <% else %>
     <%= f.text_area :comment,
-      :class => "input-reset ba b--black-20 pa2 mb2 db w-100 pa2",
+      :class => "input-reset ba b--black-20 pa3 mb2 db w-100 pa2",
       :rows => 8,
       :id => text_area_id,
       :value => comment.comment  %>

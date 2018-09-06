@@ -34,14 +34,9 @@
       by
     </span>
 
-    <%# User avatar and username%>
-    <% if (@user && @user.show_avatars?) || !@user %>
-      <a href="/u/<%= comment.user.username %>"><%= avatar_img(comment.user, 16) %></a>
-    <% end %>
+    <%# User username%>
     <a href="/u/<%= comment.user.username %>"
-      class="<%= comment.html_class_for_user %> gray underline-hover link">
-      <%= comment.user.username %>
-    </a>
+      class="<%= comment.html_class_for_user %> gray underline-hover link mr1"><%= comment.user.username %></a>
 
     <%# Time and link to the comment %>
     <a class="link gray underline-hover"
@@ -75,7 +70,8 @@
       <p>
         <a onclick="toggleReplyForm('reply_<%= comment.short_id %>')"
           href="javascript:void(0)"
-          class="gray">reply</a>
+          class="gray"
+          id="<%= "reply_form_toggler_" + comment.short_id %>">reply</a>
       </p>
     </div>
 

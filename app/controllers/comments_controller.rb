@@ -29,13 +29,16 @@ class CommentsController < ApplicationController
     comment = Comment.new
 
     begin
+      # Fint the story first
       story = Story.find_by(:short_id => story_short_id)
-      if !story || story.is_gone?
+      if story.nil? || story.is_gone?
         raise CommentStoryNotFoundError
       end
-      # If parent id exists, check the parent comment first
-      # then re-initialize comment as child comment
-      if parent_id
+
+      # If parent id present, then check the parent
+      # comment first and re-initialize comment as
+      # child comment
+      if parent_id.present?
         parent_comment = Comment.find_by(
           :story_id => story.id,
           :short_id => parent_id
@@ -52,31 +55,23 @@ class CommentsController < ApplicationController
 
       # Burst spam protection
       # Get the last user comment and get the created at
-      last_user_comment = nil
-      if comment.parent
-        last_user_comment = Comment
-        .order(:created_at => :desc)
-        .find_by(
-          :user_id => @user.id,
-          :story_id => story.id,
-          :parent_id => comment.parent.id
-        )
+      last_comment_or_reply = nil
+      if comment.has_parent?
+        last_comment_or_reply = comment
+          .siblings
+          .order(:created_at => :desc)
+          .find_by(:user_id => @user.id, :story_id => story.id)
       else
-        last_user_comment = Comment
+        last_comment_or_reply = Comment
           .order(:created_at => :desc)
           .find_by(:user_id => @user.id, :story_id => story.id)
       end
       # Raise an error if she create the comment in less than
       # 5 minutes on different thread
-      if last_user_comment &&
-         (Time.now.utc - last_user_comment.created_at) < 5.minutes
+      if last_comment_or_reply.present? &&
+         (Time.now.utc - last_comment_or_reply.created_at) < 5.minutes
         raise CommentAlreadyPostedError
       end
-      # last_user_comment = Comment.order(created_at: :desc).find_by(
-      #   story_id: story.id,
-      #   user_id: @user.id,
-      #   parent_comment_id: comment.parent_id
-      # )
 
       # Setup comment data
       comment.comment = params[:comment][:comment].to_s
@@ -94,7 +89,7 @@ class CommentsController < ApplicationController
       comment.errors.add(:comment, "We can't find the story that you comment")
       is_error = true
     rescue CommentAlreadyPostedError
-      comment.errors.add(:comment, "You have already posted a comment here recently.")
+      comment.errors.add(:comment, "You have already posted a comment/reply here recently.")
       is_error = true
     rescue CommentParentNotFoundError
       comment.errors.add(:comment, "Parent comment not found")
