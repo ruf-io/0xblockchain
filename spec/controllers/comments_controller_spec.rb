@@ -13,7 +13,7 @@ RSpec.describe CommentsController, type: :controller do
         },
       }
       # Make sure they uanble to add a comment
-      expect(response).to redirect_to login_path
+      expect(response).to redirect_to root_path
       guest_comment = Comment.find_by(comment: "Hi there! Guest user here")
       expect(guest_comment).to be_nil
     end

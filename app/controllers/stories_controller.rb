@@ -143,7 +143,6 @@ class StoriesController < ApplicationController
 
   # Show story
   def show
-    puts "================= DEBUG START SHOW ======================="
     # @story was already loaded by track_story_reads for logged-in users
     # @story ||= Story.where(short_id: params[:id]).first!
     # if @story.merged_into_story

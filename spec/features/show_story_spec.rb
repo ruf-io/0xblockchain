@@ -18,14 +18,14 @@ RSpec.feature "Show story" do
     visit root_path
     # Make sure the description link is available
     # and it is click-able
-    find("#description-" + story.short_id).click
+    find("#description_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
 
     # Visit root path again
     visit root_path
     # Make sure the 'discuss' link is available
     # and it is click-able
-    find("#comments-" + story.short_id).click
+    find("#comments_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
   end
 
@@ -44,7 +44,7 @@ RSpec.feature "Show story" do
     visit root_path
     # Make sure the 'discuss' link is available
     # and it is click-able
-    find("#comments-" + story.short_id).click
+    find("#comments_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
   end
 
@@ -58,14 +58,14 @@ RSpec.feature "Show story" do
     visit root_path
     # Make sure the description link is available
     # and it is click-able
-    find("#description-" + story.short_id).click
+    find("#description_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
 
     # Visit root path again
     visit root_path
     # Make sure the 'discuss' link is available
     # and it is click-able
-    find("#comments-" + story.short_id).click
+    find("#comments_" + story.short_id).click
     expect(page).to have_current_path story.comments_path
   end
 end

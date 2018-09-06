@@ -18,6 +18,7 @@ RSpec.feature "Logout" do
       # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
       expect(page).to have_content "Login"
+      expect(page).to have_content "You have successfully logged out!"
       expect(page).to have_content "Join via GitHub"
     end
   end
@@ -35,6 +36,7 @@ RSpec.feature "Logout" do
       # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
       expect(page).to have_content "Login"
+      expect(page).to have_content "You have successfully logged out!"
       expect(page).to have_content "Join via GitHub"
     end
   end
@@ -52,6 +54,7 @@ RSpec.feature "Logout" do
       # Make sure it is redirected to the root path
       expect(page).to have_current_path root_path
       expect(page).to have_content "Login"
+      expect(page).to have_content "You have successfully logged out!"
       expect(page).to have_content "Join via GitHub"
     end
   end

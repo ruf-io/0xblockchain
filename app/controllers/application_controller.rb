@@ -118,10 +118,8 @@ class ApplicationController < ActionController::Base
     if @user
       true
     else
-      if request.get?
-        session[:redirect_to] = request.original_fullpath
-      end
-      redirect_to login_path
+      flash[:error] = "Access denied. You must login to access that page."
+      return redirect_to root_path
     end
   end
 
@@ -132,8 +130,8 @@ class ApplicationController < ActionController::Base
       if @user.is_moderator?
         true
       else
-        flash[:error] = "You are not authorized to access that resource."
-        return redirect_to "/"
+        flash[:error] = "Access denied. You are not authorized to access that page."
+        return redirect_to root_path
       end
     end
   end
@@ -145,8 +143,8 @@ class ApplicationController < ActionController::Base
       if @user.is_admin?
         true
       else
-        flash[:error] = "You are not authorized to access that resource."
-        return redirect_to "/"
+        flash[:error] = "Access denied. You are not authorized to access that page."
+        return redirect_to root_path
       end
     end
   end

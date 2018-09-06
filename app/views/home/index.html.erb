@@ -69,7 +69,7 @@
                 </a>
 
                 <% if story.markeddown_description.present? %>
-                  <a id="description-<%= story.short_id %>"
+                  <a id="description_<%= story.short_id %>"
                     class="link gray mr1"
                     title="<%= truncate(story.description, :length => 250) %>"
                     href="<%= story.comments_path %>"><i class="fas fa-align-left"></i></a>

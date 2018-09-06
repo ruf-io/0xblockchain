@@ -45,13 +45,13 @@ class SessionsController < ApplicationController
 
   def destroy
     reset_session
-    referer_url = request.referer || "/"
-    redirect_to referer_url
+    flash[:success] = "You have successfully logged out!"
+    redirect_to root_path
   end
 
   def logout
     reset_session
-    referer_url = request.referer || "/"
-    redirect_to referer_url
+    flash[:success] = "You have successfully logged out!"
+    redirect_to root_path
   end
 end

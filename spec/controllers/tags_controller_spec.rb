@@ -35,7 +35,7 @@ RSpec.describe TagsController, type: :controller do
       get :new
       # Make sure it is redirected to the home page
       # and contains error message
-      expect(flash[:error]).to eq "You are not authorized to access that resource."
+      expect(flash[:error]).to eq "Access denied. You are not authorized to access that page."
     end
   end
 

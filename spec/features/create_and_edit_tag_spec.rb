@@ -28,6 +28,7 @@ RSpec.feature "Create & edit tag" do
 
       # Make sure it is redirected to home page
       expect(page).to have_current_path root_path
+      expect(page).to have_content "Access denied. You must login to access that page."
     end
   end
 
@@ -60,7 +61,7 @@ RSpec.feature "Create & edit tag" do
       # Make sure it is redirected to home page
       # with error message
       expect(page).to have_current_path root_path
-      expect(page).to have_content "You are not authorized to access that resource."
+      expect(page).to have_content "Access denied. You are not authorized to access that page."
     end
   end
 
