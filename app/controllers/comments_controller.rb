@@ -11,7 +11,15 @@ class CommentsController < ApplicationController
   # for rss feeds, load the user's tag filters if a token is passed
   before_action :find_user_from_rss_token, :only => [:index]
   before_action :require_logged_in_user,
-                :only => [:create, :preview, :upvote, :downvote, :unvote]
+                :only => [
+                  :create,
+                  :edit,
+                  :update,
+                  :preview,
+                  :upvote,
+                  :downvote,
+                  :unvote,
+                ]
 
   # for rss feeds, load the user's tag filters if a token is passed
   before_action :find_user_from_rss_token, :only => [:index]
@@ -127,6 +135,7 @@ class CommentsController < ApplicationController
           :is_error => is_error,
           :html_data => html_data,
           :parent_short_id => parent_short_id,
+          :comment_short_id => comment.short_id,
         }
       end
     end
@@ -143,6 +152,7 @@ class CommentsController < ApplicationController
       flash[:error] = "Comment is not available"
       return redirect_to root_path
     end
+
     # Get the replies
     @replies = @comment.descendants
 
@@ -166,15 +176,22 @@ class CommentsController < ApplicationController
   end
 
   def edit
-    if !((comment = find_comment) && comment.is_editable_by_user?(@user))
-      return render :plain => "can't find comment", :status => 400
+    # Find comment
+    @comment = Comment.find_by(:short_id => params[:id])
+    if @comment.nil?
+      flash[:error] = "We can't find the comment."
+      return redirect_to root_path
     end
 
-    # render :partial => "commentbox", :layout => false,
-    #   :content_type => "text/html", :locals => { :comment => comment }
+    # Make sure it is editable by current user
+    # If not then redirect to root_path and flash
+    # the error
+    if !@comment.is_editable_by_user?(@user)
+      flash[:error] = "You can't edit the comment."
+      return redirect_to root_path
+    end
 
-    @comment = find_comment
-    render :action => "edit"
+    return render :action => "edit"
   end
 
   def reply
@@ -226,36 +243,24 @@ class CommentsController < ApplicationController
 
   # Update comment
   def update
-    # if !((comment = find_comment) && comment.is_editable_by_user?(@user))
-    #   return render :plain => "can't find comment", :status => 400
-    # end
-
-    # comment.comment = params[:comment][:comment]
-    # comment.hat_id = nil
-    # if params[:hat_id] && @user.wearable_hats.where(:id => params[:hat_id])
-    #   comment.hat_id = params[:hat_id]
-    # end
-
-    @comment = find_comment
-    @comment.comment = params[:comment][:comment]
-    if @comment.save
-      redirect_to comment_path(@comment)
+    # Find the comment first
+    @comment = Comment
+      .includes(:story)
+      .find_by(:short_id => params[:id])
+    if @comment.nil?
+      flash[:error] = "We can't find the comment."
+      return redirect_to root_path
     end
 
-    # if params[:preview].blank? && comment.save
-    #   votes = Vote.comment_votes_by_user_for_comment_ids_hash(@user.id, [comment.id])
-    #   comment.current_vote = votes[comment.id]
-
-    #   # render :partial => "comments/comment",
-    #   #        :layout => false,
-    #   #        :content_type => "text/html",
-    #   #        :locals => { :comment => comment, :show_tree_lines => params[:show_tree_lines] }
-    #   render
-    # else
-    #   comment.current_vote = { :vote => 1 }
-
-    #   preview comment
-    # end
+    # Then update the comment
+    @comment.comment = params[:comment][:comment]
+    if @comment.valid? && @comment.save
+      # if valid then redirect to comment path
+      return redirect_to @comment.story.comments_path + "#c_" + @comment.short_id + "t"
+    else
+      # otherwise get back to edit page
+      return render :action => "edit"
+    end
   end
 
   def unvote

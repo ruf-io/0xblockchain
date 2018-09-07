@@ -50,8 +50,8 @@ class Comment < ApplicationRecord
   # the score at which a comment should be collapsed
   COLLAPSE_SCORE = -5
 
-  # after this many minutes old, a comment cannot be edited
-  MAX_EDIT_MINS = (60 * 6)
+  # after six hours a comment cannot be edited
+  SIX_HOURS = 21_600 # 6(hours) * 60(minutes) * 60(seconds)
 
   SCORE_RANGE_TO_HIDE = (-2 .. 4)
 
@@ -363,8 +363,9 @@ class Comment < ApplicationRecord
       if self.is_moderated?
         return false
       else
-        return (Time.now.utc.to_i - (self.updated_at ? self.updated_at.to_i :
-          self.created_at.to_i) < (60 * MAX_EDIT_MINS))
+        # User cannot edit story if story is created more than
+        # six hours
+        return (Time.now.utc.to_i - self.created_at.to_i < SIX_HOURS)
       end
     else
       return false

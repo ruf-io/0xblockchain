@@ -157,39 +157,14 @@ class StoriesController < ApplicationController
     @new_comment = Comment.new(:story => @story)
     # Get the comments and the user
     # TODO(pyk): Order the comment
-    @comments = Comment
+    @comments = @story
+      .comments
       .roots
-      .includes(:user, :story)
+      .includes(:user)
       .order(:created_at => :desc)
       .where(:story_id => @story.id)
 
     return render :action => "show"
-    # respond_to do |format|
-    #   format.html {
-    #     @comment = @story.comments.build
-
-    #     @meta_tags = {
-    #       "twitter:card" => "summary",
-    #       "twitter:site" => "@lobsters",
-    #       "twitter:title" => @story.title,
-    #       "twitter:description" => @story.comments_count.to_s + " " +
-    #                                'comment'.pluralize(@story.comments_count),
-    #       "twitter:image" => Rails.application.root_url +
-    #                          "apple-touch-icon-144.png",
-    #     }
-
-    #     if @story.user.twitter_username.present?
-    #       @meta_tags["twitter:creator"] = "@" + @story.user.twitter_username
-    #     end
-
-    #     load_user_votes
-
-    #     render :action => "show"
-    #   }
-    #   format.json {
-    #     render :json => @story.as_json(:with_comments => @comments)
-    #   }
-    # end
   end
 
   def suggest

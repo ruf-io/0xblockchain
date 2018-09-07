@@ -46,12 +46,13 @@ $(document).ready(function() {
   $(document)
     .on("ajax:success", ".new_comment_or_reply", function(event) {
       var currentForm = this;
-      console.log(event.detail);
       // Get the JSON response from server and parse it as
       // javascript object
       var serverResponse = JSON.parse(event.detail[2].responseText);
       // Get the HTML data
       var html_data = serverResponse.html_data;
+      // Get the comment id
+      var comment_id = serverResponse.comment_short_id;
       // Get the parent comment id (if any)
       var parent_id = serverResponse.parent_short_id;
       if (serverResponse.is_error) {
@@ -81,6 +82,16 @@ $(document).ready(function() {
         $(currentForm)
           .children("textarea[name='comment[comment]']")
           .val("");
+
+        // Change URL to recently added comment/reply
+        var new_location = window.location.href + "#c_" + comment_id + "t";
+        if (window.location.hash) {
+          new_location = window.location.href.replace(
+            window.location.hash,
+            "#c" + comment_id + "t"
+          );
+        }
+        window.location.href = new_location;
       }
     })
     .on("ajax:error", function(event, data, status, message) {

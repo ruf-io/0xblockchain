@@ -2,9 +2,9 @@
 
 <%# Define comment ID %>
 <% comment_id ="c_" + comment.short_id %>
-<li id="<%= comment_id %>" class="ml3 mb3">
+<li id="<%= comment_id %>" class="ml3 mb3 mt3">
   <%# Comment meta data %>
-  <p>
+  <p class="mv0">
     <%# Comment upvote button %>
     <% if @user %>
       <%# TODO (pyk): Update this to link_to %>
@@ -40,7 +40,7 @@
 
     <%# Time and link to the comment %>
     <a class="link gray underline-hover"
-      href="<%= comment_path(comment) %>">
+      href="#<%= comment_id %>t">
       <%= time_ago_in_words_label(comment.created_at) %>
     </a>
 
@@ -64,16 +64,16 @@
   <%# We group the comment data into one to make it collapseable %>
   <div id="comment_data_<%= comment.short_id %>">
     <%# Comment content %>
-    <div class="ml3">
+    <div id="<%= comment_id %>t" class="pa3">
       <%= comment.comment %>
-
-      <p>
-        <a onclick="toggleReplyForm('reply_<%= comment.short_id %>')"
-          href="javascript:void(0)"
-          class="gray"
-          id="<%= "reply_form_toggler_" + comment.short_id %>">reply</a>
-      </p>
     </div>
+
+    <p class="pl3 ma0">
+      <a onclick="toggleReplyForm('reply_<%= comment.short_id %>')"
+        href="javascript:void(0)"
+        class="gray"
+        id="<%= "reply_form_toggler_" + comment.short_id %>">reply</a>
+    </p>
 
     <%# Display reply box %>
     <% if @user %>

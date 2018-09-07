@@ -78,3 +78,11 @@ pre {
   font-size: 12px;
   line-height: 18px;
 }
+
+/* This is for higlight comment
+ * when the comment is accessed via URL ID
+ */
+:target {
+  background-color: #fef2c0;
+  border-radius: 3px;
+}
