@@ -160,9 +160,8 @@ class StoriesController < ApplicationController
     @comments = @story
       .comments
       .roots
-      .includes(:user)
+      .includes(:user, :story)
       .order(:created_at => :desc)
-      .where(:story_id => @story.id)
 
     return render :action => "show"
   end
