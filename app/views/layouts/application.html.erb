@@ -109,6 +109,14 @@
       <% end %>
     <% end %>
 
+    <%# We use this for ajax messages
+      (success, error, etc) placeholder. %>
+    <div class="cf">
+      <div id="ajax-messages-placeholder" class="w-100 ph3">
+
+      </div>
+    </div>
+
     <%# Content %>
     <%= yield %>
 

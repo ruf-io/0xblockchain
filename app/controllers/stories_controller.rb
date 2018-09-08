@@ -1,3 +1,5 @@
+class VoteStoryNotFoundError < StandardError; end
+
 class StoriesController < ApplicationController
   caches_page :show, if: CACHE_PAGE
 
@@ -250,34 +252,22 @@ class StoriesController < ApplicationController
     end
   end
 
+  # Upvote story
   def unvote
-    if !(story = find_story)
-      return render :plain => "can't find story", :status => 400
-    end
-
-    Vote.vote_thusly_on_story_or_comment_for_user_because(
-      0, story.id, nil, @user.id, nil
-    )
-
-    render :plain => "ok"
-  end
-
-  # Upvote
-  def upvote
-    story_short_id = params[:id]
+    story_short_id = params[:story_id]
     is_error = false
     error_msg = nil
 
     begin
       # Get the story
       story = Story.find_by(:short_id => story_short_id)
-      if @story.nil?
-        raise UpvoteStoryNotFoundError
+      if story.nil?
+        raise VoteStoryNotFoundError
       end
 
       # If story exists, then vote the story
-      # TODO: upsert here
-    rescue UpvoteStoryNotFoundError
+      @user.unvote_story(story)
+    rescue VoteStoryNotFoundError
       is_error = true
       error_msg = "Upvote failed. We can't find the story."
     end
@@ -289,28 +279,47 @@ class StoriesController < ApplicationController
         return render :json => {
           :is_error => is_error,
           :error_msg => error_msg,
+          :story_short_id => story_short_id,
+        }
+      end
+    end
+  end
+
+  # Upvote
+  def upvote
+    story_short_id = params[:story_id]
+    is_error = false
+    error_msg = nil
+
+    begin
+      # Get the story
+      story = Story.find_by(:short_id => story_short_id)
+      if story.nil?
+        raise VoteStoryNotFoundError
+      end
+
+      # If story exists, then vote the story
+      @user.upvote_story(story)
+    rescue VoteStoryNotFoundError
+      is_error = true
+      error_msg = "Upvote failed. We can't find the story."
+    end
+
+    respond_to do |format|
+      # Response to JSON request
+      # TODO(pyk): Disable other request format here
+      format.json do
+        return render :json => {
+          :is_error => is_error,
+          :error_msg => error_msg,
+          :story_short_id => story_short_id,
         }
       end
     end
   end
 
   def downvote
-    if !(story = find_story)
-      return render :plain => "can't find story", :status => 400
-    end
-
-    if !Vote::STORY_REASONS[params[:reason]]
-      return render :plain => "invalid reason", :status => 400
-    end
-
-    if !@user.can_downvote?(story)
-      return render :plain => "not permitted to downvote", :status => 400
-    end
-
-    Vote.vote_thusly_on_story_or_comment_for_user_because(
-      -1, story.id, nil, @user.id, params[:reason]
-    )
-
+    # TODO: (pyk): Implement here
     render :plain => "ok"
   end
 
