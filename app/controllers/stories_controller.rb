@@ -1,4 +1,5 @@
 class VoteStoryNotFoundError < StandardError; end
+class SaveStoryNotFoundError < StandardError; end
 
 class StoriesController < ApplicationController
   caches_page :show, if: CACHE_PAGE
@@ -323,6 +324,72 @@ class StoriesController < ApplicationController
     render :plain => "ok"
   end
 
+  # Save story
+  def save
+    story_short_id = params[:story_id]
+    is_error = false
+    error_msg = nil
+
+    begin
+      # Get the story
+      story = Story.find_by(:short_id => story_short_id)
+      if story.nil?
+        raise SaveStoryNotFoundError
+      end
+
+      # If story exists, then save the story
+      @user.save_story(story)
+    rescue SaveStoryNotFoundError
+      is_error = true
+      error_msg = "Save story failed. We can't find the story."
+    end
+
+    respond_to do |format|
+      # Response to JSON request
+      # TODO(pyk): Disable other request format here
+      format.json do
+        return render :json => {
+          :is_error => is_error,
+          :error_msg => error_msg,
+          :story_short_id => story_short_id,
+        }
+      end
+    end
+  end
+
+  # Unsave the story
+  def unsave
+    story_short_id = params[:story_id]
+    is_error = false
+    error_msg = nil
+
+    begin
+      # Get the story
+      story = Story.find_by(:short_id => story_short_id)
+      if story.nil?
+        raise SaveStoryNotFoundError
+      end
+
+      # If story exists, then unsave the story
+      @user.unsave_story(story)
+    rescue SaveStoryNotFoundError
+      is_error = true
+      error_msg = "Save story failed. We can't find the story."
+    end
+
+    respond_to do |format|
+      # Response to JSON request
+      # TODO(pyk): Disable other request format here
+      format.json do
+        return render :json => {
+          :is_error => is_error,
+          :error_msg => error_msg,
+          :story_short_id => story_short_id,
+        }
+      end
+    end
+  end
+
   def hide
     if !(story = find_story)
       return render :plain => "can't find story", :status => 400
@@ -340,26 +407,6 @@ class StoriesController < ApplicationController
     end
 
     HiddenStory.where(:user_id => @user.id, :story_id => story.id).delete_all
-
-    render :plain => "ok"
-  end
-
-  def save
-    if !(story = find_story)
-      return render :plain => "can't find story", :status => 400
-    end
-
-    SavedStory.save_story_for_user(story.id, @user.id)
-
-    render :plain => "ok"
-  end
-
-  def unsave
-    if !(story = find_story)
-      return render :plain => "can't find story", :status => 400
-    end
-
-    SavedStory.where(:user_id => @user.id, :story_id => story.id).delete_all
 
     render :plain => "ok"
   end

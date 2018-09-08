@@ -3,6 +3,7 @@
 //= require jquery
 //= require selectize
 //= require story_vote
+//= require story_save
 
 $(document).ready(function() {
   $("#story_tag_names").selectize({

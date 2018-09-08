@@ -116,4 +116,19 @@ describe User do
       expect(user_a.karma_points_story).to be 0
     end
   end
+
+  describe "save story" do
+    it "should works as expected" do
+      # Create dummy user
+      user = create :user
+
+      # Create dummy stories
+      story_a = create :story
+      user.save_story story_a
+      expect(user.saved_stories.exists?(story_a.id)).to be true
+
+      user.unsave_story story_a
+      expect(user.saved_stories.exists?(story_a.id)).to be false
+    end
+  end
 end

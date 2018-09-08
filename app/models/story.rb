@@ -39,8 +39,16 @@ class Story < ApplicationRecord
            :through => :story_votes,
            :source => :user
 
+  # Story's savers
+  has_many :story_saves,
+           :class_name => "StorySave",
+           :dependent => :destroy
+  has_many :savers,
+           :through => :story_saves,
+           :source => :user
+
   has_many :hidings, :class_name => 'HiddenStory', :inverse_of => :story, :dependent => :destroy
-  has_many :savings, :class_name => 'SavedStory', :inverse_of => :story, :dependent => :destroy
+  # has_many :savings, :class_name => 'SavedStory', :inverse_of => :story, :dependent => :destroy
 
   scope :base, -> { includes(:tags).unmerged.not_deleted }
   scope :deleted, -> { where(is_expired: true) }

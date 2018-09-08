@@ -62,14 +62,21 @@
               v[:title] %></a>
           <% end %>
 
-          <span class="black-80 pv2 mr3 dib fr-ns">
-            <%= @user.username %> (<%= @user.karma_points %>)
-          </span>
+          <%# Link to saved stories %>
+          <%= link_to "Saved",
+            saved_path,
+            :class => "link black-80 underline-hover pv2 mr3 dib"
+            %>
+
+          <%= link_to @user.username + " (" + @user.karma_points.to_s + ")",
+            user_path(@user),
+            :class => "link black-80 underline-hover pv2 mr3 dib"
+            %>
           <%= link_to "Logout",
             { :controller => "sessions", :action => "logout" },
             :data => { :confirm => "Are you sure you want to logout?" },
             :method => "post",
-            :class => "black-80 pv2 mr3 dib link underline-hover fr-ns" %>
+            :class => "black-80 pv2 mr3 dib link underline-hover" %>
         <% else %>
 
           <% header_links.each do |u,v| %>

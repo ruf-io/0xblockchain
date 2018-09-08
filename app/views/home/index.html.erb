@@ -4,6 +4,15 @@
     </div>
   </div>
 <% end %>
+
+<%# Saved stories page %>
+<% if @cur_url == "/saved" %>
+  <div class="cf">
+    <div class="fl w-100 ph3">All your saved stories is available here.</em>
+    </div>
+  </div>
+<% end %>
+
 <% if @tag %>
   <div class="cf">
     <div class="fl w-100 ph3">
@@ -167,11 +176,50 @@
                 <% end %>
 
                 <%# Show link to save story %>
+                <% if @user %>
+                  <%# If user is already save the story, then
+                  update link to the unsave story. Otherwise
+                  add link to save the story %>
+                  <% if story.savers.exists?(@user.id) %>
+                    | <%= link_to "unsave",
+                        story_unsave_path(story),
+                        :method => :post,
+                        :remote => true,
+                        :class => "gray underline-hover link unsave_story",
+                        :id => "unsave_story_" + story.short_id,
+                        "data-type" => "json"%>
+                      <%# Initialize save link with display none state %>
+                      <%= link_to "save",
+                        story_save_path(story),
+                        :method => :post,
+                        :remote => true,
+                        :class => "gray underline-hover link save_story dn",
+                        :id => "save_story_" + story.short_id,
+                        "data-type" => "json"%>
+                  <% else %>
+                    <%# Initialize unsave link with display none state %>
+                    | <%= link_to "unsave",
+                        story_unsave_path(story),
+                        :method => :post,
+                        :remote => true,
+                        :class => "gray underline-hover link unsave_story dn",
+                        :id => "unsave_story_" + story.short_id,
+                        "data-type" => "json"%>
+                      <%= link_to "save",
+                        story_save_path(story),
+                        :method => :post,
+                        :remote => true,
+                        :class => "gray underline-hover link save_story",
+                        :id => "save_story_" + story.short_id,
+                        "data-type" => "json"%>
+                  <% end %>
+                <% else %>
+                  | <a href="javascript:alert('Login or Join now to save stories')"
+                      rel="nofollow"
+                      target="_blank"
+                      class="gray underline-hover link">save</a>
+                <% end %>
                 <%# TODO: add condition user, is authored by user etc %>
-                | <a href="javascript:alert('Login or Join now to save stories')"
-                    rel="nofollow"
-                    target="_blank"
-                    class="gray underline-hover link">save</a>
 
                 <%# Show link to edit story, if story is editable by current user %>
                 <% if story.is_editable_by_user?(@user) %>

@@ -179,7 +179,7 @@ class HomeController < ApplicationController
 
   def saved
     @stories, @show_more = get_from_cache(hidden: true) {
-      paginate stories.saved
+      paginate @user.saved_stories
     }
 
     @rss_link ||= {

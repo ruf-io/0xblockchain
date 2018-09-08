@@ -46,7 +46,8 @@ class User < ApplicationRecord
   #   :source => :story
 
   # Vote stories
-  has_many :story_votes
+  has_many :story_votes,
+           :dependent => :destroy
   has_many :voted_stories, :through => :story_votes
   has_many :upvoted_stories,
            -> { where "story_votes.vote_score" => 1 },
@@ -55,6 +56,14 @@ class User < ApplicationRecord
   has_many :downvoted_stories,
            -> { where "story_votes.vote_score" => -1 },
            :through => :story_votes,
+           :source => :story
+
+  # Saved stories
+  has_many :story_saves,
+           :class_name => "StorySave",
+           :dependent => :destroy
+  has_many :saved_stories,
+           :through => :story_saves,
            :source => :story
 
   has_many :hats, :dependent => :destroy
@@ -624,5 +633,24 @@ class User < ApplicationRecord
   # Get the total of karma points
   def karma_points
     return self.karma_points_story
+  end
+
+  # User save story
+  def save_story(story)
+    StorySave.find_or_create_by(
+      :story => story,
+      :user => self
+    )
+  end
+
+  # User unsave story
+  def unsave_story(story)
+    saved = StorySave.find_by(
+      :user => self,
+      :story => story
+    )
+    if saved.present?
+      saved.destroy!
+    end
   end
 end
