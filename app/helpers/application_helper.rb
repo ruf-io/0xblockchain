@@ -46,7 +46,7 @@ module ApplicationHelper
     }
 
     if @user
-      @header_links[threads_path] = { :title => "Your Threads" }
+      # @header_links[threads_path] = { :title => "Your Threads" }
     end
 
     if @user && @user.can_submit_stories?
@@ -54,7 +54,7 @@ module ApplicationHelper
     end
 
     if @user
-      @header_links[saved_path] = { :title => "Saved" }
+      # @header_links[saved_path] = { :title => "Saved" }
     end
 
     # @header_links[search_path] = { :title => "Search" }
@@ -75,25 +75,25 @@ module ApplicationHelper
     @right_header_links = {}
 
     if @user
-      if (count = @user.unread_replies_count) > 0
-        @right_header_links[replies_unread_path] = {
-          :class => ["new_messages"],
-          :title => "#{@user.unread_replies_count} Reply".pluralize(count),
-        }
-      else
-        @right_header_links[replies_path] = { :title => "Replies" }
-      end
+      # if (count = @user.unread_replies_count) > 0
+      #   @right_header_links[replies_unread_path] = {
+      #     :class => ["new_messages"],
+      #     :title => "#{@user.unread_replies_count} Reply".pluralize(count),
+      #   }
+      # else
+      #   @right_header_links[replies_path] = { :title => "Replies" }
+      # end
 
-      if (count = @user.unread_message_count) > 0
-        @right_header_links[messages_path] = {
-          :class => ["new_messages"],
-          :title => "#{@user.unread_message_count} Message".pluralize(count),
-        }
-      else
-        @right_header_links[messages_path] = { :title => "Messages" }
-      end
+      # if (count = @user.unread_message_count) > 0
+      #   @right_header_links[messages_path] = {
+      #     :class => ["new_messages"],
+      #     :title => "#{@user.unread_message_count} Message".pluralize(count),
+      #   }
+      # else
+      #   @right_header_links[messages_path] = { :title => "Messages" }
+      # end
 
-      @right_header_links[settings_path] = { :title => "#{@user.username} (#{@user.karma})" }
+      # @right_header_links[settings_path] = { :title => "#{@user.username} (#{@user.karma})" }
     else
       @right_header_links["/auth/github"] = { :title => "Login via Github" }
     end

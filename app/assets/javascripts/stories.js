@@ -2,6 +2,7 @@
 //= require rails-ujs
 //= require jquery
 //= require selectize
+//= require story_vote
 
 $(document).ready(function() {
   $("#story_tag_names").selectize({

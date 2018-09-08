@@ -19,6 +19,7 @@ class CommentsController < ApplicationController
                   :upvote,
                   :downvote,
                   :unvote,
+                  :threads,
                 ]
 
   # for rss feeds, load the user's tag filters if a token is passed
@@ -361,6 +362,7 @@ class CommentsController < ApplicationController
     end
   end
 
+  # Show user's threads
   def threads
     if params[:user]
       @showing_user = User.where(:username => params[:user]).first!

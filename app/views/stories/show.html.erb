@@ -2,21 +2,58 @@
 <div class="cf">
   <div class="fl w-100 ph3 black-80 lh-copy fs-11pt mt3">
     <h4 class="ma0 lh-copy">
-      <%# Upvote button %>
       <% if @user %>
-        <%# TODO (pyk): Update this to link_to %>
-        <a href="#"
-          class="link black-50 tc mr1">
-          <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-          <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
-          </svg>
-        </a>
+        <%# If user is already upvote the story, then
+        update link to the unvote story. Otherwise
+        add link to upvote the story %>
+        <% if @story.upvoters.exists?(@user.id) %>
+          <%= link_to story_unvote_path(@story),
+            :method => :post,
+            :remote => true,
+            :class => "link unvote_story mr1",
+            :id => "unvote_story_" + @story.short_id,
+            "data-type" => "json" do %>
+            <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+              <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="#5319e7" />
+            </svg>
+          <% end %>
+          <%= link_to story_upvote_path(@story),
+            :method => :post,
+            :remote => true,
+            :class => "link upvote_story dn mr1",
+            :id => "upvote_story_" + @story.short_id,
+            "data-type" => "json" do %>
+            <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+              <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+            </svg>
+          <% end %>
+        <% else %>
+          <%= link_to story_unvote_path(@story),
+            :method => :post,
+            :remote => true,
+            :class => "link unvote_story dn mr1",
+            :id => "unvote_story_" + @story.short_id,
+            "data-type" => "json" do %>
+            <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+              <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="#5319e7" />
+            </svg>
+          <% end %>
+          <%= link_to story_upvote_path(@story),
+            :method => :post,
+            :remote => true,
+            :class => "link upvote_story mr1",
+            :id => "upvote_story_" + @story.short_id,
+            "data-type" => "json" do %>
+            <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
+              <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+            </svg>
+          <% end %>
+        <% end %>
       <% else %>
-        <%# TODO (pyk): Update this to link_to %>
-        <a href="/login"
+        <a href="javascript:alert('Login or Join now to upvote stories')"
           class="link black-50 tc mr1">
           <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-          <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
+            <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
           </svg>
         </a>
       <% end %>
@@ -56,11 +93,16 @@
     <%# Display meta data %>
     <p class="ma0 ml3 gray mt1 lh-copy">
       <%# Display current points %>
-      <% if @story.score >= 2 %>
-        <%= @story.score %> points
+      <span
+        id="current_story_point_<%= @story.short_id %>"
+        data-value="<%= @story.points %>"
+      >
+      <% if @story.points >= 2 %>
+        <%= @story.points %> points
       <% else %>
-        <%= @story.score %> point
+        <%= @story.points %> point
       <% end %>
+      </span>
 
       <%# Display 'authored by' or 'via' %>
       <% if @story.user_is_author? %>

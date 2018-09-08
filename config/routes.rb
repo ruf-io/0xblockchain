@@ -29,17 +29,17 @@ Rails.application.routes.draw do
   get "/top/:length" => "home#top"
   get "/top/:length/page/:page" => "home#top"
 
-  get "/threads" => "comments#threads"
-  get "/threads/:user" => "comments#threads", :as => "user_threads"
+  # get "/threads" => "comments#threads"
+  # get "/threads/:user" => "comments#threads", :as => "user_threads"
 
-  get "/replies" => "replies#all"
-  get "/replies/page/:page" => "replies#all"
-  get "/replies/comments" => "replies#comments"
-  get "/replies/comments/page/:page" => "replies#comments"
-  get "/replies/stories" => "replies#stories"
-  get "/replies/stories/page/:page" => "replies#stories"
-  get "/replies/unread" => "replies#unread"
-  get "/replies/unread/page/:page" => "replies#unread"
+  # get "/replies" => "replies#all"
+  # get "/replies/page/:page" => "replies#all"
+  # get "/replies/comments" => "replies#comments"
+  # get "/replies/comments/page/:page" => "replies#comments"
+  # get "/replies/stories" => "replies#stories"
+  # get "/replies/stories/page/:page" => "replies#stories"
+  # get "/replies/unread" => "replies#unread"
+  # get "/replies/unread/page/:page" => "replies#unread"
 
   # get "/login" => "login#index"
   # post "/login" => "login#login"
@@ -131,27 +131,27 @@ Rails.application.routes.draw do
   post "/users/:username/enable_invitation" => "users#enable_invitation",
         :as => "user_enable_invite"
 
-  get "/settings" => "settings#index"
-  post "/settings" => "settings#update"
-  post "/settings/delete_account" => "settings#delete_account",
-    :as => "delete_account"
-  get "/settings/2fa" => "settings#twofa", :as => "twofa"
-  post "/settings/2fa_auth" => "settings#twofa_auth", :as => "twofa_auth"
-  get "/settings/2fa_enroll" => "settings#twofa_enroll",
-    :as => "twofa_enroll"
-  get "/settings/2fa_verify" => "settings#twofa_verify",
-    :as => "twofa_verify"
-  post "/settings/2fa_update" => "settings#twofa_update",
-    :as => "twofa_update"
+  # get "/settings" => "settings#index"
+  # post "/settings" => "settings#update"
+  # post "/settings/delete_account" => "settings#delete_account",
+  #   :as => "delete_account"
+  # get "/settings/2fa" => "settings#twofa", :as => "twofa"
+  # post "/settings/2fa_auth" => "settings#twofa_auth", :as => "twofa_auth"
+  # get "/settings/2fa_enroll" => "settings#twofa_enroll",
+  #   :as => "twofa_enroll"
+  # get "/settings/2fa_verify" => "settings#twofa_verify",
+  #   :as => "twofa_verify"
+  # post "/settings/2fa_update" => "settings#twofa_update",
+  #   :as => "twofa_update"
 
-  post "/settings/pushover_auth" => "settings#pushover_auth"
-  get "/settings/pushover_callback" => "settings#pushover_callback"
-  get "/settings/github_auth" => "settings#github_auth"
-  get "/settings/github_callback" => "settings#github_callback"
-  post "/settings/github_disconnect" => "settings#github_disconnect"
-  get "/settings/twitter_auth" => "settings#twitter_auth"
-  get "/settings/twitter_callback" => "settings#twitter_callback"
-  post "/settings/twitter_disconnect" => "settings#twitter_disconnect"
+  # post "/settings/pushover_auth" => "settings#pushover_auth"
+  # get "/settings/pushover_callback" => "settings#pushover_callback"
+  # get "/settings/github_auth" => "settings#github_auth"
+  # get "/settings/github_callback" => "settings#github_callback"
+  # post "/settings/github_disconnect" => "settings#github_disconnect"
+  # get "/settings/twitter_auth" => "settings#twitter_auth"
+  # get "/settings/twitter_callback" => "settings#twitter_callback"
+  # post "/settings/twitter_disconnect" => "settings#twitter_disconnect"
 
   get "/filters" => "filters#index"
   post "/filters" => "filters#update"
@@ -163,39 +163,39 @@ Rails.application.routes.draw do
   post "/tags" => "tags#create"
   post "/tags/:id" => "tags#update", :as => "update_tag"
 
-  post "/invitations" => "invitations#create"
-  get "/invitations" => "invitations#index"
-  get "/invitations/request" => "invitations#build"
-  post "/invitations/create_by_request" => "invitations#create_by_request",
-    :as => "create_invitation_by_request"
-  get "/invitations/confirm/:code" => "invitations#confirm_email"
-  post "/invitations/send_for_request" => "invitations#send_for_request",
-    :as => "send_invitation_for_request"
-  get "/invitations/:invitation_code" => "signup#invited"
-  post "/invitations/delete_request" => "invitations#delete_request",
-    :as => "delete_invitation_request"
+  # post "/invitations" => "invitations#create"
+  # get "/invitations" => "invitations#index"
+  # get "/invitations/request" => "invitations#build"
+  # post "/invitations/create_by_request" => "invitations#create_by_request",
+  #   :as => "create_invitation_by_request"
+  # get "/invitations/confirm/:code" => "invitations#confirm_email"
+  # post "/invitations/send_for_request" => "invitations#send_for_request",
+  #   :as => "send_invitation_for_request"
+  # get "/invitations/:invitation_code" => "signup#invited"
+  # post "/invitations/delete_request" => "invitations#delete_request",
+  #   :as => "delete_invitation_request"
 
-  get "/hats" => "hats#index"
-  get "/hats/build_request" => "hats#build_request",
-    :as => "request_hat"
-  post "/hats/create_request" => "hats#create_request",
-    :as => "create_hat_request"
-  get "/hats/requests" => "hats#requests_index"
-  post "/hats/approve_request/:id" => "hats#approve_request",
-    :as => "approve_hat_request"
-  post "/hats/reject_request/:id" => "hats#reject_request",
-    :as => "reject_hat_request"
+  # get "/hats" => "hats#index"
+  # get "/hats/build_request" => "hats#build_request",
+  #   :as => "request_hat"
+  # post "/hats/create_request" => "hats#create_request",
+  #   :as => "create_hat_request"
+  # get "/hats/requests" => "hats#requests_index"
+  # post "/hats/approve_request/:id" => "hats#approve_request",
+  #   :as => "approve_hat_request"
+  # post "/hats/reject_request/:id" => "hats#reject_request",
+  #   :as => "reject_hat_request"
 
-  get "/moderations" => "moderations#index"
-  get "/moderations/page/:page" => "moderations#index"
-  get "/moderators" => "users#tree", :moderators => true
+  # get "/moderations" => "moderations#index"
+  # get "/moderations/page/:page" => "moderations#index"
+  # get "/moderators" => "users#tree", :moderators => true
 
-  get "/mod" => "mod#index"
-  get "/mod/flagged/:period"   => "mod#flagged",   :as => "mod_flagged"
-  get "/mod/downvoted/:period" => "mod#downvoted", :as => "mod_downvoted"
-  get "/mod/commenters/:period" => "mod#commenters", :as => "mod_commenters"
-  get "/mod/notes(/:period)" => "mod_notes#index", :as => "mod_notes"
-  post "/mod/notes" => "mod_notes#create"
+  # get "/mod" => "mod#index"
+  # get "/mod/flagged/:period"   => "mod#flagged",   :as => "mod_flagged"
+  # get "/mod/downvoted/:period" => "mod#downvoted", :as => "mod_downvoted"
+  # get "/mod/commenters/:period" => "mod#commenters", :as => "mod_commenters"
+  # get "/mod/notes(/:period)" => "mod_notes#index", :as => "mod_notes"
+  # post "/mod/notes" => "mod_notes#create"
 
   get "/privacy" => "home#privacy"
   get "/about" => "home#about"
