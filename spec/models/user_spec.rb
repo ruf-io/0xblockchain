@@ -20,15 +20,6 @@ describe User do
     expect { create(:user, :email => "user@") }.to raise_error
   end
 
-  it "authenticates properly" do
-    u = create(:user, :password => "hunter2")
-
-    expect(u.password_digest.length).to be > 20
-
-    expect(u.authenticate("hunter2")).to eq(u)
-    expect(u.authenticate("hunteR2")).to be false
-  end
-
   it "gets an error message after registering banned name" do
     expect { create(:user, :username => "admin") }
            .to raise_error("Validation failed: Username is not permitted")
@@ -84,5 +75,45 @@ describe User do
       :user_is_author => false)
     # 50% of 4 stories
     expect(u.is_heavy_self_promoter?).to be false
+  end
+
+  describe "karma points" do
+    it "should work as expected" do
+      # Create dummy user
+      user_a = create :user
+      # Create dummy stories
+      create_list :story, 3, :user => user_a
+      expect(user_a.karma_points_story).to be 0
+
+      # Create dummy voters
+      user_b = create :user
+      user_b.upvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 1
+
+      # Create dummy voters
+      user_c = create :user
+      user_c.upvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 2
+
+      # Create dummy voters
+      user_d = create :user
+      user_d.downvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 1
+
+      # Create dummy voters
+      user_e = create :user
+      user_e.downvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 0
+
+      # Undo all votes
+      user_e.unvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 1
+      user_d.unvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 2
+      user_c.unvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 1
+      user_b.unvote_story user_a.stories.first
+      expect(user_a.karma_points_story).to be 0
+    end
   end
 end

@@ -3,7 +3,6 @@ class StoriesController < ApplicationController
 
   before_action :require_logged_in_user_or_400,
                 :only => [
-                  :upvote,
                   :downvote,
                   :unvote,
                   :hide,
@@ -15,6 +14,7 @@ class StoriesController < ApplicationController
                 ]
   before_action :require_logged_in_user,
                 :only => [
+                  :upvote,
                   :destroy,
                   :create,
                   :edit,
@@ -32,6 +32,7 @@ class StoriesController < ApplicationController
   # around_action :track_story_reads,
   #               only: [:show], if: -> { @user.present? }
 
+  # Create story
   def create
     @title = "Submit Story"
     @cur_url = "/stories/new"
@@ -261,16 +262,36 @@ class StoriesController < ApplicationController
     render :plain => "ok"
   end
 
+  # Upvote
   def upvote
-    if !(story = find_story)
-      return render :plain => "can't find story", :status => 400
+    story_short_id = params[:id]
+    is_error = false
+    error_msg = nil
+
+    begin
+      # Get the story
+      story = Story.find_by(:short_id => story_short_id)
+      if @story.nil?
+        raise UpvoteStoryNotFoundError
+      end
+
+      # If story exists, then vote the story
+      # TODO: upsert here
+    rescue UpvoteStoryNotFoundError
+      is_error = true
+      error_msg = "Upvote failed. We can't find the story."
     end
 
-    Vote.vote_thusly_on_story_or_comment_for_user_because(
-      1, story.id, nil, @user.id, nil
-    )
-
-    render :plain => "ok"
+    respond_to do |format|
+      # Response to JSON request
+      # TODO(pyk): Disable other request format here
+      format.json do
+        return render :json => {
+          :is_error => is_error,
+          :error_msg => error_msg,
+        }
+      end
+    end
   end
 
   def downvote

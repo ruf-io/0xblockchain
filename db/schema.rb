@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_05_164954) do
+ActiveRecord::Schema.define(version: 2018_09_08_042725) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gin"
@@ -188,6 +188,19 @@ ActiveRecord::Schema.define(version: 2018_09_05_164954) do
     t.index ["user_id"], name: "index_stories_on_user_id"
   end
 
+  create_table "story_votes", force: :cascade do |t|
+    t.bigint "story_id"
+    t.bigint "user_id"
+    t.integer "vote_score", null: false
+    t.datetime "upvoted_at"
+    t.datetime "downvoted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["story_id", "user_id"], name: "index_story_votes_on_story_id_and_user_id", unique: true
+    t.index ["story_id"], name: "index_story_votes_on_story_id"
+    t.index ["user_id"], name: "index_story_votes_on_user_id"
+  end
+
   create_table "suggested_taggings", id: :serial, force: :cascade do |t|
     t.integer "story_id"
     t.integer "tag_id"
@@ -282,6 +295,8 @@ ActiveRecord::Schema.define(version: 2018_09_05_164954) do
     t.index ["user_id", "story_id"], name: "user_id_story_id"
   end
 
+  add_foreign_key "story_votes", "stories"
+  add_foreign_key "story_votes", "users"
 
   create_view "replying_comments",  sql_definition: <<-SQL
       SELECT read_ribbons.user_id,

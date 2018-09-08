@@ -81,8 +81,11 @@ class Vote < ApplicationRecord
   def self.vote_thusly_on_story_or_comment_for_user_because(
     vote, story_id, comment_id, user_id, reason, update_counters = true
   )
-    v = Vote.where(:user_id => user_id, :story_id => story_id,
-      :comment_id => comment_id).first_or_initialize
+    v = Vote.where(
+      :user_id => user_id,
+      :story_id => story_id,
+      :comment_id => comment_id
+    ).first_or_initialize
 
     if !v.new_record? && v.vote == vote
       return

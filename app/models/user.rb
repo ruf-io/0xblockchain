@@ -35,14 +35,28 @@ class User < ApplicationRecord
   has_many :moderations,
            :inverse_of => :moderator,
            :dependent => :restrict_with_exception
-  has_many :votes, :dependent => :destroy
-  has_many :voted_stories, -> { where('votes.comment_id' => nil) },
-           :through => :votes,
-           :source => :story
+
+  # has_many :votes, :dependent => :destroy
+  # has_many :voted_stories, -> { where('votes.comment_id' => nil) },
+  #          :through => :votes,
+  #          :source => :story
+  # has_many :upvoted_stories,
+  #          -> { where('votes.comment_id' => nil, 'votes.vote' => 1) },
+  #          :through => :votes,
+  #   :source => :story
+
+  # Vote stories
+  has_many :story_votes
+  has_many :voted_stories, :through => :story_votes
   has_many :upvoted_stories,
-           -> { where('votes.comment_id' => nil, 'votes.vote' => 1) },
-           :through => :votes,
-    :source => :story
+           -> { where "story_votes.vote_score" => 1 },
+           :through => :story_votes,
+           :source => :story
+  has_many :downvoted_stories,
+           -> { where "story_votes.vote_score" => -1 },
+           :through => :story_votes,
+           :source => :story
+
   has_many :hats, :dependent => :destroy
   has_many :wearable_hats, -> { where('doffed_at is null') },
            :class_name => "Hat",
@@ -543,5 +557,72 @@ class User < ApplicationRecord
       user.github_uid = auth.uid
       user.github_oauth_token = auth.credentials.token
     end
+  end
+
+  # User upvote story
+  def upvote_story(story)
+    vote = StoryVote.find_by(
+      :story => story,
+      :user => self
+    )
+    if vote.nil?
+      vote = StoryVote.new(
+        :user => self,
+        :story => story,
+        :vote_score => :upvoted,
+        :upvoted_at => Time.now.utc
+      )
+    else
+      vote.vote_score = :upvoted
+      vote.upvoted_at = Time.now.utc
+    end
+    vote.save!
+  end
+
+  # User downvote story
+  def downvote_story(story)
+    vote = StoryVote.find_by(
+      :story => story,
+      :user => self
+    )
+    if vote.nil?
+      vote = StoryVote.new(
+        :user => self,
+        :story => story,
+        :vote_score => :downvoted,
+        :downvoted_at => Time.now.utc
+      )
+    else
+      vote.vote_score = :downvoted
+      vote.downvoted_at = Time.now.utc
+    end
+    vote.save!
+  end
+
+  # User unvote story
+  def unvote_story(story)
+    vote = StoryVote.find_by(
+      :user => self,
+      :story => story
+    )
+    if vote.present?
+      vote.destroy!
+    end
+  end
+
+  # Get karma points from story
+  def karma_points_story
+    # User will get reward if they get upvote
+    # from other users
+    points = StoryVote
+      .where(:story => self.stories)
+      .where.not(:user => self)
+      .sum(:vote_score)
+    return points
+  end
+
+  # Get the total of karma points
+  def karma_points
+    return self.karma_points_story
   end
 end

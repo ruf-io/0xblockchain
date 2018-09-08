@@ -19,10 +19,26 @@ class Story < ApplicationRecord
            :inverse_of => :story,
            :dependent => :destroy
   has_many :tags, -> { order('tags.is_media desc, tags.tag') }, :through => :taggings
-  has_many :votes, -> { where(:comment_id => nil) }, :inverse_of => :story
-  has_many :voters, -> { where('votes.comment_id' => nil) },
-           :through => :votes,
+  # has_many :votes, -> { where(:comment_id => nil) }, :inverse_of => :story
+  # has_many :voters, -> { where('votes.comment_id' => nil) },
+  #          :through => :votes,
+  #          :source => :user
+
+  # Story's voters
+  has_many :story_votes,
+           :dependent => :destroy
+  has_many :voters,
+           :through => :story_votes,
            :source => :user
+  has_many :upvoters,
+           -> { where "story_votes.vote_score" => 1 },
+           :through => :story_votes,
+           :source => :user
+  has_many :downvoters,
+           -> { where "story_votes.vote_score" => -1 },
+           :through => :story_votes,
+           :source => :user
+
   has_many :hidings, :class_name => 'HiddenStory', :inverse_of => :story, :dependent => :destroy
   has_many :savings, :class_name => 'SavedStory', :inverse_of => :story, :dependent => :destroy
 
@@ -944,5 +960,14 @@ class Story < ApplicationRecord
     end
 
     @fetched_attributes
+  end
+
+  # Story votes
+  # Get the story points
+  def points
+    points = StoryVote
+      .where(:story_id => self.id)
+      .sum(:vote_score)
+    return points
   end
 end
