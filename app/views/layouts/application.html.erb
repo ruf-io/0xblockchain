@@ -3,18 +3,30 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon.png" />
-  <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon.png" />
-  <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-144.png" />
-  <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="referrer" content="always" />
+
+  <%# Apple meta tags %>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" href="<%= asset_path "apple-touch-icon.png" %>" />
+
+  <%# Static properties for twitter card %>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@0xblockchaindev">
+  <meta name="twitter:image" content="<%= asset_path "apple-touch-icon.png" %>">
+
+  <%# Dynamycally generated meta tags %>
   <% if @meta_tags %>
     <% @meta_tags.each do |k,v| %>
       <meta name="<%= k %>" content="<%= v %>" />
     <% end %>
   <% end %>
+
+  <%# favicon.ico %>
   <%= favicon_link_tag 'favicon.ico' %>
+
   <% if @short_url %>
     <link rev="canonical" rel="self alternate shorter shorturl shortlink"
       href="<%= @short_url %>" />

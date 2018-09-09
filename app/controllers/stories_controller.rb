@@ -155,7 +155,11 @@ class StoriesController < ApplicationController
       return redirect_to root_path
     end
     # TODO(pyk): handle when story is deleted
-
+    @meta_tags = {
+      "twitter:title" => @story.title,
+      "twitter:description" => @story.comments_count.to_s + " " +
+                               'comment'.pluralize(@story.comments_count),
+    }
     @title = @story.title
     @short_url = @story.short_id_url
     @new_comment = Comment.new(:story => @story)
