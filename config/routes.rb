@@ -1,14 +1,13 @@
 Rails.application.routes.draw do
-  root :to => "home#index",
+  root :to => "home#front_page",
     :protocol => (Rails.application.config.force_ssl ? "https://" : "http://"),
     :as => "root"
+  get "/page/:page" => "home#front_page"
 
   get "/404" => "home#four_oh_four", :via => :all
 
   get "/rss" => "home#index", :format => "rss"
   get "/hottest" => "home#index", :format => "json"
-
-  get "/page/:page" => "home#index"
 
   get "/newest" => "home#newest"
   get "/newest/page/:page" => "home#newest"

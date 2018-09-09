@@ -42,7 +42,6 @@ class StoriesController < ApplicationController
 
     @story = Story.new(story_params)
     @story.user_id = @user.id
-
     if @story.valid? && !(@story.already_posted_story && !@story.is_previewed)
       if @story.save
         ReadRibbon.where(user: @user, story: @story).first_or_create
@@ -168,7 +167,7 @@ class StoriesController < ApplicationController
     @comments = @story
       .comments
       .roots
-      .includes(:user, :story)
+      .includes(:user)
       .order(:created_at => :desc)
 
     return render :action => "show"

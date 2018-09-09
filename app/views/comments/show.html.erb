@@ -14,7 +14,8 @@
     <%= render partial: "comments/comment",
       locals: {
         comment: @comment,
-        replies: @comment.children
+        replies: @comment.children,
+        story_short_id: @comment.story.short_id
       } %>
     </ol>
   </div>

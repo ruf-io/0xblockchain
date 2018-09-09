@@ -124,6 +124,7 @@ class CommentsController < ApplicationController
         :content_type => "text/html",
         :locals => {
           :comment => comment,
+          :story_short_id => story_short_id,
         }
       is_error = false
     end

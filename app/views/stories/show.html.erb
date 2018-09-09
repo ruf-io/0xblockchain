@@ -191,7 +191,10 @@
       class="list pl0 mt5">
       <%= render partial: "comments/comment",
         collection: @comments,
-        as: :comment %>
+        as: :comment,
+        locals: {
+          story_short_id: @story.short_id,
+        } %>
     </ol>
   </div>
 </div>

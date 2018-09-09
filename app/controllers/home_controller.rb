@@ -80,6 +80,7 @@ class HomeController < ApplicationController
     render :action => "index"
   end
 
+  # Show index
   def index
     @stories, @show_more = get_from_cache(hottest: true) {
       paginate stories.hottest
@@ -111,6 +112,24 @@ class HomeController < ApplicationController
         end
       }
       format.json { render :json => @stories }
+    end
+  end
+
+  # Show front-page
+  # TODO: implement front-page
+  def front_page
+    # Sort story by hotness score
+    @stories, @show_more = paginate Story
+      .includes(:tags)
+      .where("created_at >= ?", 5.days.ago)
+      .where.not(:hotness => nil)
+      .order(:hotness => :desc)
+
+    @heading = @title = ""
+    @cur_url = "/"
+
+    respond_to do |format|
+      format.html { render :action => "index" }
     end
   end
 
@@ -164,9 +183,11 @@ class HomeController < ApplicationController
 
   # Recent page
   def recent
-    @stories, @show_more = get_from_cache(recent: true) {
-      paginate Story.recent(@user, filtered_tag_ids)
-    }
+    @stories, @show_more = paginate Story
+      .includes(:tags)
+      .where("created_at >= ?", 7.days.ago)
+      .where.not(:hotness => nil)
+      .order(:created_at => :desc)
 
     @heading = @title = "Recent Stories"
     @cur_url = "/recent"
@@ -179,7 +200,9 @@ class HomeController < ApplicationController
 
   def saved
     @stories, @show_more = get_from_cache(hidden: true) {
-      paginate @user.saved_stories
+      paginate @user
+        .saved_stories
+        .includes(:tags)
     }
 
     @rss_link ||= {
@@ -206,7 +229,11 @@ class HomeController < ApplicationController
     @tag = Tag.where(:tag => params[:tag]).first!
 
     @stories, @show_more = get_from_cache(tag: @tag) {
-      paginate stories.tagged(@tag)
+      paginate Story
+        .includes(:tags)
+        .where("created_at >= ?", 5.days.ago)
+        .where.not(:hotness => nil)
+        .order(:created_at => :desc)
     }
 
     @heading = @tag.tag

@@ -7,7 +7,7 @@ RSpec.feature "Link to comment spec" do
       story = create :story
 
       # Visit homepage
-      visit root_path
+      visit newest_path
 
       # Story should be available on the front-page
       expect(page).to have_content story.title
@@ -30,8 +30,9 @@ RSpec.feature "Link to comment spec" do
       story = create :story_with_comments,
                      tag_names: tag_names,
                      comments_count: 1
-      # visit home page
-      visit root_path
+      # visit newest page
+      visit newest_path
+
       # Story should be available on the front-page
       expect(page).to have_content story.title
       expect(page).to have_content story.user.username
@@ -54,7 +55,7 @@ RSpec.feature "Link to comment spec" do
                      tag_names: tag_names,
                      comments_count: 3
       # visit home page
-      visit root_path
+      visit newest_path
 
       # Story should be available on the front-page
       expect(page).to have_content story.title

@@ -15,7 +15,7 @@ RSpec.feature "Add comment" do
     it "Should not be able to access the form" do
       story_short_id = @stories.first.short_id
       # Visit front page and click on the one of the story
-      visit root_path
+      visit newest_path
       find("a#comments_" + story_short_id).click
 
       # Make sure the form are disabled
@@ -42,7 +42,7 @@ RSpec.feature "Add comment" do
     scenario "Add comment", js: true do
       story_short_id = @stories.first.short_id
       # Visit front page and click on one of the story
-      visit root_path
+      visit newest_path
       find("a#comments_" + story_short_id).click
 
       # Make sure the form are enabled

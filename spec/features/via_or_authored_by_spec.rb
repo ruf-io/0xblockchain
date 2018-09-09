@@ -5,8 +5,8 @@ RSpec.feature "Via or Authored by" do
     # Create dummy story using factory bot
     story = create :story, user_is_author: false
 
-    # Visit homepage
-    visit root_path
+    # Visit newest page
+    visit newest_path
     expect(page).to have_content "via " + story.user.username
 
     # Make sure link to the user profile is work
@@ -18,8 +18,8 @@ RSpec.feature "Via or Authored by" do
     # Create dummy story using factory bot
     story = create :story, user_is_author: true
 
-    # Visit homepage
-    visit root_path
+    # Visit newest page
+    visit newest_path
     expect(page).to have_content "authored by " + story.user.username
 
     # Make sure link to the user profile is work

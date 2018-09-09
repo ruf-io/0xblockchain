@@ -489,9 +489,9 @@ class User < ApplicationRecord
     thread_ids
   end
 
-  def stories_submitted_count
-    Keystore.value_for("user:#{self.id}:stories_submitted").to_i
-  end
+  # def stories_submitted_count
+  #   Keystore.value_for("user:#{self.id}:stories_submitted").to_i
+  # end
 
   def to_param
     username

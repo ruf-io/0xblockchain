@@ -39,7 +39,7 @@
       <% story_index = 1 %>
     <% end %>
     <% @stories.each do |story| %>
-      <li class="mb2">
+      <li class="mb2" data-hotness="<%= story.hotness %>">
         <div id="story_<%= story.short_id %>"
           class="flex">
           <%# Voting %>

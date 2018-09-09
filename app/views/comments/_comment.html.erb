@@ -1,5 +1,3 @@
-<%# Ger replies data %>
-
 <%# Define comment ID %>
 <% comment_id ="c_" + comment.short_id %>
 <li id="<%= comment_id %>" class="ml3 mb3 mt3">
@@ -36,7 +34,7 @@
 
     <%# User username%>
     <a href="/u/<%= comment.user.username %>"
-      class="<%= comment.html_class_for_user %> gray underline-hover link mr1"><%= comment.user.username %></a>
+      class="gray underline-hover link mr1"><%= comment.user.username %></a>
 
     <%# Time and link to the comment %>
     <a class="link gray underline-hover"
@@ -80,7 +78,7 @@
       <%= render partial: "comments/comment_form",
         locals: {
           comment: Comment.new(:parent => comment),
-          story_short_id: comment.story.short_id,
+          story_short_id: story_short_id,
           css_classes: "ml3 mt3 new_comment_or_reply dn",
           button_text: "Add reply"
         }
@@ -90,7 +88,7 @@
       <%= render partial: "comments/comment_form",
         locals: {
           comment: Comment.new(:parent => comment),
-          story_short_id: comment.story.short_id,
+          story_short_id: story_short_id,
           css_classes: "ml3 mt3 new_comment_or_reply dn",
           disabled: true,
           button_text: "Add reply"
@@ -106,8 +104,9 @@
         <% replies.each do |reply| %>
           <%= render partial: "comments/comment",
           locals: {
-          comment: reply,
-          replies: reply.children
+            comment: reply,
+            replies: reply.children,
+            story_short_id: story_short_id,
           } %>
         <% end %>
       <% end %>

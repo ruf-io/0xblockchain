@@ -54,14 +54,14 @@ class Story < ApplicationRecord
   scope :deleted, -> { where(is_expired: true) }
   scope :not_deleted, -> { where(is_expired: false) }
   scope :unmerged, -> { where(:merged_story_id => nil) }
-  scope :positive_ranked, -> { where("#{Story.score_sql} >= 0") }
-  scope :low_scoring, ->(max = 5) { where("#{Story.score_sql} < ?", max) }
-  scope :hottest, ->(user = nil, exclude_tags = nil) {
-    base.not_hidden_by(user)
-        .filter_tags(exclude_tags || [])
-        .positive_ranked
-        .order('hotness')
-  }
+  # scope :positive_ranked, -> { where("#{Story.score_sql} >= 0") }
+  # scope :low_scoring, ->(max = 5) { where("#{Story.score_sql} < ?", max) }
+  # scope :hottest, ->(user = nil, exclude_tags = nil) {
+  #   base.not_hidden_by(user)
+  #       .filter_tags(exclude_tags || [])
+  #       .positive_ranked
+  #       .order('hotness')
+  # }
   scope :recent, ->(user = nil, exclude_tags = nil) {
     base.low_scoring
         .not_hidden_by(user)
@@ -155,13 +155,12 @@ class Story < ApplicationRecord
                 :moderation_reason, :previewing, :is_previewed, :vote
   attr_writer :fetched_content
 
-  before_validation :assign_short_id_and_upvote, :on => :create
-  before_create :assign_initial_hotness
-  before_save :log_moderation
+  # Hooks
+  before_validation :assign_short_id, :on => :create
   before_save :fix_bogus_chars
-  after_create :mark_submitter, :record_initial_upvote
-  after_save :update_merged_into_story_comments, :recalculate_hotness!
+  after_create :record_initial_upvote
 
+  # Validations
   validate do
     if self.url.present?
       check_already_posted
@@ -240,17 +239,17 @@ class Story < ApplicationRecord
       .order("id DESC").first
   end
 
-  def self.recalculate_all_hotnesses!
-    # do the front page first, since find_each can't take an order
-    Story.order("id DESC").limit(100).each(&:recalculate_hotness!)
-    Story.find_each(&:recalculate_hotness!)
-    true
-  end
+  # def self.recalculate_all_hotnesses!
+  #   # do the front page first, since find_each can't take an order
+  #   Story.order("id DESC").limit(100).each(&:recalculate_hotness!)
+  #   Story.find_each(&:recalculate_hotness!)
+  #   true
+  # end
 
-  def self.score_sql
-    Arel.sql("(CAST(upvotes AS #{votes_cast_type}) - " <<
-      "CAST(downvotes AS #{votes_cast_type}))")
-  end
+  # def self.score_sql
+  #   Arel.sql("(CAST(upvotes AS #{votes_cast_type}) - " <<
+  #     "CAST(downvotes AS #{votes_cast_type}))")
+  # end
 
   def self.votes_cast_type
     Story.connection.adapter_name.match?(/mysql/i) ? "signed" : "integer"
@@ -297,57 +296,52 @@ class Story < ApplicationRecord
     js
   end
 
-  def assign_initial_hotness
-    self.hotness = self.calculated_hotness
-  end
+  # def calculated_hotness
+  #   # Calculate story hotness
+  # end
 
-  def assign_short_id_and_upvote
-    self.short_id = ShortId.new(self.class).generate
-    self.upvotes = 1
-  end
+  # def calculated_hotness
+  #   # take each tag's hotness modifier into effect, and give a slight bump to
+  #   # stories submitted by the author
+  #   base = self.tags.sum(:hotness_mod) + (self.user_is_author? && self.url.present? ? 0.25 : 0.0)
 
-  def calculated_hotness
-    # take each tag's hotness modifier into effect, and give a slight bump to
-    # stories submitted by the author
-    base = self.tags.sum(:hotness_mod) + (self.user_is_author? && self.url.present? ? 0.25 : 0.0)
+  #   # give a story's comment votes some weight, ignoring submitter's comments
+  #   cpoints = self.merged_comments
+  #     .where("user_id <> ?", self.user_id)
+  #     .select(:upvotes, :downvotes)
+  #     .map {|c|
+  #       if base < 0
+  #         # in stories already starting out with a bad hotness mod, only look
+  #         # at the downvotes to find out if this tire fire needs to be put out
+  #         c.downvotes * -0.5
+  #       else
+  #         c.upvotes + 1 - c.downvotes
+  #       end
+  #     }
+  #     .inject(&:+).to_f * 0.5
 
-    # give a story's comment votes some weight, ignoring submitter's comments
-    cpoints = self.merged_comments
-      .where("user_id <> ?", self.user_id)
-      .select(:upvotes, :downvotes)
-      .map {|c|
-        if base < 0
-          # in stories already starting out with a bad hotness mod, only look
-          # at the downvotes to find out if this tire fire needs to be put out
-          c.downvotes * -0.5
-        else
-          c.upvotes + 1 - c.downvotes
-        end
-      }
-      .inject(&:+).to_f * 0.5
+  #   # mix in any stories this one cannibalized
+  #   cpoints += self.merged_stories.map(&:score).inject(&:+).to_f
 
-    # mix in any stories this one cannibalized
-    cpoints += self.merged_stories.map(&:score).inject(&:+).to_f
+  #   # if a story has many comments but few votes, it's probably a bad story, so
+  #   # cap the comment points at the number of upvotes
+  #   if cpoints > self.upvotes
+  #     cpoints = self.upvotes
+  #   end
 
-    # if a story has many comments but few votes, it's probably a bad story, so
-    # cap the comment points at the number of upvotes
-    if cpoints > self.upvotes
-      cpoints = self.upvotes
-    end
+  #   # don't immediately kill stories at 0 by bumping up score by one
+  #   order = Math.log([(score + 1).abs + cpoints, 1].max, 10)
+  #   if score > 0
+  #     sign = 1
+  #   elsif score < 0
+  #     sign = -1
+  #   else
+  #     sign = 0
+  #   end
 
-    # don't immediately kill stories at 0 by bumping up score by one
-    order = Math.log([(score + 1).abs + cpoints, 1].max, 10)
-    if score > 0
-      sign = 1
-    elsif score < 0
-      sign = -1
-    else
-      sign = 0
-    end
-
-    return -((order * sign) + base +
-      ((self.created_at || Time.now.utc).to_f / HOTNESS_WINDOW)).round(7)
-  end
+  #   return -((order * sign) + base +
+  #     ((self.created_at || Time.now.utc).to_f / HOTNESS_WINDOW)).round(7)
+  # end
 
   def can_be_seen_by_user?(user)
     if is_gone? && !(user && (user.is_moderator? || user.id == self.user_id))
@@ -603,17 +597,13 @@ class Story < ApplicationRecord
     self.merged_story_id ? self.merged_into_story.try(:short_id) : nil
   end
 
-  def recalculate_hotness!
-    update_column :hotness, calculated_hotness
-  end
+  # def recalculate_hotness!
+  #   update_column :hotness, calculated_hotness
+  # end
 
-  def record_initial_upvote
-    self.user.upvote_story(self)
-  end
-
-  def score
-    upvotes - downvotes
-  end
+  # def score
+  #   upvotes - downvotes
+  # end
 
   def short_id_path
     Rails.application.routes.url_helpers.root_path + "s/#{self.short_id}"
@@ -802,8 +792,6 @@ class Story < ApplicationRecord
 
     # calculate count after removing deleted comments and threads
     self.update_column :comments_count, (self.comments_count = comments.count {|c| !c.is_gone? })
-
-    self.recalculate_hotness!
   end
 
   def update_merged_into_story_comments
@@ -970,12 +958,63 @@ class Story < ApplicationRecord
     @fetched_attributes
   end
 
+  #############################################################################
+  # Story hooks definition
+  # Theese hooks will be executed onnnnnnnnnn story lifecycle
+  #############################################################################
+  # Assign short ID
+  def assign_short_id
+    self.short_id = ShortId.new(self.class).generate
+  end
+
+  # Record initial upvote from the submitter
+  def record_initial_upvote
+    self.user.upvote_story(self)
+  end
+
+  #############################################################################
   # Story votes
+  #############################################################################
   # Get the story points
   def points
     points = StoryVote
       .where(:story_id => self.id)
       .sum(:vote_score)
     return points
+  end
+
+  #############################################################################
+  # Story hotness score
+  #############################################################################
+  # Get the hotness score of the story
+  # This is modified version of Hacker News rank algorithm
+  # https://medium.com/hacking-and-gonzo/how-hacker-news-ranking-algorithm-works-1d9b0cf2c08d
+  def hotness_score
+    # Promoted score
+    # TODO(pyk): Add is_promoted column
+    promoted_score = 0
+
+    # Comments score
+    comments_score = self.comments.count / 2
+
+    # Tags score
+    tags_score = self.tags.sum(:hotness_mod)
+
+    # Author score
+    author_score = 0
+    if self.user_is_author?
+      author_score = 1
+    end
+
+    # Story age in hour
+    story_age = ((Time.now.utc - self.created_at) / 1.hour).round
+    gravity = 0.5
+    decay = story_age ** gravity
+
+    # Calculate hotness score
+    base_score = (promoted_score + comments_score + tags_score + author_score)
+    score = (self.points * base_score) / decay
+
+    return score
   end
 end
