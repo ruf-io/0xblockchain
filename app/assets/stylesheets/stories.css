@@ -72,11 +72,22 @@
   }
 } */
 
+/*
 pre {
   overflow: auto;
   padding: 16px;
   font-size: 12px;
   line-height: 18px;
+}
+*/
+
+pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
 }
 
 /* This is for higlight comment

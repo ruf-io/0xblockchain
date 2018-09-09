@@ -1,7 +1,8 @@
 <%# Show story %>
 <div class="cf">
-  <div class="fl w-100 ph3 black-80 lh-copy fs-11pt mt3">
-    <h4 class="ma0 lh-copy">
+  <div class="fl w-100 ph3 black-80 lh-copy fs-11pt mt3 flex">
+    <%# Voting %>
+    <div class="voting-column tc mr2">
       <% if @user %>
         <%# If user is already upvote the story, then
         update link to the unvote story. Otherwise
@@ -10,7 +11,7 @@
           <%= link_to story_unvote_path(@story),
             :method => :post,
             :remote => true,
-            :class => "link unvote_story mr1",
+            :class => "link unvote_story",
             :id => "unvote_story_" + @story.short_id,
             "data-type" => "json" do %>
             <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
@@ -20,7 +21,7 @@
           <%= link_to story_upvote_path(@story),
             :method => :post,
             :remote => true,
-            :class => "link upvote_story dn mr1",
+            :class => "link upvote_story dn",
             :id => "upvote_story_" + @story.short_id,
             "data-type" => "json" do %>
             <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
@@ -31,7 +32,7 @@
           <%= link_to story_unvote_path(@story),
             :method => :post,
             :remote => true,
-            :class => "link unvote_story dn mr1",
+            :class => "link unvote_story dn",
             :id => "unvote_story_" + @story.short_id,
             "data-type" => "json" do %>
             <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
@@ -41,7 +42,7 @@
           <%= link_to story_upvote_path(@story),
             :method => :post,
             :remote => true,
-            :class => "link upvote_story mr1",
+            :class => "link upvote_story",
             :id => "upvote_story_" + @story.short_id,
             "data-type" => "json" do %>
             <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
@@ -51,100 +52,108 @@
         <% end %>
       <% else %>
         <a href="javascript:alert('Login or Join now to upvote stories')"
-          class="link black-50 tc mr1">
+          class="link black-50 tc">
           <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
             <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
           </svg>
         </a>
       <% end %>
+    </div>
 
-      <%# Story title %>
-      <a href="<%= @story.url_or_comments_path %>"
-      class="link underline-hover black-80 mr1">
-      <%= break_long_words(@story.title) %>
-      </a>
+    <%# Detail %>
+    <div class="detail-column">
+      <h4 class="ma0 lh-copy">
+        <%# Story title %>
+        <a href="<%= @story.url_or_comments_path %>"
+        class="link underline-hover black-80 mr1">
+        <%= break_long_words(@story.title) %></a>
 
-      <%# Show description icon, if description is present %>
-      <% if @story.markeddown_description.present? %>
-        <a class="link gray mr1"
-        title="<%= truncate(@story.description, :length => 250) %>"
-        href="<%= @story.comments_path %>"><i class="fas fa-align-left"></i></a>
-      <% end %>
-
-      <%# Show tags %>
-      <span>
-        <% @story.tags.each do |tag| %>
-          <a href="<%= tag_path(tag) %>"
-          class="<%= tag.css_class %> tag mr1 gray"
-          title="<%= tag.description %>"
-          style="background-color: <%= tag.background_color %>; color: <%= tag.text_color %>;"><%= tag.tag %></a>
+        <%# Show description icon, if description is present %>
+        <% if @story.markeddown_description.present? %>
+          <a class="link gray mr1"
+          title="<%= truncate(@story.description, :length => 250) %>"
+          href="<%= @story.comments_path %>"><i class="fas fa-align-left"></i></a>
         <% end %>
-      </span>
 
-      <%# Show domain if any %>
-      <% if @story.domain.present? %>
-      <a class="link gray underline-hover normal"
-      href="<%= @story.domain_search_url %>" >
-      <%= break_long_words(@story.domain) %>
-      </a>
-      <% end %>
-    </h4>
+        <%# Show tags %>
+        <span>
+          <% @story.tags.each do |tag| %>
+            <a href="<%= tag_path(tag) %>"
+            class="<%= tag.css_class %> tag mr1 gray"
+            title="<%= tag.description %>"
+            style="background-color: <%= tag.background_color %>; color: <%= tag.text_color %>;"><%= tag.tag %></a>
+          <% end %>
+        </span>
 
-    <%# Display meta data %>
-    <p class="ma0 ml3 gray mt1 lh-copy">
-      <%# Display current points %>
-      <span
-        id="current_story_point_<%= @story.short_id %>"
-        data-value="<%= @story.points %>"
-      >
-      <% if @story.points >= 2 %>
-        <%= @story.points %> points
-      <% else %>
-        <%= @story.points %> point
-      <% end %>
-      </span>
+        <%# Show domain if any %>
+        <% if @story.domain.present? %>
+        <a class="link gray underline-hover normal"
+        href="<%= @story.domain_search_url %>" >
+        <%= break_long_words(@story.domain) %>
+        </a>
+        <% end %>
+      </h4>
 
-      <%# Display 'authored by' or 'via' %>
-      <% if @story.user_is_author? %>
-        authored by
-      <% else %>
-        via
-      <% end %>
-
-      <%# User username%>
-      <a href="/u/<%= @story.user.username %>"
-        class="<%= @story.html_class_for_user %> gray underline-hover link">
-        <%= @story.user.username %>
-      </a>
-
-      <%# Time story submitted %>
-      <%= time_ago_in_words_label(@story.created_at) %>
-
-      <%# Show link to cache url, if story url is present %>
-      <% if @story.url.present? %>
-      | <a href="<%= @story.archive_url %>"
-          rel="nofollow"
-          target="_blank"
-          class="gray underline-hover link">cached</a>
-      <% end %>
-
-      <%# Show link to edit story, if story is editable by current user %>
-      <% if @story.is_editable_by_user?(@user) %>
-      | <a href="<%= edit_story_path(@story.short_id)%>"
-        class="gray underline-hover link">edit</a>
-      <% end %>
-
-      <%# Show link to comments %>
-      | <span class="gray ">
-        <% if @story.comments_count == 0 %>
-        no comments
+      <%# Display meta data %>
+      <p class="ma0 gray mt1 lh-copy">
+        <%# Display current points %>
+        <span
+          id="current_story_point_<%= @story.short_id %>"
+          data-value="<%= @story.points %>"
+        >
+        <% if @story.points >= 2 %>
+          <%= @story.points %> points
         <% else %>
-        <%= @story.comments_count %>
-        comment<%= @story.comments_count == 1 ? "" : "s" %>
+          <%= @story.points %> point
         <% end %>
-      </span>
-    </p>
+        </span>
 
+        <%# Display 'authored by' or 'via' %>
+        <% if @story.user_is_author? %>
+          authored by
+        <% else %>
+          via
+        <% end %>
+
+        <%# User username%>
+        <a href="/u/<%= @story.user.username %>"
+          class="<%= @story.html_class_for_user %> gray underline-hover link">
+          <%= @story.user.username %>
+        </a>
+
+        <%# Time story submitted %>
+        <%= time_ago_in_words_label(@story.created_at) %>
+
+        <%# Show link to cache url, if story url is present %>
+        <% if @story.url.present? %>
+        | <a href="<%= @story.archive_url %>"
+            rel="nofollow"
+            target="_blank"
+            class="gray underline-hover link">cached</a>
+        <% end %>
+
+        <%# Show link to edit story, if story is editable by current user %>
+        <% if @story.is_editable_by_user?(@user) %>
+        | <a href="<%= edit_story_path(@story.short_id)%>"
+          class="gray underline-hover link">edit</a>
+        <% end %>
+
+        <%# Show link to comments %>
+        | <span class="gray ">
+          <% if @story.comments_count == 0 %>
+          no comments
+          <% else %>
+          <%= @story.comments_count %>
+          comment<%= @story.comments_count == 1 ? "" : "s" %>
+          <% end %>
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="cf">
+  <div class="fl w-100 ph3 fs-11pt lh-copy">
     <%# Display story text if any %>
     <% if @story.markeddown_description.present? %>
       <div class="ml3">
