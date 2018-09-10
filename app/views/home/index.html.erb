@@ -44,61 +44,11 @@
           class="flex">
           <%# Voting %>
           <div class="voting-column tc mr2">
-            <% if @user %>
-              <%# If user is already upvote the story, then
-              update link to the unvote story. Otherwise
-              add link to upvote the story %>
-              <% if story.upvoters.exists?(@user.id) %>
-                <%= link_to story_unvote_path(story),
-                  :method => :post,
-                  :remote => true,
-                  :class => "link unvote_story",
-                  :id => "unvote_story_" + story.short_id,
-                  "data-type" => "json" do %>
-                  <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-                    <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="#5319e7" />
-                  </svg>
-                <% end %>
-                <%= link_to story_upvote_path(story),
-                  :method => :post,
-                  :remote => true,
-                  :class => "link upvote_story dn",
-                  :id => "upvote_story_" + story.short_id,
-                  "data-type" => "json" do %>
-                  <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-                    <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
-                  </svg>
-                <% end %>
-              <% else %>
-                <%= link_to story_unvote_path(story),
-                  :method => :post,
-                  :remote => true,
-                  :class => "link unvote_story dn",
-                  :id => "unvote_story_" + story.short_id,
-                  "data-type" => "json" do %>
-                  <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-                    <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="#5319e7" />
-                  </svg>
-                <% end %>
-                <%= link_to story_upvote_path(story),
-                  :method => :post,
-                  :remote => true,
-                  :class => "link upvote_story",
-                  :id => "upvote_story_" + story.short_id,
-                  "data-type" => "json" do %>
-                  <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-                    <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
-                  </svg>
-                <% end %>
-              <% end %>
-            <% else %>
-              <a href="javascript:alert('Login or Join now to upvote stories')"
-                class="link black-50 tc">
-                <svg width="10" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 3px;">
-                  <path d="M7 0L13.9282 12H0.0717969L7 0Z" fill="rgba(0,0,0,0.3)" />
-                </svg>
-              </a>
-            <% end %>
+            <%# Render upvote & unvote button %>
+            <%= render partial: "stories/upvote_button",
+              locals: {
+                story: story,
+              } %>
 
             <%# Display index number %>
             <br/>
