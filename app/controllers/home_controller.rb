@@ -198,6 +198,7 @@ class HomeController < ApplicationController
     render :action => "index"
   end
 
+  # Saved page
   def saved
     @stories, @show_more = get_from_cache(hidden: true) {
       paginate @user
@@ -225,14 +226,19 @@ class HomeController < ApplicationController
     end
   end
 
+  # Tag page
   def tagged
-    @tag = Tag.where(:tag => params[:tag]).first!
+    @tag = Tag.find_by(:tag => params[:tag])
+    if @tag.nil?
+      flash[:error] = params[:tag] + " tag is not available"
+      return redirect_to root_path
+    end
 
     @stories, @show_more = get_from_cache(tag: @tag) {
       paginate Story
         .includes(:tags)
-        .where("created_at >= ?", 5.days.ago)
-        .where.not(:hotness => nil)
+        .where(:tags => { tag: @tag.tag })
+        .where("stories.created_at >= ?", 14.days.ago)
         .order(:created_at => :desc)
     }
 

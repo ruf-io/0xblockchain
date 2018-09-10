@@ -39,7 +39,7 @@ module ApplicationHelper
 
     @header_links = {
       root_path => { :title => "Front page" },
-      recent_path => { :title => "Recent" },
+      newest_path => { :title => "Newest" },
       tag_url("ask") => { :title => "Ask" },
       tag_url("show") => { :title => "Show" },
       # comments_path => { :title => "Comments" },
