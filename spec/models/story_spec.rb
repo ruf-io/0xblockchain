@@ -30,10 +30,10 @@ describe Story do
   end
 
   it "must have at least one tag" do
-    expect { create(:story, :tags_a => nil) }.to raise_error
-    expect { create(:story, :tags_a => ["", " "]) }.to raise_error
+    expect { create(:story, :tag_names => nil) }.to raise_error
+    expect { create(:story, :tag_names => ["", " "]) }.to raise_error
 
-    expect { create(:story, :tags_a => ["", "tag1"]) }.to_not raise_error
+    expect { create(:story, :tag_names => ["", "tag1"]) }.to_not raise_error
   end
 
   it "removes redundant http port 80 and https port 443" do
@@ -147,31 +147,44 @@ describe Story do
   end
 
   it "calculates tag changes properly" do
-    s = create(:story, :title => "blah", :tags_a => ["tag1", "tag2"])
+    s = create(:story, :title => "blah", :tag_names => ["tag1", "tag2"])
 
-    s.tags_a = ["tag2"]
+    s.tag_names = ["tag2"]
     expect(s.tagging_changes).to eq("tags" => ["tag1 tag2", "tag2"])
   end
 
   it "logs moderations properly" do
-    mod = create(:user, :moderator)
+    mod = create :user, :is_moderator => true
 
-    s = create(:story, :title => "blah", :tags_a => ["tag1", "tag2"],
-      :description => "desc")
+    s = create :story,
+               :title => "blah",
+               :tag_names => ["tag1", "tag2"],
+               :description => "desc"
 
     s.title = "changed title"
     s.description = nil
-    s.tags_a = ["tag1"]
+    s.tag_names = ["tag1"]
 
     s.editor = mod
-    s.moderation_reason = "because i hate you"
+    s.moderation_reason = "test moderation"
     s.save!
 
     mod_log = Moderation.last
     expect(mod_log.moderator_user_id).to eq(mod.id)
     expect(mod_log.story_id).to eq(s.id)
-    expect(mod_log.reason).to eq("because i hate you")
+    expect(mod_log.reason).to eq("test moderation")
     expect(mod_log.action).to match(/title from "blah" to "changed title"/)
     expect(mod_log.action).to match(/tags from "tag1 tag2" to "tag1"/)
+  end
+
+  it "calculate the hotness score properly" do
+    # Create dummy story
+    story = create :story
+    expect(story.hotness_score).to eq 1
+
+    user = create :user
+    user.upvote_story story
+
+    expect(story.hotness_score).to be > 1
   end
 end

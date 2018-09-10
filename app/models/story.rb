@@ -157,6 +157,7 @@ class Story < ApplicationRecord
 
   # Hooks
   before_validation :assign_short_id, :on => :create
+  before_save :log_moderation
   before_save :fix_bogus_chars
   after_create :record_initial_upvote
 
@@ -529,6 +530,7 @@ class Story < ApplicationRecord
     end
   end
 
+  # Log moderation
   def log_moderation
     if self.new_record? ||
        (!self.editing_from_suggestions && (!self.editor || self.editor.id == self.user_id))
@@ -1010,9 +1012,12 @@ class Story < ApplicationRecord
     story_age = ((Time.now.utc - self.created_at) / 1.hour).round
     gravity = 0.5
     decay = story_age ** gravity
+    if decay == 0
+      decay = 1
+    end
 
     # Calculate hotness score
-    base_score = (promoted_score + comments_score + tags_score + author_score)
+    base_score = (1 + promoted_score + comments_score + tags_score + author_score)
     score = (self.points * base_score) / decay
 
     return score
