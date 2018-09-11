@@ -53,6 +53,8 @@ group :test, :development do
   gem "byebug"
   gem "rb-readline"
   gem "dotenv-rails"
+  # For twitter utility
+  gem "twurl"
 end
 
 # Github login

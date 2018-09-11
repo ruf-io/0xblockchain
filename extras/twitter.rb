@@ -2,8 +2,8 @@ class Twitter
   cattr_accessor :CONSUMER_KEY, :CONSUMER_SECRET, :AUTH_TOKEN, :AUTH_SECRET
 
   # these need to be overridden in config/initializers/production.rb
-  @@CONSUMER_KEY = nil
-  @@CONSUMER_SECRET = nil
+  @@CONSUMER_KEY = ENV.fetch("TWITTER_CONSUMER_KEY")
+  @@CONSUMER_SECRET = ENV.fetch("TWITTER_CONSUMER_SECRET")
 
   # You'll need to go to https://apps.twitter.com/, add an app, and
   # whitelist both /settings and /settings/twitter_callback as Callback URLs
@@ -11,8 +11,8 @@ class Twitter
 
   # these are set for the account used to post updates in
   # script/post_to_twitter (needs read/write access)
-  @@AUTH_TOKEN = nil
-  @@AUTH_SECRET = nil
+  @@AUTH_TOKEN = ENV.fetch("TWITTER_AUTH_TOKEN")
+  @@AUTH_SECRET = ENV.fetch("TWITTER_AUTH_SECRET")
 
   MAX_TWEET_LEN = 280
 
