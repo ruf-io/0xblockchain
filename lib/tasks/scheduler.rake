@@ -23,6 +23,9 @@ namespace :heroku_scheduler do
       .where(:twitter_id => nil)
       .where("created_at >= ?", 2.hours.ago)
       .first
+    if story.nil?
+      puts "Skip tweeting ..."
+    end
 
     # Tweet the story
     tags = story.tags.pluck(:tag).map {|t| ' #' + t }.join('')
