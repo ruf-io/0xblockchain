@@ -21,7 +21,7 @@ namespace :heroku_scheduler do
     story = Story
       .order(:hotness => :desc)
       .where(:twitter_id => nil)
-      .where("created_at >= ?", 2.hours.ago)
+      .where("created_at >= ?", 2.days.ago)
       .first
     if story.nil?
       puts "Skip tweeting ..."
