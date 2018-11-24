@@ -121,7 +121,6 @@ class HomeController < ApplicationController
     # Sort story by hotness score
     @stories, @show_more = paginate Story
       .includes(:tags)
-      .where("created_at >= ?", 5.days.ago)
       .where.not(:hotness => nil)
       .order(:hotness => :desc)
 
@@ -238,7 +237,6 @@ class HomeController < ApplicationController
       paginate Story
         .includes(:tags)
         .where(:tags => { tag: @tag.tag })
-        .where("stories.created_at >= ?", 14.days.ago)
         .order(:created_at => :desc)
     }
 
